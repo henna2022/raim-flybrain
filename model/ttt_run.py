@@ -28,7 +28,7 @@ if __name__ == '__main__':
         z = np.load(out); done = dict(zip(z['boards'], z['X']))
     todo = [(b, seed) for b in boards if b not in done]
     def save():
-        ks = sorted(done); np.savez(out + '.tmp.npz', boards=np.array(ks), X=np.stack([done[k] for k in ks]))
+        ks = sorted(done); np.savez_compressed(out + '.tmp.npz', boards=np.array(ks), X=np.stack([done[k] for k in ks]))
         os.replace(out + '.tmp.npz', out)
     print(f'seed {seed}: {len(done)} done, {len(todo)} to go, {workers} workers', flush=True)
     t0 = time.time()

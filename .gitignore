@@ -10,3 +10,6 @@ model/ttt/*.npz
 model/ttt/*.log
 .env*
 model/op/*.npz
+desktop/workers.txt
+op_results.zip
+octapawn.log
