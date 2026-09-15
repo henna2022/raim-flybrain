@@ -12,7 +12,7 @@ echo "$(date '+%F %T') 시뮬 끝, 판독기 학습·평가"
 "$PY" op_train.py 2>&1 | grep -v -i warn | tail -60
 rm -f "$ROOT/op_results.zip"
 "$PY" -m zipfile -c "$ROOT/op_results.zip" op/features_seed0.npz op/features_seed1.npz op/readout.json op/fly_moves.json op/report.json
-if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
+if [ -z "${NO_UPLOAD:-}" ] && command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
   TAG="op-results-$(date +%Y%m%d-%H%M)"
   gh release create "$TAG" "$ROOT/op_results.zip" --repo henna2022/raim-flybrain --title "옥타폰 계산 결과 $TAG" --notes "데스크탑에서 계산한 발화 수와 판독기" \
     && echo "GitHub 비공개 저장소 Release $TAG 에 올렸어요. Claude에게 '옥타폰 결과 올렸어'라고 알려 주세요"
