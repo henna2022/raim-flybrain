@@ -1,6 +1,6 @@
 """연결체 데이터 받기와 SHA-256 확인. 리눅스·WSL·윈도우·맥 어디서나 같은 파이썬으로 돈다.
 사용: python desktop/fetch_data.py [all|dl]   (dl은 딥러닝 벤치에 필요한 연결 목록 하나만)"""
-import hashlib, os, sys, urllib.request
+import hashlib, os, shutil, subprocess, sys, urllib.request
 
 MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'model')
 SHIU = 'https://raw.githubusercontent.com/philshiu/Drosophila_brain_model/91bdd1e7dcf193f3e7ca5a8933497fcef63b7960'
@@ -28,13 +28,13 @@ def fetch(name):
         print(f'  있음: {name}')
         return path
     print(f'  받는 중: {name}', flush=True)
-    for attempt in range(3):
-        try:
+    try:   # curl은 리눅스·WSL·맥·윈도우10+에 기본으로 있고 시스템 인증서를 쓴다 (파이썬 urllib은 맥 python.org 빌드에서 인증서 오류)
+        if shutil.which('curl'):
+            subprocess.run(['curl', '-fsSL', '--retry', '3', '-o', path + '.part', url], check=True)
+        else:
             urllib.request.urlretrieve(url, path + '.part')
-            break
-        except OSError as ex:
-            if attempt == 2:
-                sys.exit(f'  [실패] 받지 못했어요: {name} ({ex})')
+    except (OSError, subprocess.CalledProcessError) as ex:
+        sys.exit(f'  [실패] 받지 못했어요: {name} ({ex})')
     if sha256(path + '.part') != digest:
         os.remove(path + '.part')
         sys.exit(f'  [실패] 해시가 달라요: {name}')

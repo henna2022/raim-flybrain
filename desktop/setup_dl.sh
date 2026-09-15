@@ -5,13 +5,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VENV="${VENV:-$HOME/.venvs/flychess-dl}"
 
-if command -v nvidia-smi >/dev/null; then
-  nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader
-  WHEEL="--index-url https://download.pytorch.org/whl/cu126"
-else
-  echo "nvidia-smi가 없어요. 그래픽카드 드라이버(WSL이면 윈도우 쪽 NVIDIA 드라이버)를 확인하세요. 지금은 CPU로만 잽니다."
-  WHEEL="--index-url https://download.pytorch.org/whl/cpu"
-fi
+NVSMI=$(command -v nvidia-smi || ls /usr/lib/wsl/lib/nvidia-smi 2>/dev/null || true)   # WSL은 PATH에 없을 때가 있다
+[ -n "$NVSMI" ] && "$NVSMI" --query-gpu=name,memory.total,driver_version --format=csv,noheader || echo "nvidia-smi를 못 찾았어요. 계속 진행하고 PyTorch가 직접 확인해요."
+# 리눅스(WSL)는 늘 CUDA 12.6용을 깐다 (그래픽카드가 없어도 CPU로 돈다). 맥은 점검용이라 PyPI 기본
+case "$(uname -s)" in Linux) WHEEL="--index-url https://download.pytorch.org/whl/cu126" ;; *) WHEEL="" ;; esac
 
 PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || true)
 [ -n "$PY" ] || { echo "Python 3.11 이상이 필요해요"; exit 1; }
@@ -25,7 +22,7 @@ cd "$ROOT"
 import shutil, torch
 ok = torch.cuda.is_available()
 print('torch', torch.__version__, '| CUDA', ok, torch.cuda.get_device_name(0) if ok else '')
-if not ok and shutil.which('nvidia-smi'): print('[경고] 그래픽카드는 보이는데 PyTorch가 CUDA를 못 써요. 윈도우 NVIDIA 드라이버를 최신으로 올린 뒤 다시 실행하세요. 지금 결과는 CPU 기준이에요.')"
+if not ok and (shutil.which('nvidia-smi') or shutil.os.path.exists('/usr/lib/wsl/lib/nvidia-smi')): print('[경고] 그래픽카드는 보이는데 PyTorch가 CUDA를 못 써요. 윈도우 NVIDIA 드라이버를 최신으로 올린 뒤 다시 실행하세요. 지금 결과는 CPU 기준이에요.')"
 "$VENV/bin/python" -W ignore dl/bench_gpu.py ${BENCH_ARGS:-}
 if [ -z "${NO_UPLOAD:-}" ] && command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
   TAG="bench-$(date +%Y%m%d-%H%M)"
