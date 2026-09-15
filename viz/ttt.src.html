@@ -1,0 +1,162 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>초파리 뇌와 틱택토</title>
+<style>
+:root{--bg:#070b14;--panel:#0c1220;--line:#1c2538;--cell:#141b2b;--cellLine:#2a3550;--text:#dfe6f2;--muted:#7f8ca3;--accent:#f2c14e;--in:#22c55e;--out:#ef4444}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;padding:0 20px;box-sizing:border-box}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0 10px}
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.brand img{height:30px;width:auto;display:block}
+.brand .sep{width:1px;height:22px;background:var(--cellLine)}
+h1{font-size:22px;margin:0;font-weight:700}
+.sub{color:var(--muted);font-size:13px}
+.dev{background:#2a3550;color:var(--text);border-radius:6px;padding:2px 8px;font-size:12px;margin-left:8px;font-weight:400}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;min-height:0}
+#play{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0}
+#status{font-size:22px;font-weight:600;min-height:1.4em;text-align:center}
+#board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:10px;width:min(100%,56vh);height:min(100vw,56vh)}
+.cell{min-width:0;min-height:0;background:var(--cell);border:1px solid var(--cellLine);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:0;color:inherit}
+.cell.win{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.stone{width:64%;height:64%}
+.human{border:9px solid var(--text);border-radius:50%;box-sizing:border-box}
+.ghost{opacity:.4}
+#who{display:flex;gap:10px}
+.pill{background:var(--cell);border:1px solid var(--cellLine);color:var(--text);border-radius:12px;padding:12px 22px;font-size:17px}
+.pill.on{background:#243049;border-color:#3b4a6b}
+#brainBox{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0;overflow:hidden}
+.boxhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 5px 0 0;vertical-align:1px}
+.legend span{margin-right:12px}
+#brain{width:100%;height:100%;display:block}
+#candWrap{padding:4px 16px 14px}
+#candHead{font-size:13px;color:var(--muted);margin-bottom:6px}
+#cands{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name num" "bar bar";align-items:center;gap:6px 8px;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;opacity:.45;min-height:3.4em;box-sizing:border-box}
+.row>span:first-child{grid-area:name;white-space:nowrap}
+.row .num{grid-area:num}
+.row .bar{grid-area:bar}
+.row.taken{opacity:.15}
+.row.done{opacity:1}
+.row.pick{font-weight:700;border-color:var(--accent)}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#8795ad;border-radius:5px;transition:width .3s}
+.row.pick .bar i{background:var(--accent)}
+.num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
+footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
+#rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
+#rotate h2{margin:0;font-size:26px;line-height:1.45}
+#rotate p{margin:0;color:var(--muted);font-size:17px}
+@media (orientation:portrait){#rotate{display:flex}}
+</style></head><body><div id="app">
+<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리 뇌와 틱택토<span class="dev" id="dev" hidden></span></h1></div><span class="sub">초파리 뇌를 거친 신호로 수를 골라요</span></header>
+<main>
+ <section id="play">
+  <div id="status" aria-live="polite"></div>
+  <div id="board"></div>
+  <div id="who"><button class="pill" data-who="H">내가 먼저</button><button class="pill" data-who="F">초파리 먼저</button></div>
+ </section>
+ <section id="brainBox">
+  <div class="boxhead"><span class="legend"><span><i style="background:var(--in)"></i>판이 들어가는 감각 뉴런</span><span><i style="background:var(--out)"></i>읽어 내는 출력 뉴런</span></span><span id="fired"></span></div>
+  <canvas id="brain"></canvas>
+  <div id="candWrap"><div id="candHead"></div><div id="cands"></div></div>
+ </section>
+</main>
+<footer id="foot"></footer>
+</div>
+<div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
+<script>
+const DATA=/*DATA*/null;
+// ---------- 데이터 풀기 ----------
+const u8=s=>{const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
+const f64=s=>new Float64Array(u8(s).buffer), i16=s=>new Int16Array(u8(s).buffer);
+const NRO=DATA.nRO, NB=DATA.boards.length/9, BYTES=Math.ceil(NRO/8);
+const IDX=new Map();for(let k=0;k<NB;k++)IDX.set(DATA.boards.substr(k*9,9),k);
+const BITS=u8(DATA.bits),CNT=u8(DATA.cnt),HAVE=u8(DATA.have);
+const POP=new Uint8Array(256);for(let v=1;v<256;v++)POP[v]=POP[v>>1]+(v&1);
+const OFF=new Uint32Array(NB+1);
+for(let k=0;k<NB;k++){let n=0;for(let j=0;j<BYTES;j++)n+=POP[BITS[k*BYTES+j]];OFF[k+1]=OFF[k]+n}
+const have=k=>(HAVE[k>>3]>>(k&7))&1;
+function fired(k){const out=[];let c=OFF[k];for(let i=0;i<NRO;i++)if((BITS[k*BYTES+(i>>3)]>>(i&7))&1)out.push([i,CNT[c++]]);return out}
+// 판독기: 점수 = b + Σ w·(log1p(발화 수) − mu)/sd  (ttt_train.py와 같은 식)
+const MU=f64(DATA.mu),SD=f64(DATA.sd),W=f64(DATA.w);
+let BASE=DATA.b;for(let i=0;i<NRO;i++)BASE-=W[i]*MU[i]/SD[i];
+function score(k){let s=BASE;for(const[i,c]of fired(k))s+=W[i]*Math.log1p(c)/SD[i];return s}
+
+// ---------- 게임 ----------
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const NAMES=['왼쪽 위','위','오른쪽 위','왼쪽','가운데','오른쪽','왼쪽 아래','아래','오른쪽 아래'];
+const winLine=b=>LINES.find(l=>b[l[0]]!=='.'&&b[l[0]]===b[l[1]]&&b[l[1]]===b[l[2]])||null;
+const moves=b=>[...b].map((c,i)=>c==='.'?i:-1).filter(i=>i>=0);
+const play=(b,i,p)=>b.slice(0,i)+p+b.slice(i+1);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// 뇌 밖 보조 규칙 두 가지: 바로 이기는 칸이 있으면 두고, 없으면 사람이 바로 이길 칸을 막는다
+function assist(b){for(const p of 'FH')for(const i of moves(b))if(winLine(play(b,i,p)))return[i,p==='F'?'win':'block'];return null}
+const ida=n=>(n.charCodeAt(n.length-1)-0xAC00)%28?'이었지만':'였지만';
+function chooseMove(b){let best=-1,bs=-Infinity;for(const i of moves(b)){const s=score(IDX.get(play(b,i,'F')));if(s>bs){bs=s;best=i}}return best}
+
+const $=id=>document.getElementById(id);
+const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></svg>';
+const HUMAN='<div class="stone human" aria-hidden="true"></div>';
+let board='.........',gen=0,busy=false,ghostAt=-1,winCells=[];
+const cells=[];
+for(let i=0;i<9;i++){const c=document.createElement('button');c.className='cell';c.setAttribute('aria-label',NAMES[i]+' 칸');c.onclick=()=>tap(i);$('board').appendChild(c);cells.push(c)}
+function render(){cells.forEach((c,i)=>{const v=board[i];c.innerHTML=v==='H'?HUMAN:v==='F'?FLY:(i===ghostAt?FLY.replace('class="stone"','class="stone ghost"'):'');c.setAttribute('aria-label',NAMES[i]+' 칸'+(v==='H'?', 내 돌':v==='F'?', 초파리 돌':''));c.classList.toggle('win',winCells.includes(i))})}
+const status=t=>$('status').textContent=t;
+function ended(){const l=winLine(board);if(l){winCells=l;render();status((board[l[0]]==='F'?'초파리가 이겼어요.':'내가 이겼어요.')+' 아래 버튼으로 새 판을 시작해요');return true}
+  if(!board.includes('.')){status('비겼어요. 아래 버튼으로 새 판을 시작해요');return true}return false}
+function newGame(who){gen++;busy=false;board='.........';ghostAt=-1;winCells=[];render();rows([]);brainShow(board,-1);
+  document.querySelectorAll('.pill').forEach(p=>{p.classList.toggle('on',p.dataset.who===who);p.setAttribute('aria-pressed',p.dataset.who===who)});
+  if(who==='F')flyTurn();else status('내 차례예요. 빈칸을 눌러 보세요')}
+function tap(i){if(busy||board[i]!=='.'||winLine(board))return;board=play(board,i,'H');render();rows([]);brainShow(board,-1);if(!ended())flyTurn()}
+async function flyTurn(){
+  const g=gen;busy=true;status('칸마다 미리 계산한 뇌 반응을 살펴보고 있어요');
+  const ms=moves(board),step=Math.max(320,Math.min(650,3600/ms.length));rows(ms);
+  let best=-1,bs=-Infinity;
+  for(const i of ms){const nb=play(board,i,'F'),k=IDX.get(nb),s=score(k);
+    ghostAt=i;render();brainShow(nb,k);fill(i,s,have(k));if(s>bs){bs=s;best=i}
+    await sleep(step);if(g!==gen)return}
+  const a=assist(board),mv=a?a[0]:best;
+  if(a)$('candHead').textContent=a[0]===best?`뇌 점수도 보조 규칙과 같은 칸(${NAMES[mv]})을 골랐어요`:`뇌 점수로는 ${NAMES[best]}${ida(NAMES[best])}, 보조 규칙으로 ${a[1]==='win'?'바로 이기는':'내가 바로 이길'} 칸인 ${NAMES[mv]}에 뒀어요`;
+  ghostAt=-1;pick(mv);brainShow(play(board,mv,'F'),IDX.get(play(board,mv,'F')));await sleep(a&&a[0]!==best?1600:700);if(g!==gen)return;
+  board=play(board,mv,'F');render();busy=false;if(!ended())status('내 차례예요. 빈칸을 눌러 보세요')}
+document.querySelectorAll('.pill').forEach(p=>p.onclick=()=>newGame(p.dataset.who));
+
+// ---------- 후보 칸 점수 막대 ----------
+// 점수판은 늘 9칸을 그려 뇌 패널 높이가 바뀌지 않게 한다
+function rows(ms){$('cands').innerHTML=NAMES.map((n,i)=>`<div class="row${board[i]!=='.'?' taken':''}" id="r${i}"><span>${n}</span><span class="num"></span><span class="bar"><i></i></span></div>`).join('');
+  $('candHead').textContent=ms.length?'그 칸에 두면 어떻게 될지 판독기가 매긴 점수 (1 이김, 0 비김, -1 짐)':'초파리 차례가 되면, 빈칸마다 그 칸에 둔 판의 뇌 반응을 살펴봐요'}
+function fill(i,s,ok){const r=$('r'+i);r.classList.add('done');r.querySelector('i').style.width=ok?((Math.max(-1,Math.min(1,s))+1)*50)+'%':'0';r.querySelector('.num').textContent=ok?(Math.abs(s)<0.005?0:s).toFixed(2):'계산 전'}
+function pick(i){$('r'+i).classList.add('pick')}
+
+// ---------- 뇌 패널 ----------
+const cv=$('brain'),ctx=cv.getContext('2d');
+const BG=i16(DATA.bg),SENS=i16(DATA.sens),SCELL=u8(DATA.sensCell),RO=i16(DATA.ro);
+const byGroup=Array.from({length:18},()=>[]);for(let n=0;n<SCELL.length;n++)byGroup[SCELL[n]].push(n);
+let bgImg=null,S=1,W0=0,H0=0,shown={groups:[],fired:[],t0:0};
+const px=v=>W0/2+v/1000*S, py=v=>H0/2+v/1000*S;
+function layout(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);W0=cv.width;H0=cv.height;
+  S=Math.min(W0/2,H0/2/0.46)*0.94;bgImg=document.createElement('canvas');bgImg.width=W0;bgImg.height=H0;const b=bgImg.getContext('2d');
+  b.fillStyle='#8795ad';b.globalAlpha=.2;const s=1.3*d;for(let n=0;n<BG.length;n+=2)b.fillRect(px(BG[n]),py(BG[n+1]),s,s);
+  b.fillStyle='#ef4444';b.globalAlpha=.22;for(let n=0;n<RO.length;n+=2)b.fillRect(px(RO[n]),py(RO[n+1]),2*d,2*d);kick()}
+function brainShow(b,k){const groups=[];for(let i=0;i<9;i++){if(b[i]==='H')groups.push(i);if(b[i]==='F')groups.push(9+i)}
+  const f=k>=0&&have(k)?fired(k):[];shown={groups,fired:f,t0:performance.now()};
+  $('fired').textContent=k>=0?(have(k)?`출력 뉴런 ${NRO.toLocaleString()}개 중 ${f.length}개 발화`:'이 판은 아직 계산 전'):'';kick()}
+function draw(now){if(!bgImg)return;const d=devicePixelRatio||1,a=Math.min(1,(now-shown.t0)/250);
+  ctx.clearRect(0,0,W0,H0);ctx.drawImage(bgImg,0,0);
+  ctx.fillStyle='#22c55e';ctx.globalAlpha=.75*a;const s=2.2*d;
+  for(const g of shown.groups)for(const n of byGroup[g])ctx.fillRect(px(SENS[2*n]),py(SENS[2*n+1]),s,s);
+  ctx.globalCompositeOperation='lighter';ctx.fillStyle='#ef4444';
+  for(const[i,c]of shown.fired){const r=(1.4+Math.log1p(c)*1.1)*d;ctx.globalAlpha=.9*a;ctx.beginPath();ctx.arc(px(RO[2*i]),py(RO[2*i+1]),r,0,6.283);ctx.fill()}
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1}
+// 페이드(250ms)가 끝나면 그리기를 멈춘다. 종일 켜 두는 태블릿이 쉬게 하려고
+let raf=0;function kick(){if(!raf)raf=requestAnimationFrame(function f(now){draw(now);raf=now-shown.t0<300?requestAnimationFrame(f):0})}
+new ResizeObserver(()=>layout()).observe(cv);
+let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>newGame('H'),90000)},true);addEventListener('contextmenu',e=>e.preventDefault());
+
+// ---------- 안내 문구 ----------
+const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
+$('foot').innerHTML=`초파리 뇌 모델(FlyWire 연결체 630 버전, Shiu 외 2024)은 바꾸지 않았어요. 판을 감각 뉴런 ${nSens}개에 넣고 출력 뉴런 ${nRO}개의 발화를 읽어요.<br>점수를 매기는 판독기만 뇌 밖에서, 컴퓨터가 끝까지 따져 본 정답(이김·비김·짐)을 보고 학습했어요. 초파리 뇌가 게임을 배운 건 아니에요.<br>뇌 밖 보조 규칙도 두 가지 있어요. 초파리는 바로 이기는 칸이 있으면 그 칸에 두고, 내가 바로 이길 칸은 막아요. 뇌 반응은 판마다 미리 계산해 두었어요.`;
+if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
+layout();newGame('H');
+</script></body></html>
