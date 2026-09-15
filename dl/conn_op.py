@@ -47,9 +47,7 @@ class ConnMatMul(torch.autograd.Function):
         return gv, gx, None, None
 
 
-def conn_matmul(vals, x, conn, chunk=8):
-    """vals: [edges], x: [batch, neurons] → [batch, neurons]"""
-    return ConnMatMul.apply(vals, x, conn, chunk)
+conn_matmul = ConnMatMul.apply   # (vals [edges], x [batch, neurons], conn, chunk) → [batch, neurons]
 
 
 def self_test(device='cpu'):

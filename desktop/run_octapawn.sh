@@ -6,8 +6,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"; cd "$ROOT/model"
 PY="$ROOT/model/.venv/bin/python"
 W="${1:-$(cat "$ROOT/desktop/workers.txt" 2>/dev/null || echo 4)}"
 echo "$(date '+%F %T') 시작, 작업자 $W개"
-"$PY" ttt_run.py 0 "$W" --game=op 2>&1 | grep --line-buffered -v -i warn
-"$PY" ttt_run.py 1 "$W" --game=op 2>&1 | grep --line-buffered -v -i warn
+for s in 0 1; do "$PY" ttt_run.py "$s" "$W" --game=op 2>&1 | grep --line-buffered -v -i warn; done
 echo "$(date '+%F %T') 시뮬 끝, 판독기 학습·평가"
 "$PY" op_train.py 2>&1 | grep -v -i warn | tail -60
 rm -f "$ROOT/op_results.zip"

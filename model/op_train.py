@@ -4,7 +4,7 @@
       python op_train.py selftest   (가짜 특징으로 채점 로직 확인, 시뮬 데이터 없이 돈다)"""
 import sys, json, numpy as np
 from op_game import fly_states, candidates, moves, play, value, winner, START, OTHER
-from ttt_train import predict, fit, spread, mean          # 게임과 무관한 릿지·교차검증만 가져온다
+from ttt_train import predict, fit, spread, mean, onehot, random_network   # 게임과 무관한 부분만 가져온다
 
 STATES, CANDS = fly_states(), candidates()
 IDX = {b: i for i, b in enumerate(CANDS)}
@@ -72,11 +72,6 @@ def matches(fly, n=1000):
             out[f'vs_{hname}_{"human_first" if starter == "H" else "fly_first"}'] = {'fly_win': r.count('F'), 'fly_loss': r.count('H')}
     return out
 
-def onehot(bs): return np.array([[c == 'H' for c in b] + [c == 'F' for c in b] for b in bs], float)
-def random_network(seed, d=1171):
-    rng = np.random.default_rng(seed)
-    return np.maximum(0, onehot(CANDS) @ rng.normal(size=(32, d)) + rng.normal(size=d))
-
 def load(seed):
     z = np.load(f'op/features_seed{seed}.npz'); d = dict(zip(z['boards'], z['X']))
     missing = [b for b in CANDS if b not in d]
@@ -99,7 +94,7 @@ if __name__ == '__main__':
     H['fly_brain'] = grade(heldout(X0))
     H['fly_brain_tested_on_new_noise'] = grade(heldout(X0, X1))
     H['board_onehot_linear'] = grade(heldout(onehot(CANDS)))
-    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r))) for r in range(5)]]) for k in base}
+    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r, onehot(CANDS)))) for r in range(5)]]) for k in base}
     nulls = [grade(heldout(X0[np.random.default_rng(200 + r).permutation(len(CANDS))])) for r in range(20)]
     H['shuffled_null_20'] = {k: spread([g[k] for g in nulls]) for k in base}
     gate = {'G2_pass_1_above_shuffled_max': H['fly_brain'][K] > max(g[K] for g in nulls),

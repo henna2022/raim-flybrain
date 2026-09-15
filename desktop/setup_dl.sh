@@ -13,7 +13,7 @@ else
   WHEEL="--index-url https://download.pytorch.org/whl/cpu"
 fi
 
-PY=""; for v in python3.13 python3.12 python3.11; do command -v "$v" >/dev/null && { PY="$v"; break; }; done
+PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || true)
 [ -n "$PY" ] || { echo "Python 3.11 이상이 필요해요"; exit 1; }
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip
@@ -21,10 +21,11 @@ PY=""; for v in python3.13 python3.12 python3.11; do command -v "$v" >/dev/null 
 "$VENV/bin/python" -m pip install -q numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
 
 cd "$ROOT"
-"$VENV/bin/python" -c "import torch; print('torch', torch.__version__, '| CUDA', torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else '')"
-if command -v nvidia-smi >/dev/null && ! "$VENV/bin/python" -c "import torch,sys; sys.exit(0 if torch.cuda.is_available() else 1)"; then
-  echo "[경고] 그래픽카드는 보이는데 PyTorch가 CUDA를 못 써요. 윈도우 NVIDIA 드라이버를 최신으로 올린 뒤 다시 실행하세요. 지금 결과는 CPU 기준이에요."
-fi
+"$VENV/bin/python" -c "
+import shutil, torch
+ok = torch.cuda.is_available()
+print('torch', torch.__version__, '| CUDA', ok, torch.cuda.get_device_name(0) if ok else '')
+if not ok and shutil.which('nvidia-smi'): print('[경고] 그래픽카드는 보이는데 PyTorch가 CUDA를 못 써요. 윈도우 NVIDIA 드라이버를 최신으로 올린 뒤 다시 실행하세요. 지금 결과는 CPU 기준이에요.')"
 "$VENV/bin/python" -W ignore dl/bench_gpu.py ${BENCH_ARGS:-}
 if [ -z "${NO_UPLOAD:-}" ] && command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
   TAG="bench-$(date +%Y%m%d-%H%M)"

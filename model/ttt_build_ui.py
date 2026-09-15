@@ -2,7 +2,7 @@
 ttt/readout.json(ttt_train.py 산출)이 없거나 시뮬이 덜 끝났으면 있는 판만으로 임시 판독기를 만들고 '개발용'으로 표시한다."""
 import json, base64, os, numpy as np
 from ttt_game import candidates, value
-from ttt_layout import select
+from ttt_sim import select
 
 b64 = lambda a: base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 L = select(); ann, comp = L['ann'], L['comp']

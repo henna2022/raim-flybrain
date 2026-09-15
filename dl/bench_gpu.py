@@ -5,7 +5,7 @@
 판정 기준 (계획 2026-09-15): 시냅스 >=5 연결, T=10에서 GPU 메모리 80% 이하로 돌린 배치 중 가장 빠른 초당 국면 수 P10
   GO: 기울기 검증 통과 + P10 >= 16   조건부: 9.3 <= P10 < 16 (T=6 허용 시)   NO-GO: 그 밖 (CPU여도 속도로 판정)
   16 = 200만 국면 x 학습 7회 x 1 epoch를 250시간 안에, 9.3 = 같은 조건의 T=6"""
-import json, os, platform, sys, time
+import functools, json, os, platform, sys, time
 import numpy as np, pandas as pd, torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -21,7 +21,6 @@ sync = torch.cuda.synchronize if device == 'cuda' else (lambda: None)
 vram = torch.cuda.get_device_properties(0).total_memory / 2**30 if device == 'cuda' else None
 con = pd.read_parquet(fetch('2023_03_23_connectivity_630_final.parquet'),
                       columns=['Presynaptic_Index', 'Postsynaptic_Index', 'Connectivity', 'Excitatory'])
-_graphs = {}
 
 
 def ram_gib():
@@ -39,14 +38,12 @@ def est_gib(batch, T, edges, chunk):
     return (batch * N * T * 4 * 4 + 12 * chunk * edges + 60 * edges) / 2**30
 
 
+@functools.lru_cache(maxsize=1)                           # 그래프 하나만 메모리에 둔다
 def graph(min_syn):
-    if min_syn not in _graphs:
-        e = con[con.Connectivity >= min_syn]
-        _graphs.clear()                                   # 그래프 하나만 메모리에 둔다
-        _graphs[min_syn] = (len(e), Conn(e.Presynaptic_Index.values, e.Postsynaptic_Index.values, N, device),
-                            torch.tensor(np.sign(e.Excitatory.values), dtype=torch.float32, device=device),
-                            torch.tensor(np.log1p(e.Connectivity.values), dtype=torch.float32, device=device))
-    return _graphs[min_syn]
+    e = con[con.Connectivity >= min_syn]
+    return (len(e), Conn(e.Presynaptic_Index.values, e.Postsynaptic_Index.values, N, device),
+            torch.tensor(np.sign(e.Excitatory.values), dtype=torch.float32, device=device),
+            torch.tensor(np.log1p(e.Connectivity.values), dtype=torch.float32, device=device))
 
 
 def run(min_syn, batch, T):

@@ -9,19 +9,22 @@ from model import default_params as P
 T_RUN, RATE = 200 * ms, 100 * Hz
 _net = None
 
-def build(target='cython', n_groups=18):
-    """n_groups = 칸 수 × 2 (틱택토 18, 옥타폰 32). 감각 뉴런을 무작위로 섞어 n_groups 묶음으로 나눈다."""
-    global _net, stim, mon, cell_of, readout, readout_ids
-    prefs.codegen.target = target
+def select(n_groups=18):
+    """감각 뉴런을 무작위로 섞어 n_groups 묶음(칸 수 × 2: 틱택토 18, 옥타폰 32)으로 나누고, 읽을 하행·운동 뉴런을 고른다."""
     comp = pd.read_csv('2023_03_23_completeness_630_final.csv', index_col=0)
-    con = pd.read_parquet('2023_03_23_connectivity_630_final.parquet')
     ann = pd.read_csv('flywire_annotations_v630.tsv', sep='\t', low_memory=False)
     ann = ann[ann.root_id.isin(comp.index)].drop_duplicates('root_id').set_index('root_id')
     pos = {rid: i for i, rid in enumerate(comp.index)}
     sens = np.random.default_rng(0).permutation(ann[ann.super_class == 'sensory'].index.map(pos).to_numpy())
     cell_of = np.concatenate([np.full(len(g), k) for k, g in enumerate(np.array_split(np.arange(len(sens)), n_groups))])
     ro = ann[ann.super_class.isin(['descending', 'motor'])]
-    readout, readout_ids = ro.index.map(pos).to_numpy(), ro.index.to_numpy()
+    return dict(comp=comp, ann=ann, sens=sens, cell_of=cell_of, readout=ro.index.map(pos).to_numpy(), readout_ids=ro.index.to_numpy())
+
+def build(target='cython', n_groups=18):
+    global _net, stim, mon, cell_of, readout
+    prefs.codegen.target = target
+    L = select(n_groups); comp, sens, cell_of, readout = L['comp'], L['sens'], L['cell_of'], L['readout']
+    con = pd.read_parquet('2023_03_23_connectivity_630_final.parquet')
 
     neu = NeuronGroup(len(comp), P['eqs'], method='linear', threshold=P['eq_th'],
                       reset=P['eq_rst'], refractory='rfc', namespace=P)
@@ -38,7 +41,6 @@ def build(target='cython', n_groups=18):
     _net.store()
 
 def features(board, seed=0):
-    if _net is None: build()
     _net.restore()
     n = len(board)
     on = [i for i, c in enumerate(board) if c == 'H'] + [n + i for i, c in enumerate(board) if c == 'F']

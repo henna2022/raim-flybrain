@@ -102,9 +102,10 @@ def load(seed):
     return np.log1p(np.stack([d[b] for b in CANDS]).astype(float))
 
 def onehot(bs): return np.array([[c == 'H' for c in b] + [c == 'F' for c in b] for b in bs], float)
-def random_network(seed, d=1171):
+def random_network(seed, B, d=1171):
+    """판 원-핫 B를 무작위 ReLU 층으로 d차원까지 늘린 대조군"""
     rng = np.random.default_rng(seed)
-    return np.maximum(0, onehot(CANDS) @ rng.normal(size=(18, d)) + rng.normal(size=d))
+    return np.maximum(0, B @ rng.normal(size=(B.shape[1], d)) + rng.normal(size=d))
 
 def spread(xs): xs = sorted(xs); return {'min': xs[0], 'median': xs[len(xs) // 2], 'max': xs[-1], 'n': len(xs)}
 
@@ -127,7 +128,7 @@ if __name__ == '__main__':
     for name, X in [('fly_brain', X0), ('board_onehot_linear', onehot(CANDS))]:
         ch, lams = heldout(X); H[name] = grade(ch) | {'lambdas': lams}
     ch, _ = heldout(X0, X1); H['fly_brain_tested_on_new_noise'] = grade(ch)
-    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r))[0]) for r in range(5)]]) for k in base}
+    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r, onehot(CANDS)))[0]) for r in range(5)]]) for k in base}
     perm = np.random.default_rng(9).permutation(len(CANDS))
     H['shuffled_null'] = grade(heldout(X0[perm])[0])
 
@@ -140,7 +141,7 @@ if __name__ == '__main__':
         'same_move_by_chance_where_choice_matters': mean([1 / len(moves(s)) for s in MATTERS])}
     E['fly_brain_with_2_assists'] = grade(with_assists(fly_choice))
     E['board_onehot_linear'] = grade(insample(onehot(CANDS))[0])
-    E['random_network_control'] = grade(insample(random_network(40))[0])
+    E['random_network_control'] = grade(insample(random_network(40, onehot(CANDS)))[0])
     null_games, null_grades = [], []
     for r in range(20):
         ch = insample(X0[np.random.default_rng(100 + r).permutation(len(CANDS))])[0]
