@@ -23,5 +23,8 @@ PY=""; for v in python3.13 python3.12 python3.11; do command -v "$v" >/dev/null 
 
 cd "$ROOT"
 "$VENV/bin/python" -c "import torch; print('torch', torch.__version__, '| CUDA', torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else '')"
+if command -v nvidia-smi >/dev/null && ! "$VENV/bin/python" -c "import torch,sys; sys.exit(0 if torch.cuda.is_available() else 1)"; then
+  echo "[경고] 그래픽카드는 보이는데 PyTorch가 CUDA를 못 써요. 윈도우 NVIDIA 드라이버를 최신으로 올린 뒤 다시 실행하세요. 지금 결과는 CPU 기준이에요."
+fi
 "$VENV/bin/python" -W ignore dl/bench_gpu.py
 echo; echo "끝. dl/bench_result.json 내용을 Claude에게 붙여 넣어 주세요:"; cat dl/bench_result.json
