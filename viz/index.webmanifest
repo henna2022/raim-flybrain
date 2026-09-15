@@ -1,0 +1,16 @@
+{
+  "id": "/",
+  "name": "초파리 가상현실과 뇌",
+  "short_name": "초파리 뇌",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "icons": [
+    { "src": "/icons/fly-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/fly-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

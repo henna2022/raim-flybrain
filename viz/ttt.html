@@ -1,5 +1,6 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<link rel="manifest" href="/ttt.webmanifest"><meta name="theme-color" content="#070b14"><link rel="apple-touch-icon" href="/icons/ttt-180.png"><link rel="icon" href="/icons/ttt-192.png">
 <title>초파리 뇌와 틱택토</title>
 <style>
 :root{--bg:#070b14;--panel:#0c1220;--line:#1c2538;--cell:#141b2b;--cellLine:#2a3550;--text:#dfe6f2;--muted:#7f8ca3;--accent:#f2c14e;--in:#22c55e;--out:#ef4444}
@@ -159,4 +160,5 @@ const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
 $('foot').innerHTML=`초파리 뇌 모델(FlyWire 연결체 630 버전, Shiu 외 2024)은 바꾸지 않았어요. 판을 감각 뉴런 ${nSens}개에 넣고 출력 뉴런 ${nRO}개의 발화를 읽어요.<br>점수를 매기는 판독기만 뇌 밖에서, 컴퓨터가 끝까지 따져 본 정답(이김·비김·짐)을 보고 학습했어요. 초파리 뇌가 게임을 배운 건 아니에요.<br>뇌 밖 보조 규칙도 두 가지 있어요. 초파리는 바로 이기는 칸이 있으면 그 칸에 두고, 내가 바로 이길 칸은 막아요. 뇌 반응은 판마다 미리 계산해 두었어요.`;
 if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
 layout();newGame('H');
-</script></body></html>
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script></body></html>
