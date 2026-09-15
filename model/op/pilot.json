@@ -1,0 +1,11 @@
+{
+ "boards": 352,
+ "sibling_pairs": 486,
+ "minutes": 6.9,
+ "r_op": 1.358,
+ "r_ttt": 1.128,
+ "threshold": 0.902,
+ "spikes_per_board": 1050,
+ "active_readout_per_board": 176,
+ "pass": true
+}

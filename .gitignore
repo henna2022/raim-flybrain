@@ -9,3 +9,4 @@ model/*.tsv
 model/ttt/*.npz
 model/ttt/*.log
 .env*
+model/op/*.npz

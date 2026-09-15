@@ -9,7 +9,8 @@ from model import default_params as P
 T_RUN, RATE = 200 * ms, 100 * Hz
 _net = None
 
-def build(target='cython'):
+def build(target='cython', n_groups=18):
+    """n_groups = 칸 수 × 2 (틱택토 18, 옥타폰 32). 감각 뉴런을 무작위로 섞어 n_groups 묶음으로 나눈다."""
     global _net, stim, mon, cell_of, readout, readout_ids
     prefs.codegen.target = target
     comp = pd.read_csv('2023_03_23_completeness_630_final.csv', index_col=0)
@@ -18,7 +19,7 @@ def build(target='cython'):
     ann = ann[ann.root_id.isin(comp.index)].drop_duplicates('root_id').set_index('root_id')
     pos = {rid: i for i, rid in enumerate(comp.index)}
     sens = np.random.default_rng(0).permutation(ann[ann.super_class == 'sensory'].index.map(pos).to_numpy())
-    cell_of = np.concatenate([np.full(len(g), k) for k, g in enumerate(np.array_split(np.arange(len(sens)), 18))])
+    cell_of = np.concatenate([np.full(len(g), k) for k, g in enumerate(np.array_split(np.arange(len(sens)), n_groups))])
     ro = ann[ann.super_class.isin(['descending', 'motor'])]
     readout, readout_ids = ro.index.map(pos).to_numpy(), ro.index.to_numpy()
 
@@ -39,7 +40,8 @@ def build(target='cython'):
 def features(board, seed=0):
     if _net is None: build()
     _net.restore()
-    on = [i for i, c in enumerate(board) if c == 'H'] + [9 + i for i, c in enumerate(board) if c == 'F']
+    n = len(board)
+    on = [i for i, c in enumerate(board) if c == 'H'] + [n + i for i, c in enumerate(board) if c == 'F']
     stim.rates = np.isin(cell_of, on) * RATE
     brian_seed(seed)
     _net.run(T_RUN)
