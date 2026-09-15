@@ -1,0 +1,15 @@
+{
+ "heldout_fly": 0.5484,
+ "heldout_fly_new_noise": 0.5136,
+ "drop": 0.0348,
+ "heldout_shuffled_20": {
+  "min": 0.387,
+  "median": 0.4049,
+  "max": 0.4177,
+  "n": 20
+ },
+ "random_mover": 0.4046,
+ "r_ttt": 1.128,
+ "pass_1_above_null_max": true,
+ "pass_2_drop_le_0.05": true
+}
