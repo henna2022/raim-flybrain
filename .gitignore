@@ -8,3 +8,4 @@ model/*.csv
 model/*.tsv
 model/ttt/*.npz
 model/ttt/*.log
+.env*
