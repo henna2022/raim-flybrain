@@ -26,7 +26,7 @@ cpu = os.cpu_count() or 4
 try: ram = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') / 2**30
 except (ValueError, AttributeError, OSError): ram = 16.0
 workers = max(1, min(cpu - 1, int(ram // 1.2)))                # 작업자 하나에 메모리 약 0.8~1 GB
-hours = 13854 * 2 * per / (workers * 0.8) / 3600               # 0.8: 여러 개 돌릴 때 효율 (추정)
+hours = 13854 * 2 * per / (workers * 0.5) / 3600               # 0.5: 작업자를 늘려도 메모리 대역폭 때문에 절반쯤만 빨라짐 (맥 파일럿 실측 0.46)
 open(os.path.join(HERE, 'workers.txt'), 'w').write(str(workers))
 
 print('\n===== 데스크탑 점검 결과 =====')
@@ -35,4 +35,4 @@ print(f'맥과 같은 결과: {exact}/{len(ref)}판 완전히 같음, 상관 {mi
       + ('' if exact == len(ref) else '  (CPU·컴파일러 차이로 조금 다를 수 있어요. 한 컴퓨터에서 전부 돌리면 괜찮아요)'))
 print(f'판 하나: {per:.2f}초 (작업자 1개)')
 print(f'CPU {cpu}개, 메모리 {ram:.0f} GB → 작업자 {workers}개 추천 (desktop/workers.txt에 저장)')
-print(f'옥타폰 전체(13,854판 × 난수 2종) 예상: 약 {hours:.1f}시간')
+print(f'옥타폰 전체(13,854판 × 난수 2종) 예상: 약 {hours:.1f}시간 (추정, 실제 속도는 로그의 eta를 보세요)')

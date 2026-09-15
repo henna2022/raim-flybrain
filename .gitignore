@@ -13,3 +13,5 @@ model/op/*.npz
 desktop/workers.txt
 op_results.zip
 octapawn.log
+dl/bench_result.json
+__pycache__/

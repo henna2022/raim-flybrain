@@ -53,3 +53,15 @@ cd ~/raim-flybrain && git pull && nohup bash desktop/run_octapawn.sh > octapawn.
 | 시뮬 | `model/ttt_run.py N W --game=op` | 판마다 감각 뉴런 32묶음 자극, 200 ms, 출력 뉴런 1,171개 발화 수 저장. 난수 0·1 |
 | 학습·평가 | `model/op_train.py` | 릿지 판독기, 처음 보는 판 평가, 섞은 대조군 20회, 새 잡음, 대국 |
 | 점검 | `desktop/check.py` | 고속 모드, 맥 결과와 비교(`reference_op.json`), 판당 시간 |
+
+## 딥러닝 체스: 그래픽카드 벤치마크 (첫 관문)
+
+체스는 초파리 연결체 모양 신경망을 딥러닝으로 학습한다. 먼저 이 데스크탑 그래픽카드에서 학습 한 걸음이 얼마나 걸리는지 잰다.
+
+1. 위의 `setup.sh`를 한 번 돌려 연결체 데이터를 받아 둔다
+2. 윈도우 쪽 NVIDIA 드라이버가 최신인지 확인한다 (WSL은 윈도우 드라이버를 그대로 쓴다)
+3. 실행한다. PyTorch CUDA 환경을 따로 만들고(`~/.venvs/flychess-dl`), 조건 5가지로 속도와 메모리를 잰다
+   ```
+   cd ~/raim-flybrain && git pull && bash desktop/setup_dl.sh
+   ```
+4. 마지막에 나오는 `dl/bench_result.json` 내용을 Claude에게 붙여 넣는다
