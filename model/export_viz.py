@@ -14,7 +14,8 @@ rng=np.random.default_rng(0)
 bg=a.index[rng.random(len(a))<0.3]           # ponytail: 30% background sample, enough for a point cloud
 keep=list(dict.fromkeys(list(bg)+list(active)))
 idx={rid:i for i,rid in enumerate(keep)}
-pos=a.loc[keep,['pos_x','pos_y','pos_z']]; pos=(pos-pos.mean())/np.abs(pos-pos.mean()).max().max()
+pos=a.loc[keep,['pos_x','pos_y','pos_z']]*[4,4,40]   # 주석표 좌표는 복셀 단위(4x4x40 nm)라 깊이에 10배를 곱해야 실제 모양
+pos=(pos-pos.mean())/np.abs(pos-pos.mean()).max().max()
 out={'pos':np.round(pos.to_numpy()*1000).astype(int).tolist(),
      'cls':[cls.get(s,1) for s in a.loc[keep,'super_class']],
      'spk':{}}
