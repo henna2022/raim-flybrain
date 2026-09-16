@@ -11,7 +11,7 @@ fi
 echo "1/3 가상환경: $VENV ($("$PY" --version))"
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip
-"$VENV/bin/python" -m pip install -q -r "$M/requirements.txt"
+"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" -r "$M/requirements.txt"
 ln -sfn "$VENV" "$M/.venv"
 
 echo "2/3 연결체 데이터 (처음엔 약 120 MB)"

@@ -17,8 +17,8 @@ if [ -z "$PY" ] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_inf
 fi
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip
-"$VENV/bin/python" -m pip install -q torch==2.14.0 $WHEEL
-"$VENV/bin/python" -m pip install -q numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
+"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" torch==2.14.0 $WHEEL
+"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
 
 cd "$ROOT"
 "$VENV/bin/python" -c "
