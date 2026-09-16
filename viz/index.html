@@ -14,8 +14,8 @@ header span{color:var(--muted);font-size:16px}
 main{display:flex;flex-direction:column;justify-content:center;gap:28px;min-height:0}
 h1{margin:0;font-size:40px;font-weight:700;line-height:1.3}
 .lead{margin:8px 0 0;color:var(--muted);font-size:19px}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;color:inherit;text-decoration:none;min-height:0}
+.cards{display:flex;justify-content:center;gap:20px}   /* 카드 수가 바뀌어도 균형이 맞는다 */
+.card{flex:1 1 0;min-width:0;max-width:560px;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;color:inherit;text-decoration:none;min-height:0}
 .card .pic{width:100%;aspect-ratio:16/10;border-radius:14px;background:#0a101d;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .card .pic svg{height:78%;width:auto}
 .card h2{margin:18px 0 6px;font-size:25px;font-weight:700}
@@ -42,12 +42,6 @@ footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="3" stroke-linecap="round"><path d="M50 10V70M70 10V70M30 30H90M30 50H90"/></g><circle cx="40" cy="20" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><circle cx="80" cy="60" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><g transform="translate(51 31) scale(.18)"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 틱택토</h2>
    <p>초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!</p>
-   <span class="go">시작하기</span>
-  </a>
-  <a class="card" href="/op.html">
-   <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g transform="translate(30 10)"><rect width="60" height="60" fill="#1b2438"/><path fill="#2e3a55" d="M0 0h15v15H0zM30 0h15v15H30zM15 15h15v15H15zM45 15h15v15H45zM0 30h15v15H0zM30 30h15v15H30zM15 45h15v15H15zM45 45h15v15H45z"/></g><g transform="translate(46 26) scale(.28)" opacity=".8"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
-   <h2>초파리와 체스</h2>
-   <p>4×4 판에서 병정 네 개씩으로 겨뤄요. 체스의 폰 규칙을 빌린 옥타폰 게임이에요.</p>
    <span class="go">시작하기</span>
   </a>
  </div>
