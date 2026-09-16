@@ -25,7 +25,7 @@ per = (time.time() - t0) / (2 * len(ref))
 cpu = os.cpu_count() or 4
 try: ram = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') / 2**30
 except (ValueError, AttributeError, OSError): ram = 16.0
-workers = max(1, min(cpu - 1, int(ram // 1.2)))                # 작업자 하나에 메모리 약 0.8~1 GB
+workers = max(1, min(cpu - 1, int(ram // 2.5)))                # 작업자 하나에 2.5 GB로 잡는다 (뇌를 만드는 순간 메모리가 튄다. WSL에서 11개는 통째로 죽었음)
 hours = 13854 * 2 * per / (workers * 0.5) / 3600               # 0.5: 작업자를 늘려도 메모리 대역폭 때문에 절반쯤만 빨라짐 (맥 파일럿 실측 0.46)
 open(os.path.join(HERE, 'workers.txt'), 'w').write(str(workers))
 
