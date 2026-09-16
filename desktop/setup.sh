@@ -4,8 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; M="$ROOT/model"
 VENV="${VENV:-$HOME/.venvs/raim-flybrain}"      # 저장소 밖에 둔다 (동기화 폴더에 두면 파일이 숨김 처리돼 깨질 수 있음)
 
-PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || true)
-[ -n "$PY" ] || { echo "Python 3.11 이상을 먼저 설치해 주세요"; exit 1; }
+PY=$(command -v python3.14 || command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3 || true)
+if [ -z "$PY" ] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)'; then
+  echo "Python 3.11 이상이 필요해요 (지금: ${PY:-없음})"; exit 1
+fi
 echo "1/3 가상환경: $VENV ($("$PY" --version))"
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip

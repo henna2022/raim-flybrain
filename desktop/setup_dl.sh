@@ -10,8 +10,10 @@ NVSMI=$(command -v nvidia-smi || ls /usr/lib/wsl/lib/nvidia-smi 2>/dev/null || t
 # 리눅스(WSL)는 늘 CUDA 12.6용을 깐다 (그래픽카드가 없어도 CPU로 돈다). 맥은 점검용이라 PyPI 기본
 case "$(uname -s)" in Linux) WHEEL="--index-url https://download.pytorch.org/whl/cu126" ;; *) WHEEL="" ;; esac
 
-PY=$(command -v python3.13 || command -v python3.12 || command -v python3.11 || true)
-[ -n "$PY" ] || { echo "Python 3.11 이상이 필요해요"; exit 1; }
+PY=$(command -v python3.14 || command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3 || true)
+if [ -z "$PY" ] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)'; then
+  echo "Python 3.11 이상이 필요해요 (지금: ${PY:-없음})"; exit 1
+fi
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip
 "$VENV/bin/python" -m pip install -q torch==2.14.0 $WHEEL
