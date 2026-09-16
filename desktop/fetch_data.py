@@ -30,7 +30,8 @@ def fetch(name):
     print(f'  받는 중: {name}', flush=True)
     try:   # curl은 리눅스·WSL·맥·윈도우10+에 기본으로 있고 시스템 인증서를 쓴다 (파이썬 urllib은 맥 python.org 빌드에서 인증서 오류)
         if shutil.which('curl'):
-            subprocess.run(['curl', '-fsSL', '--retry', '3', '-o', path + '.part', url], check=True)
+            subprocess.run(['curl', '-fsSL', '--http1.1', '--retry', '10', '--retry-all-errors', '--retry-delay', '3',
+                            '-C', '-', '-o', path + '.part', url], check=True)   # 끊기면 이어받는다 (회사망 TLS 끊김 대비)
         else:
             urllib.request.urlretrieve(url, path + '.part')
     except (OSError, subprocess.CalledProcessError) as ex:
