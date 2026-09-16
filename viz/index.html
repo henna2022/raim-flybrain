@@ -21,8 +21,6 @@ h1{margin:0;font-size:40px;font-weight:700;line-height:1.3}
 .card h2{margin:18px 0 6px;font-size:25px;font-weight:700}
 .card p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;flex:1}
 .go{margin-top:18px;align-self:flex-start;background:var(--accent);color:#14110a;border-radius:12px;padding:12px 22px;font-size:18px;font-weight:600}
-.card.soon{opacity:.55}
-.card.soon .go{background:#243049;color:var(--text)}
 footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
 #rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
 #rotate h2{margin:0;font-size:26px;line-height:1.45}
@@ -46,12 +44,12 @@ footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
    <p>초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!</p>
    <span class="go">시작하기</span>
   </a>
-  <div class="card soon" aria-disabled="true">
+  <a class="card" href="/op.html">
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g transform="translate(30 10)"><rect width="60" height="60" fill="#1b2438"/><path fill="#2e3a55" d="M0 0h15v15H0zM30 0h15v15H30zM15 15h15v15H15zM45 15h15v15H45zM0 30h15v15H0zM30 30h15v15H30zM15 45h15v15H15zM45 45h15v15H45z"/></g><g transform="translate(46 26) scale(.28)" opacity=".8"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 병정 대결</h2>
-   <p>4×4 판에서 병정 네 개씩으로 겨뤄요. 체스의 폰 규칙을 빌린 옥타폰 게임이에요. 지금 만들고 있어요!</p>
-   <span class="go">준비하고 있어요</span>
-  </div>
+   <p>4×4 판에서 병정 네 개씩으로 겨뤄요. 체스의 폰 규칙을 빌린 옥타폰 게임이에요.</p>
+   <span class="go">시작하기</span>
+  </a>
  </div>
 </main>
 <footer>진짜 초파리가 아니라, 초파리 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요. 뇌 반응은 미리 계산해 두었어요.</footer>

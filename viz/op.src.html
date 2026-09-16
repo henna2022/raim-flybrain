@@ -1,0 +1,238 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<link rel="manifest" href="/app.webmanifest"><meta name="theme-color" content="#070b14"><link rel="apple-touch-icon" href="/icons/fly-180.png"><link rel="icon" href="/icons/fly-192.png">
+<title>초파리와 병정 대결</title>
+<style>
+@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+:root{--bg:#070b14;--panel:#0c1220;--line:#1c2538;--cell:#141b2b;--cellLine:#2a3550;--text:#dfe6f2;--muted:#7f8ca3;--accent:#f2c14e;--in:#22c55e;--out:#ef4444}
+html,body{touch-action:manipulation;overscroll-behavior:none;margin:0;height:100%;background:var(--bg);color:var(--text);font-family:'Paperlogy',-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;padding:0 20px;box-sizing:border-box}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0 10px}
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.brand img{height:30px;width:auto;display:block}
+.home{color:var(--text);text-decoration:none;border:1px solid var(--cellLine);background:var(--cell);border-radius:10px;padding:8px 14px;font-size:15px;white-space:nowrap}
+.brand .sep{width:1px;height:22px;background:var(--cellLine)}
+h1{font-size:22px;margin:0;font-weight:700}
+.sub{color:var(--muted);font-size:13px}
+.dev{background:#2a3550;color:var(--text);border-radius:6px;padding:2px 8px;font-size:12px;margin-left:8px;font-weight:400}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;min-height:0}
+#play{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0}
+#status{font-size:22px;font-weight:600;min-height:1.4em;text-align:center}
+#board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:10px;width:min(100%,56vh);height:min(100vw,56vh)}
+.cell{min-width:0;min-height:0;background:var(--cell);border:1px solid var(--cellLine);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:0;color:inherit}
+.cell.last{box-shadow:inset 0 0 0 2px #3b4a6b}
+.cell.win,.cell.sel{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.cell.dest{border-color:var(--accent);border-style:dashed;box-shadow:inset 0 0 0 2px rgba(242,193,78,.35)}
+.stone{width:64%;height:64%}
+.human{border:9px solid var(--text);border-radius:50%;box-sizing:border-box}
+.ghost{opacity:.4}
+#who{display:flex;gap:10px}
+.pill{background:var(--cell);border:1px solid var(--cellLine);color:var(--text);border-radius:12px;padding:12px 22px;font-size:17px}
+.pill.on{background:#243049;border-color:#3b4a6b}
+#brainBox{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0;overflow:hidden}
+.boxhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 5px 0 0;vertical-align:1px}
+.legend span{margin-right:12px}
+#brain{width:100%;height:100%;display:block}
+#candWrap{padding:4px 16px 14px}
+#candHead{font-size:13px;color:var(--muted);margin-bottom:6px}
+#cands{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name num" "bar bar";align-items:center;gap:6px 8px;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;opacity:.45;min-height:3.4em;box-sizing:border-box}
+.row>span:first-child{grid-area:name;white-space:nowrap}
+.row .num{grid-area:num}
+.row .bar{grid-area:bar}
+.row.taken{opacity:.15}
+.row.done{opacity:1}
+.row.pick{font-weight:700;border-color:var(--accent)}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#8795ad;border-radius:5px;transition:width .3s}
+.row.pick .bar i{background:var(--accent)}
+.num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
+footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
+#intro{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;background:rgba(7,11,20,.92);display:flex;align-items:center;justify-content:center;padding:24px}
+#intro[hidden]{display:none}
+#intro .sheet{background:var(--card,#0f1626);border:1px solid var(--line);border-radius:24px;padding:28px 32px;max-width:900px;width:100%;max-height:100%;overflow:auto;text-align:center}
+#intro h2{margin:0 0 6px;font-size:30px}
+#intro .sub{margin:0 0 22px;color:var(--muted);font-size:17px}
+#intro .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:0;padding:0;list-style:none}
+#intro .steps li{background:#0a101d;border:1px solid var(--line);border-radius:16px;padding:16px}
+#intro .steps svg{width:100%;height:104px}
+#intro .steps p{margin:12px 0 0;font-size:17px;line-height:1.5}
+#intro .steps b{color:var(--accent)}
+#intro .note{margin:20px 0 0;color:var(--muted);font-size:15px;line-height:1.55}
+#intro .note+.note{font-size:13px;margin-top:10px}
+#intro .go{margin-top:22px;background:var(--accent);color:#14110a;border:0;border-radius:14px;padding:16px 46px;font-size:21px;font-weight:700;font-family:inherit}
+.ghost-btn{color:var(--text);text-decoration:none;border:1px solid var(--cellLine);background:var(--cell);border-radius:10px;padding:8px 14px;font-size:15px;white-space:nowrap;font-family:inherit}
+@media (max-width:820px){#intro .steps{grid-template-columns:1fr}#intro .steps svg{height:70px}#intro .steps li{display:flex;align-items:center;gap:14px;text-align:left}#intro .steps svg{width:84px;flex:none}#intro .steps p{margin:0}}
+@media (max-height:560px){#intro h2{font-size:24px}#intro .sub{margin-bottom:14px}#intro .steps svg{height:62px}#intro .note{margin-top:12px}#intro .go{margin-top:14px;padding:12px 36px;font-size:19px}}
+#rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
+#rotate h2{margin:0;font-size:26px;line-height:1.45}
+#rotate p{margin:0;color:var(--muted);font-size:17px}
+@media (orientation:portrait){#rotate{display:flex}}
+</style></head><body><div id="app">
+<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 병정 대결<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 움직일 병정을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
+<main>
+ <section id="play">
+  <div id="status" aria-live="polite"></div>
+  <div id="board"></div>
+  <div id="who"><button class="pill" data-who="H">내가 먼저</button><button class="pill" data-who="F">초파리 먼저</button></div>
+ </section>
+ <section id="brainBox">
+  <div class="boxhead"><span class="legend"><span><i style="background:var(--in)"></i>판 모양이 들어가는 느끼는 신경</span><span><i style="background:var(--out)"></i>반응을 읽는 몸에 명령하는 신경</span></span><span id="fired"></span></div>
+  <canvas id="brain"></canvas>
+  <div id="candWrap"><div id="candHead"></div><div id="cands"></div></div>
+ </section>
+</main>
+<footer id="foot"></footer>
+</div>
+<div id="intro">
+ <div class="sheet">
+  <h2>초파리와 병정 대결</h2>
+  <p class="sub">4×4 판에서 병정 넷씩으로 겨뤄요. 규칙은 네 가지예요.</p>
+  <ol class="steps" id="introSteps"></ol>
+  <p class="note" id="introNote"></p>
+  <p class="note" id="introAdult"></p>
+  <button class="go" id="introGo">시작하기</button>
+ </div>
+</div>
+<div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
+<script>
+const DATA=/*DATA*/null;
+// ---------- 데이터 풀기 ----------
+const u8=s=>{const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
+const f64=s=>new Float64Array(u8(s).buffer), i16=s=>new Int16Array(u8(s).buffer);
+const NRO=DATA.nRO, NB=DATA.boards.length/16, BYTES=Math.ceil(NRO/8);
+const IDX=new Map();for(let k=0;k<NB;k++)IDX.set(DATA.boards.substr(k*16,16),k);
+const BITS=u8(DATA.bits),CNT=u8(DATA.cnt),HAVE=u8(DATA.have);
+const POP=new Uint8Array(256);for(let v=1;v<256;v++)POP[v]=POP[v>>1]+(v&1);
+const OFF=new Uint32Array(NB+1);
+for(let k=0;k<NB;k++){let n=0;for(let j=0;j<BYTES;j++)n+=POP[BITS[k*BYTES+j]];OFF[k+1]=OFF[k]+n}
+const have=k=>(HAVE[k>>3]>>(k&7))&1;
+function fired(k){const out=[];let c=OFF[k];for(let i=0;i<NRO;i++)if((BITS[k*BYTES+(i>>3)]>>(i&7))&1)out.push([i,CNT[c++]]);return out}
+// 판독기: 점수 = b + Σ w·(log1p(발화 수) − mu)/sd  (op_train.py와 같은 식)
+const MU=f64(DATA.mu),SD=f64(DATA.sd),W=f64(DATA.w);
+let BASE=DATA.b;for(let i=0;i<NRO;i++)BASE-=W[i]*MU[i]/SD[i];
+function score(k){let s=BASE;for(const[i,c]of fired(k))s+=W[i]*Math.log1p(c)/SD[i];return s}
+
+// ---------- 게임 (op_game.py를 그대로 옮김) ----------
+const START='FFFF........HHHH',DIR={F:4,H:-4},OTHER={F:'H',H:'F'};
+// 나열 순서 고정: 칸 오름차순 → 전진 → 왼쪽 대각 → 오른쪽 대각. op_train.choose가 동점일 때 앞 순서를 고르고
+// 아래 s>bs도 첫 최대를 남기므로, 이 순서만 지키면 fly_moves.json과 같은 수가 나온다.
+function moves(b,p){const d=DIR[p],out=[];for(let i=0;i<16;i++){if(b[i]!==p)continue;const c=i%4,j=i+d;
+  if(j<0||j>15)continue;                       // 파이썬은 음수 인덱스가 반대로 감기고 JS는 undefined가 된다. 이 줄이 그 차이를 막는다
+  if(b[j]==='.')out.push([i,j]);
+  for(const dc of[-1,1])if(c+dc>=0&&c+dc<4&&b[j+dc]===OTHER[p])out.push([i,j+dc])}return out}
+const play=(b,m,p)=>{const l=[...b];l[m[0]]='.';l[m[1]]=p;return l.join('')};
+// 검사 순서(초파리 끝줄 → 사람 끝줄 → 둘 수 없음)를 그대로 지킨다. 비김은 규칙상 없다.
+const winner=(b,to)=>b.slice(12).includes('F')?'F':b.slice(0,4).includes('H')?'H':moves(b,to).length?null:OTHER[to];
+const NAMES=[...Array(16)].map((_,i)=>`${(i>>2)+1}줄 ${(i%4)+1}칸`);
+const nm=m=>NAMES[m[0]]+[' 왼쪽 잡기',' 앞으로',' 오른쪽 잡기'][m[1]-m[0]-3];   // 초파리 수만 이름이 필요하다
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// ponytail: 규칙 도우미 없음. 넣으려면 ttt의 assist()를 옥타폰 규칙으로 옮기고 footer 3번째 줄을 도우미 문장으로 되돌릴 것.
+// 단 화면 수치는 도우미 없는 값이라 어른 메모에 단서가 필요해지고, 개입한 판마다 candHead에 뇌 1등 수와 실제로 둔 수를 둘 다 적어야 한다.
+
+const $=id=>document.getElementById(id);
+const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></svg>';
+const GHOST=FLY.replace('class="stone"','class="stone ghost"');
+const HUMAN='<div class="stone human" aria-hidden="true"></div>';
+const TURN='내 차례예요! 움직일 내 병정을 눌러 보세요';
+const SEL_PLAIN='노란 점선 칸으로 갈 수 있어요. 다른 곳을 누르면 취소돼요';
+const SEL_EAT='노란 점선 칸으로 갈 수 있어요. 초파리가 있는 칸을 누르면 잡아요';
+const THINK='초파리가 둘 수 있는 수마다 뇌 반응을 살펴보는 중이에요';
+let board=START,gen=0,busy=false,starter='H',sel=-1,dests=[],ghostMv=null,lastMv=null,winCells=[];
+const cells=[];
+for(let i=0;i<16;i++){const c=document.createElement('button');c.className='cell';c.onclick=()=>tap(i);$('board').appendChild(c);cells.push(c)}
+function render(){cells.forEach((c,i)=>{
+  let v=board[i];if(ghostMv)v=i===ghostMv[0]?'.':i===ghostMv[1]?'g':v;
+  c.innerHTML=v==='H'?HUMAN:v==='F'?FLY:v==='g'?GHOST:'';
+  c.setAttribute('aria-label',NAMES[i]+(board[i]==='H'?', 내 병정':board[i]==='F'?', 초파리 병정':'')+(i===sel?', 고른 내 병정':dests.includes(i)?', 갈 수 있는 곳':''));
+  c.classList.toggle('sel',i===sel);c.classList.toggle('dest',dests.includes(i));
+  c.classList.toggle('last',!!lastMv&&(i===lastMv[0]||i===lastMv[1]));c.classList.toggle('win',winCells.includes(i))})}
+const status=t=>$('status').textContent=t;
+function ended(to){const w=winner(board,to);if(!w)return false;
+  const reach=w==='F'?board.slice(12).includes('F'):board.slice(0,4).includes('H');
+  winCells=reach?[0,1,2,3].map(i=>w==='F'?12+i:i).filter(i=>board[i]===w):[];
+  const why=reach?(w==='F'?'초파리 병정이 맨 아랫줄에 닿았어요.':'내 병정이 맨 윗줄에 닿았어요.')
+                 :(w==='F'?'내 병정이 움직일 수 없게 되었어요.':'초파리가 움직일 수 없게 되었어요.');
+  busy=true;sel=-1;dests=[];render();
+  status(why+(w==='F'?' 초파리가 이겼어요!':' 내가 이겼어요!')+(w==='F'&&starter==='F'?' 이번엔 내가 먼저로 한 판 더 해 볼까요?':' 아래 버튼을 눌러 한 판 더 해요'));return true}
+function newGame(who){gen++;busy=false;starter=who;board=START;sel=-1;dests=[];ghostMv=null;lastMv=null;winCells=[];render();rows([]);brainShow(board,-1);
+  document.querySelectorAll('.pill').forEach(p=>{p.classList.toggle('on',p.dataset.who===who);p.setAttribute('aria-pressed',p.dataset.who===who)});
+  if(who==='F')flyTurn();else status(TURN)}
+// 사람의 도착칸은 늘 '.' 아니면 'F'라 내 병정 칸과 겹치지 않는다. 그래서 모드 플래그도 취소 버튼도 필요 없다
+function tap(i){if(busy)return;
+  if(board[i]==='H'){const d=moves(board,'H').filter(m=>m[0]===i).map(m=>m[1]);
+    if(!d.length){sel=-1;dests=[];render();status('이 병정은 지금 갈 곳이 없어요. 다른 병정을 눌러 보세요')}
+    else{sel=i;dests=d;render();status(d.some(j=>board[j]==='F')?SEL_EAT:SEL_PLAIN)}return}
+  if(sel>=0&&dests.includes(i)){board=play(board,[sel,i],'H');sel=-1;dests=[];lastMv=null;
+    render();rows([]);brainShow(board,-1);if(!ended('F'))flyTurn();return}
+  const had=sel>=0;sel=-1;dests=[];render();status(had?'거기엔 갈 수 없어요. 내 병정을 다시 눌러 보세요':TURN)}
+async function flyTurn(){const g=gen;busy=true;sel=-1;dests=[];status(THINK);
+  const ms=moves(board,'F'),step=Math.max(320,Math.min(650,3600/ms.length));rows(ms);
+  let best=0,bs=-Infinity;
+  for(let n=0;n<ms.length;n++){const nb=play(board,ms[n],'F'),k=IDX.has(nb)?IDX.get(nb):-1,s=k>=0?score(k):0;
+    ghostMv=ms[n];render();brainShow(nb,k);fill(n,s,k>=0&&have(k));if(k>=0&&s>bs){bs=s;best=n}
+    await sleep(step);if(g!==gen)return}
+  const mv=ms[best],nb=play(board,mv,'F');ghostMv=null;pick(best);
+  brainShow(nb,IDX.has(nb)?IDX.get(nb):-1);await sleep(700);if(g!==gen)return;
+  const cap=board[mv[1]]==='H';board=nb;lastMv=mv;render();busy=false;
+  if(!ended('H'))status((cap?'초파리가 내 병정을 잡았어요. ':'')+TURN)}
+document.querySelectorAll('.pill').forEach(p=>p.onclick=()=>newGame(p.dataset.who));
+
+// ---------- 후보 수 점수 막대 ----------
+// 점수판은 늘 7줄(2열 4행)을 그려 뇌 패널 높이가 바뀌지 않게 한다. 후보는 판마다 1~7개다
+function rows(ms){$('cands').innerHTML=[...Array(7)].map((_,n)=>`<div class="row${n<ms.length?'':' taken'}" id="r${n}"><span>${n<ms.length?nm(ms[n]):'&nbsp;'}</span><span class="num"></span><span class="bar"><i></i></span></div>`).join('');
+  $('candHead').textContent=ms.length?'이렇게 움직이면 어떨까? 점수가 높을수록 초파리에게 좋아요 (1쯤이면 초파리 이김 · -1쯤이면 초파리 짐)':'초파리 차례가 되면 둘 수 있는 수마다 뇌 반응을 살펴봐요'}
+function fill(n,s,ok){const r=$('r'+n);r.classList.add('done');r.querySelector('i').style.width=ok?((Math.max(-1,Math.min(1,s))+1)*50)+'%':'0';r.querySelector('.num').textContent=ok?(Math.abs(s)<0.005?0:s).toFixed(2):'계산 전'}
+function pick(n){$('r'+n).classList.add('pick')}
+
+// ---------- 뇌 패널 ----------
+const cv=$('brain'),ctx=cv.getContext('2d');
+const BG=i16(DATA.bg),SENS=i16(DATA.sens),SCELL=u8(DATA.sensCell),RO=i16(DATA.ro);
+const byGroup=Array.from({length:32},()=>[]);for(let n=0;n<SCELL.length;n++)byGroup[SCELL[n]].push(n);
+let bgImg=null,S=1,W0=0,H0=0,shown={groups:[],fired:[],t0:0};
+const px=v=>W0/2+v/1000*S, py=v=>H0/2+v/1000*S;
+function layout(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);W0=cv.width;H0=cv.height;
+  S=Math.min(W0/2,H0/2/0.46)*0.94;bgImg=document.createElement('canvas');bgImg.width=W0;bgImg.height=H0;const b=bgImg.getContext('2d');
+  b.fillStyle='#8795ad';b.globalAlpha=.2;const s=1.3*d;for(let n=0;n<BG.length;n+=2)b.fillRect(px(BG[n]),py(BG[n+1]),s,s);
+  b.fillStyle='#ef4444';b.globalAlpha=.22;for(let n=0;n<RO.length;n+=2)b.fillRect(px(RO[n]),py(RO[n+1]),2*d,2*d);kick()}
+// ttt_sim.features의 on = [사람 칸 i] + [n + 초파리 칸 i], 옥타폰은 n=16이라 묶음 0~15가 사람, 16~31이 초파리다
+function brainShow(b,k){const groups=[];for(let i=0;i<16;i++){if(b[i]==='H')groups.push(i);if(b[i]==='F')groups.push(16+i)}
+  const f=k>=0&&have(k)?fired(k):[];shown={groups,fired:f,t0:performance.now()};
+  $('fired').textContent=k>=0?(have(k)?`명령 신경 ${NRO.toLocaleString()}개 중 ${f.length}개가 반짝였어요`:'이 판은 아직 계산 전'):'';kick()}
+function draw(now){if(!bgImg)return;const d=devicePixelRatio||1,a=Math.min(1,(now-shown.t0)/250);
+  ctx.clearRect(0,0,W0,H0);ctx.drawImage(bgImg,0,0);
+  ctx.fillStyle='#22c55e';ctx.globalAlpha=.75*a;const s=2.2*d;
+  for(const g of shown.groups)for(const n of byGroup[g])ctx.fillRect(px(SENS[2*n]),py(SENS[2*n+1]),s,s);
+  ctx.globalCompositeOperation='lighter';ctx.fillStyle='#ef4444';
+  for(const[i,c]of shown.fired){const r=(1.4+Math.log1p(c)*1.1)*d;ctx.globalAlpha=.9*a;ctx.beginPath();ctx.arc(px(RO[2*i]),py(RO[2*i+1]),r,0,6.283);ctx.fill()}
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1}
+// 페이드(250ms)가 끝나면 그리기를 멈춘다. 종일 켜 두는 태블릿이 쉬게 하려고
+let raf=0;function kick(){if(!raf)raf=requestAnimationFrame(function f(now){draw(now);raf=now-shown.t0<300?requestAnimationFrame(f):0})}
+new ResizeObserver(()=>layout()).observe(cv);
+let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>{newGame('H');intro.hidden=false},90000)},true);addEventListener('contextmenu',e=>e.preventDefault());
+
+// ---------- 안내 문구 ----------
+const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
+$('foot').innerHTML=`진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 판 모양을 느끼는 신경 ${nSens}개에 넣고, 몸에 명령하는 신경 ${nRO}개의 반응을 읽어요.<br>점수는 뇌 밖의 판독기가 매겨요. 판독기는 컴퓨터가 끝까지 따져 본 정답(이김·짐)을 보고 배웠어요. 초파리 뇌가 이 게임을 배운 건 아니에요.<br>이 화면에는 규칙을 대신 챙겨 주는 도우미가 없어요. 초파리는 뇌 점수가 가장 높은 수를 그대로 골라요. 뇌 반응은 판마다 미리 계산해 두었어요.<br>초파리 뇌라서 더 잘 두는 건 아니에요. 판을 그대로 보고 계산하는 더 단순한 방법이 더 잘 둬요. 자세한 숫자는 설명 화면 맨 아래에 있어요.`;
+if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
+// ---------- 시작 전 설명 ----------
+// 격자는 8~52 정사각형을 4등분. 칸 폭 11, 칸 중심은 13.5 / 24.5 / 35.5 / 46.5
+const mini=inner=>`<svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="2.4" stroke-linecap="round"><path d="M19 8V52M30 8V52M41 8V52M8 19H52M8 30H52M8 41H52"/></g>${inner}</svg>`;
+const ring=(x,y,c='#e6ecf5',r=4.5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}" stroke-width="3.2"/>`;
+const flyAt=(x,y,k=0.11)=>`<g transform="translate(${x-100*k/2} ${y-100*k/2}) scale(${k})">${FLY.slice(FLY.indexOf('>')+1,FLY.lastIndexOf('</svg>'))}</g>`;
+const box=(x,y)=>`<rect x="${x-5.5}" y="${y-5.5}" width="11" height="11" rx="2" fill="none" stroke="#f2c14e" stroke-width="2" stroke-dasharray="3 2.5"/>`;
+$('introSteps').innerHTML=[
+ [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30,'#e6ecf5',7)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="8" font-family="inherit">vs</text></svg>`, '<b>1.</b> 누가 먼저 둘지 골라요'],
+ [mini(ring(24.5,46.5,'#f2c14e')+box(24.5,35.5)), '<b>2.</b> 내 병정을 누르고, 갈 곳을 눌러요'],
+ [mini(ring(24.5,46.5)+flyAt(35.5,35.5)+box(35.5,35.5)+'<path d="M28 43L32 39" stroke="#f2c14e" stroke-width="2.4" stroke-linecap="round"/>'), '<b>3.</b> 앞이 막히면 못 가요. 대각선 앞의 초파리는 잡아요'],
+ [mini('<rect x="8" y="8" width="44" height="11" fill="#f2c14e" opacity=".16"/>'+ring(24.5,13.5,'#f2c14e')+'<path d="M24.5 31V21M20.5 24.5L24.5 20.5L28.5 24.5" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-linecap="round"/>'), '<b>4.</b> 맨 윗줄에 닿거나, 초파리가 못 움직이면 이겨요'],
+].map(([svg,txt])=>`<li>${svg}<p>${txt}</p></li>`).join('');
+$('introNote').innerHTML='초파리는 둘 수 있는 수마다 "이렇게 움직이면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 수를 골라요.<br>먼저 두는 쪽이 유리한 게임이라, 처음엔 내가 먼저 두기로 되어 있어요.';
+$('introAdult').innerHTML='어른을 위한 메모: 어느 수를 두느냐로 승패가 갈리는 판에서, 뇌 신호로 고른 수가 가장 좋은 수였던 비율은 처음 보는 판에서 88.6%예요. 이 화면이 쓰는 판독기는 그 판들까지 다 보고 만든 것이라, 같은 판을 다시 재면 90.6%가 나와요(더 잘한다는 뜻은 아니에요).'+'<br>잡음을 바꿔 다시 재면 83.3%로, 5.3%p나 떨어져요. 미리 정한 기준은 하락폭 5%p 안쪽이었는데 그보다 더 떨어져서 이 검사는 통과하지 못했어요.'+'<br>판 모양 정보를 지운 대조군은 51.2%예요. 뇌를 지난 신호가 판을 진짜로 읽고 있다는 뜻이에요.'+'<br>다만 판을 그대로 보고 계산하는 더 단순한 방법이 94.0%, 아무렇게나 만든 신경망도 94.7%로 초파리 뇌보다 잘해요. 초파리 뇌라서 더 잘 두는 건 아니에요.'+'<br>아무렇게나 두는 상대와 1,000판씩 겨루면 821판, 918판 이기고, 완벽하게 두는 상대에게는 2,000판 모두 져요. 사람이 먼저 두면 규칙상 초파리가 이길 방법이 아예 없고, 초파리가 먼저 두는 1,000판은 규칙상 이길 수 있는 판인데도 못 이겨요.';
+const intro=$('intro');
+$('introGo').onclick=()=>{intro.hidden=true;newGame('H')};
+$('showIntro').onclick=()=>intro.hidden=false;
+layout();newGame('H');
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script></body></html>
