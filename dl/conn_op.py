@@ -63,7 +63,7 @@ def self_test(device='cpu'):
     ((dense @ x1.t()).t().pow(2).sum()).backward()
     v2 = v1.detach().clone().requires_grad_()
     x2 = x1.detach().clone().requires_grad_()
-    conn_matmul(v2, x2, conn, chunk=2).pow(2).sum().backward()
+    conn_matmul(v2, x2, conn, 2).pow(2).sum().backward()   # autograd.Function.apply는 키워드 인자를 안 받는다
     ok = torch.allclose(v1.grad, v2.grad, atol=1e-4) and torch.allclose(x1.grad, x2.grad, atol=1e-4)
     assert ok, 'conn_matmul gradient mismatch'
     return ok
