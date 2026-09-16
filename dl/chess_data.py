@@ -9,7 +9,10 @@
       python dl/chess_data.py check        (허깅페이스에 닿는지만 확인, 받지 않음)"""
 import json, math, os, subprocess, sys
 from array import array
-import numpy as np
+try:                       # check 는 가상환경을 만들기 전에 도는 명령이라 넘파이 없이도 돌아야 한다
+    import numpy as np
+except ImportError:
+    np = None
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DIR = os.path.join(HERE, 'chess')
@@ -188,6 +191,10 @@ def build(target, shard=SHARD, groups=TRAIN_GROUPS, val_group=VAL_GROUP):
         if len(ys[k]) < want: print(f'[주의] {k} 목표 {want}개를 못 채웠어요. TRAIN_GROUPS·VAL_GROUP에 행그룹을 더 넣어 주세요.')
 
 
+def need_numpy():
+    if np is None: sys.exit('  [실패] 넘파이가 없어요. bash desktop/setup_dl.sh 를 먼저 돌리면 같이 깔려요')
+
+
 def check():
     """허깅페이스와 라이체스 원본에 닿는지만 본다 (HEAD 두 개, 받지 않는다)"""
     for name, url in [('허깅페이스 파케이', URL % SHARD), ('라이체스 원본', 'https://database.lichess.org/lichess_db_eval.jsonl.zst')]:
@@ -209,7 +216,7 @@ if __name__ == '__main__':
     if arg == 'check': check(); sys.exit()
     if arg != 'selftest':
         if not arg.isdigit(): sys.exit('  [실패] 국면 수는 숫자로 적어 주세요. 예: python dl/chess_data.py 500000')
-        build(int(arg)); sys.exit()
+        need_numpy(); build(int(arg)); sys.exit()
 
     assert round(win_white(0, None), 4) == 0.5
     assert round(win_white(100, None), 5) == 0.59103
@@ -238,6 +245,7 @@ if __name__ == '__main__':
     try: win_white(None, 0); ok0 = False
     except AssertionError: ok0 = True
     assert ok0, 'mate 0을 그냥 라벨로 바꿨다'
-    assert np.packbits(np.zeros(784, np.uint8)).shape == (98,)
-    assert np.unpackbits(pack(encode(START))).sum() == 36             # 팩했다 풀어도 켜진 비트 수가 같나
+    if np is not None:                                                # 넘파이가 없으면 비트 포장 검사만 건너뛴다
+        assert np.packbits(np.zeros(784, np.uint8)).shape == (98,)
+        assert np.unpackbits(pack(encode(START))).sum() == 36         # 팩했다 풀어도 켜진 비트 수가 같나
     print('selftest ok | 시작국면 비트', len(encode(START)), '| cp170 백차례', round(label('w', 170, None), 3))
