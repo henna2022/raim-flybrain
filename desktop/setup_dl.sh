@@ -17,9 +17,16 @@ if [ -z "$PY" ] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_inf
   echo "Python 3.11 이상이 필요해요 (지금: ${PY:-없음})"; exit 1
 fi
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
-"$VENV/bin/python" -m pip install -q --upgrade pip
-"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" "${TORCH_SPEC:-torch==2.14.0}" $WHEEL
-"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
+"$VENV/bin/python" -m pip install -q --upgrade pip || echo "pip 업그레이드는 건너뜁니다 (망이 끊겨도 설치에는 지장 없어요)"
+# 망이 멀쩡하면 pip으로 목록을 받고(버전 고정), pip 자체 통신이 깨지는 망이면 curl만 쓰는 쪽으로 넘어간다.
+# CURL_ONLY=1 로 두면 처음부터 curl 쪽으로 간다 (회사망에서 pip TLS가 깨질 때)
+install() {
+  if [ -z "${CURL_ONLY:-}" ] && "$VENV/bin/python" "$ROOT/desktop/pip_resume.py" "$@"; then return; fi
+  echo "pip 통신이 안 돼서 curl로 받아요 (버전은 목록에 있는 가장 새 것)"
+  "$VENV/bin/python" "$ROOT/desktop/pip_curl.py" "$@"
+}
+install "${TORCH_SPEC:-torch==2.14.0}" $WHEEL
+install numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
 
 cd "$ROOT"
 "$VENV/bin/python" -c "

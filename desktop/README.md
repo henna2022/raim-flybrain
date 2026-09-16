@@ -61,6 +61,11 @@ Ubuntu 창에서 한 줄씩 붙여 넣는다 (붙여넣기는 마우스 오른�
   - 마지막에 `P10 = ... 국면/초 → GO` (또는 조건부 / NO-GO)
   - `Release bench-... 에 올렸어요`
 - `[경고] ... CUDA를 못 써요`가 나오면: 윈도우에서 **NVIDIA App → 드라이버 업데이트** 후 같은 명령 다시
+- **회사망에서 pip이 계속 끊기면** (`SSLError`, `RECORD_LAYER_FAILURE`, `목록 받기 실패`): pip 통신을 아예 빼고 curl만 쓴다
+  ```
+  CURL_ONLY=1 bash ~/raim-flybrain/desktop/setup_dl.sh
+  ```
+  받다 만 파일은 `~/.cache/raim-wheels`에 남아 있어서 이어서 받는다. 해시로 검사하니 깨진 것만 다시 받는다
 
 ## 5. 옥타폰 계산 시작 (명령 한 줄, 계산은 몇 시간)
 
