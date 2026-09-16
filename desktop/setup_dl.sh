@@ -8,7 +8,8 @@ VENV="${VENV:-$HOME/.venvs/flychess-dl}"
 NVSMI=$(command -v nvidia-smi || ls /usr/lib/wsl/lib/nvidia-smi 2>/dev/null || true)   # WSL은 PATH에 없을 때가 있다
 [ -n "$NVSMI" ] && "$NVSMI" --query-gpu=name,memory.total,driver_version --format=csv,noheader || echo "nvidia-smi를 못 찾았어요. 계속 진행하고 PyTorch가 직접 확인해요."
 # 리눅스(WSL)는 늘 CUDA 12.6용을 깐다 (그래픽카드가 없어도 CPU로 돈다). 맥은 점검용이라 PyPI 기본
-# TORCH_INDEX="" 로 두면 PyPI(또는 PIP_INDEX_URL 미러)에서 받는다. PyPI 리눅스 torch도 CUDA 포함본이다
+# TORCH_INDEX="" 로 두면 PyPI(또는 PIP_INDEX_URL 미러)에서 받는다. PyPI 리눅스 torch도 CUDA 포함본이다.
+# 버전을 바꾸려면 TORCH_SPEC="torch==2.13.0"
 case "$(uname -s)" in Linux) WHEEL="${TORCH_INDEX---index-url https://download.pytorch.org/whl/cu126}" ;; *) WHEEL="" ;; esac
 
 PY=$(command -v python3.14 || command -v python3.13 || command -v python3.12 || command -v python3.11 || command -v python3 || true)
@@ -17,7 +18,7 @@ if [ -z "$PY" ] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_inf
 fi
 [ -x "$VENV/bin/python" ] || "$PY" -m venv "$VENV"
 "$VENV/bin/python" -m pip install -q --upgrade pip
-"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" torch==2.14.0 $WHEEL
+"$VENV/bin/python" "$ROOT/desktop/pip_resume.py" "${TORCH_SPEC:-torch==2.14.0}" $WHEEL
 "$VENV/bin/python" "$ROOT/desktop/pip_resume.py" numpy==2.5.3 pandas==3.0.5 pyarrow==25.0.1
 
 cd "$ROOT"
