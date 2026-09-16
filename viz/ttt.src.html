@@ -47,12 +47,27 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;m
 .row.pick .bar i{background:var(--accent)}
 .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
 footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
+#intro{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;background:rgba(7,11,20,.92);display:flex;align-items:center;justify-content:center;padding:24px}
+#intro[hidden]{display:none}
+#intro .sheet{background:var(--card,#0f1626);border:1px solid var(--line);border-radius:24px;padding:28px 32px;max-width:900px;width:100%;max-height:100%;overflow:auto;text-align:center}
+#intro h2{margin:0 0 6px;font-size:30px}
+#intro .sub{margin:0 0 22px;color:var(--muted);font-size:17px}
+#intro .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:0;padding:0;list-style:none}
+#intro .steps li{background:#0a101d;border:1px solid var(--line);border-radius:16px;padding:16px}
+#intro .steps svg{width:100%;height:104px}
+#intro .steps p{margin:12px 0 0;font-size:17px;line-height:1.5}
+#intro .steps b{color:var(--accent)}
+#intro .note{margin:20px 0 0;color:var(--muted);font-size:15px;line-height:1.55}
+#intro .go{margin-top:22px;background:var(--accent);color:#14110a;border:0;border-radius:14px;padding:16px 46px;font-size:21px;font-weight:700;font-family:inherit}
+.ghost-btn{color:var(--text);text-decoration:none;border:1px solid var(--cellLine);background:var(--cell);border-radius:10px;padding:8px 14px;font-size:15px;white-space:nowrap;font-family:inherit}
+@media (max-width:820px){#intro .steps{grid-template-columns:1fr}#intro .steps svg{height:70px}#intro .steps li{display:flex;align-items:center;gap:14px;text-align:left}#intro .steps svg{width:84px;flex:none}#intro .steps p{margin:0}}
+@media (max-height:560px){#intro h2{font-size:24px}#intro .sub{margin-bottom:14px}#intro .steps svg{height:62px}#intro .note{margin-top:12px}#intro .go{margin-top:14px;padding:12px 36px;font-size:19px}}
 #rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
 #rotate h2{margin:0;font-size:26px;line-height:1.45}
 #rotate p{margin:0;color:var(--muted);font-size:17px}
 @media (orientation:portrait){#rotate{display:flex}}
 </style></head><body><div id="app">
-<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 틱택토<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 둘 곳을 골라요</span></div><a class="home" href="/">처음으로</a></header>
+<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 틱택토<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 둘 곳을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
 <main>
  <section id="play">
   <div id="status" aria-live="polite"></div>
@@ -66,6 +81,15 @@ footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
  </section>
 </main>
 <footer id="foot"></footer>
+</div>
+<div id="intro">
+ <div class="sheet">
+  <h2>초파리와 틱택토</h2>
+  <p class="sub">초파리와 한 판 겨뤄 봐요. 규칙은 세 가지예요.</p>
+  <ol class="steps" id="introSteps"></ol>
+  <p class="note">초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요.</p>
+  <button class="go" id="introGo">시작하기</button>
+ </div>
 </div>
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
 <script>
@@ -154,12 +178,24 @@ function draw(now){if(!bgImg)return;const d=devicePixelRatio||1,a=Math.min(1,(no
 // 페이드(250ms)가 끝나면 그리기를 멈춘다. 종일 켜 두는 태블릿이 쉬게 하려고
 let raf=0;function kick(){if(!raf)raf=requestAnimationFrame(function f(now){draw(now);raf=now-shown.t0<300?requestAnimationFrame(f):0})}
 new ResizeObserver(()=>layout()).observe(cv);
-let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>newGame('H'),90000)},true);addEventListener('contextmenu',e=>e.preventDefault());
+let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>{newGame('H');intro.hidden=false},90000)},true);addEventListener('contextmenu',e=>e.preventDefault());
 
 // ---------- 안내 문구 ----------
 const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
 $('foot').innerHTML=`진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 판 모양을 느끼는 신경 ${nSens}개에 넣고, 몸에 명령하는 신경 ${nRO}개의 반응을 읽어요.<br>점수는 뇌 밖의 판독기가 매겨요. 판독기는 컴퓨터가 끝까지 따져 본 정답(이김·비김·짐)을 보고 배웠어요. 초파리 뇌가 틱택토를 배운 건 아니에요.<br>뇌 밖에 규칙 도우미도 두 가지 있어요. 바로 이길 수 있으면 이기고, 내가 바로 이길 칸은 막아요. 뇌 반응은 판마다 미리 계산해 두었어요.`;
 if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
+// ---------- 시작 전 설명 ----------
+const mini=(inner)=>`<svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="2.4" stroke-linecap="round"><path d="M24 8V52M40 8V52M8 24H56M8 40H56"/></g>${inner}</svg>`;
+const ring=(x,y,c='#e6ecf5')=>`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="${c}" stroke-width="3.2"/>`;
+const flyAt=(x,y,k=0.16)=>`<g transform="translate(${x-100*k/2} ${y-100*k/2}) scale(${k})">${FLY.slice(FLY.indexOf('>')+1, FLY.lastIndexOf('</svg>'))}</g>`;
+$('introSteps').innerHTML=[
+ [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="8" font-family="inherit">vs</text></svg>`, '<b>1.</b> 누가 먼저 둘지 골라요'],
+ [mini(ring(32,32)+'<rect x="41" y="9" width="14" height="14" rx="3" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-dasharray="4 3"/>'), '<b>2.</b> 빈칸을 콕 눌러 내 동그라미를 놓아요'],
+ [mini(ring(16,16,'#f2c14e')+ring(32,32,'#f2c14e')+ring(48,48,'#f2c14e')+'<path d="M16 16L48 48" stroke="#f2c14e" stroke-width="2.4"/>'), '<b>3.</b> 가로·세로·대각선으로 셋을 먼저 만들면 이겨요'],
+].map(([svg,txt])=>`<li>${svg}<p>${txt}</p></li>`).join('');
+const intro=$('intro');
+$('introGo').onclick=()=>{intro.hidden=true;newGame('H')};
+$('showIntro').onclick=()=>intro.hidden=false;
 layout();newGame('H');
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script></body></html>
