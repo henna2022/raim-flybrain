@@ -1,7 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <link rel="manifest" href="/app.webmanifest"><meta name="theme-color" content="#070b14"><link rel="apple-touch-icon" href="/icons/fly-180.png"><link rel="icon" href="/icons/fly-192.png">
-<title>초파리와 병정 대결</title>
+<title>초파리와 체스</title>
 <style>
 @font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 :root{--bg:#070b14;--panel:#0c1220;--line:#1c2538;--cell:#141b2b;--cellLine:#2a3550;--text:#dfe6f2;--muted:#7f8ca3;--accent:#f2c14e;--in:#22c55e;--out:#ef4444}
@@ -70,7 +70,7 @@ footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
 #rotate p{margin:0;color:var(--muted);font-size:17px}
 @media (orientation:portrait){#rotate{display:flex}}
 </style></head><body><div id="app">
-<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 병정 대결<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 움직일 병정을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
+<header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 체스<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 움직일 병정을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
 <main>
  <section id="play">
   <div id="status" aria-live="polite"></div>
@@ -87,7 +87,7 @@ footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
 </div>
 <div id="intro">
  <div class="sheet">
-  <h2>초파리와 병정 대결</h2>
+  <h2>초파리와 체스</h2>
   <p class="sub">4×4 판에서 병정 넷씩으로 겨뤄요. 규칙은 네 가지예요.</p>
   <ol class="steps" id="introSteps"></ol>
   <p class="note" id="introNote"></p>
