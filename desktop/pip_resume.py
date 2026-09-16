@@ -3,7 +3,7 @@
 사용: python desktop/pip_resume.py [pip install 인자들]
 예:   python desktop/pip_resume.py torch==2.14.0 --index-url https://download.pytorch.org/whl/cu126
 """
-import json, os, subprocess, sys, tempfile, time
+import json, os, re, subprocess, sys, tempfile, time
 
 CACHE = os.path.expanduser('~/.cache/raim-wheels')
 PY = sys.executable
@@ -15,14 +15,20 @@ MIRROR = 'https://mirror.kakao.com/pypi/simple'      # 국내 미러. 회사망�
 def urls_to_download(args, tries=6):
     """받을 파일 목록만 pip에게 묻는다. 이 단계는 pip 자체 통신이라 회사망에서 끊기기 쉬워 여러 번 시도한다."""
     for i in range(tries):
-        extra = [] if i < tries - 2 else ['--index-url', MIRROR]   # 끝 두 번은 국내 미러로 바꿔 본다
+        mirror = i >= tries - 2                                    # 끝 두 번은 국내 미러로 바꿔 본다
+        # 미러는 PyPI 사본이라 pytorch.org 전용 버전이 없다(2026-09-16 기준 cp314용 torch는 2.13.0까지).
+        # 그래서 미러로 갈 때는 정확한 버전 못을 빼고 미러가 가진 최신을 받는다.
+        use = [re.sub(r'==.*$', '', a) for a in args if not a.startswith('http')] if mirror else args
+        use = [a for a in use if a != '--index-url'] if mirror else use
+        extra = ['--index-url', MIRROR] if mirror else []
         with tempfile.TemporaryDirectory() as tmp:
             report = os.path.join(tmp, 'report.json')
-            r = subprocess.run([PY, '-m', 'pip', 'install', '--dry-run', '--quiet', '--retries', '10',
-                                '--timeout', '60', '--report', report, *args, *extra], capture_output=True, text=True)
+            r = subprocess.run([PY, '-m', 'pip', 'install', '--dry-run', '--quiet', '--retries', '3',
+                                '--timeout', '60', '--report', report, *use, *extra], capture_output=True, text=True)
             if r.returncode == 0:
+                if mirror: print(f'  국내 미러에서 찾았어요: {" ".join(use)}', flush=True)
                 return [item['download_info']['url'] for item in json.load(open(report))['install']]
-        where = '국내 미러' if extra else '기본 주소'
+        where = '국내 미러' if mirror else '기본 주소'
         print(f'  목록 받기 실패 ({where}, {i + 1}/{tries}회). 다시 시도해요', flush=True)
         time.sleep(3)
     sys.exit('  [실패] 받을 목록을 가져오지 못했어요. 망이 계속 끊기면 desktop/README.md 의 플랜 B를 보세요:\n'
