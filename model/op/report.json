@@ -1,0 +1,165 @@
+{
+ "_note": "heldout = 시험하는 초파리 차례 판의 후보 판을 학습에서 뺀 판독기로 채점. exhibit = 모든 판으로 학습한 태블릿용 표. shuffled = 판과 발화 수의 짝을 섞어 판 정보를 없앤 대조군. 옥타폰은 비김이 없고 먼저 두는 쪽이 필승.",
+ "n_fly_positions": 8077,
+ "n_positions_where_choice_matters": 3577,
+ "n_boards_simulated": 13854,
+ "random_mover": {
+  "best_move_all_positions": 0.7839,
+  "best_move_where_choice_matters": 0.512,
+  "threw_away_a_winnable_position": 0.2982
+ },
+ "heldout": {
+  "fly_brain": {
+   "best_move_all_positions": 0.9494,
+   "best_move_where_choice_matters": 0.8857,
+   "threw_away_a_winnable_position": 0.0699
+  },
+  "fly_brain_tested_on_new_noise": {
+   "best_move_all_positions": 0.926,
+   "best_move_where_choice_matters": 0.8328,
+   "threw_away_a_winnable_position": 0.1022
+  },
+  "board_onehot_linear": {
+   "best_move_all_positions": 0.9734,
+   "best_move_where_choice_matters": 0.9399,
+   "threw_away_a_winnable_position": 0.0367
+  },
+  "random_network_control_5_draws": {
+   "best_move_all_positions": {
+    "min": 0.9762,
+    "median": 0.9765,
+    "max": 0.9777,
+    "n": 5
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.9463,
+    "median": 0.9469,
+    "max": 0.9497,
+    "n": 5
+   },
+   "threw_away_a_winnable_position": {
+    "min": 0.0308,
+    "median": 0.0325,
+    "max": 0.0328,
+    "n": 5
+   }
+  },
+  "shuffled_null_20": {
+   "best_move_all_positions": {
+    "min": 0.7729,
+    "median": 0.7841,
+    "max": 0.7961,
+    "n": 20
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.4873,
+    "median": 0.5124,
+    "max": 0.5396,
+    "n": 20
+   },
+   "threw_away_a_winnable_position": {
+    "min": 0.2814,
+    "median": 0.2987,
+    "max": 0.3133,
+    "n": 20
+   }
+  }
+ },
+ "gate": {
+  "G2_pass_1_above_shuffled_max": true,
+  "G2_pass_2_new_noise_drop_le_0.05": false,
+  "G2_pass": false
+ },
+ "exhibit": {
+  "fly_brain": {
+   "best_move_all_positions": 0.9585,
+   "best_move_where_choice_matters": 0.9063,
+   "threw_away_a_winnable_position": 0.0572,
+   "lambda": 100
+  },
+  "shuffled_null_20": {
+   "best_move_all_positions": {
+    "min": 0.803,
+    "median": 0.8132,
+    "max": 0.8256,
+    "n": 20
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.5552,
+    "median": 0.5781,
+    "max": 0.6061,
+    "n": 20
+   },
+   "threw_away_a_winnable_position": {
+    "min": 0.2407,
+    "median": 0.258,
+    "max": 0.2718,
+    "n": 20
+   }
+  }
+ },
+ "games_1000_each": {
+  "fly_brain_exhibit_table": {
+   "vs_random_human_human_first": {
+    "fly_win": 821,
+    "fly_loss": 179
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 918,
+    "fly_loss": 82
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "fly_loss": 1000
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "fly_loss": 1000
+   }
+  },
+  "random_fly": {
+   "vs_random_human_human_first": {
+    "fly_win": 445,
+    "fly_loss": 555
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 555,
+    "fly_loss": 445
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "fly_loss": 1000
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 48,
+    "fly_loss": 952
+   }
+  },
+  "shuffled_null_20_fly_wins": {
+   "vs_random_human_human_first": {
+    "min": 356,
+    "median": 501,
+    "max": 593,
+    "n": 20
+   },
+   "vs_random_human_fly_first": {
+    "min": 481,
+    "median": 584,
+    "max": 670,
+    "n": 20
+   },
+   "vs_perfect_human_human_first": {
+    "min": 0,
+    "median": 0,
+    "max": 0,
+    "n": 20
+   },
+   "vs_perfect_human_fly_first": {
+    "min": 0,
+    "median": 98,
+    "max": 327,
+    "n": 20
+   }
+  }
+ }
+}
