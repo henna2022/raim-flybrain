@@ -24,7 +24,7 @@ button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 #panes>div{position:relative;min-width:0;min-height:0;overflow:hidden}
 #panes canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #left{border-right:1px solid #1c2538}
-.tag{position:absolute;top:10px;left:14px;font-size:14px;letter-spacing:0;line-height:20px;color:#7f8ca3}
+.tag{pointer-events:none;position:absolute;top:10px;left:14px;font-size:14px;letter-spacing:0;line-height:20px;color:#7f8ca3}
 #bubble{position:absolute;left:50%;top:0;transform:translate(-50%,-100%);line-height:22px;pointer-events:none;background:#fff;color:#111;border-radius:14px;padding:8px 14px;font-size:16px;opacity:0;transition:opacity .2s;white-space:nowrap}
 #bubble:after{content:"";position:absolute;left:50%;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;transform:translateX(-50%)}
 #info{padding:8px 18px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px;line-height:20px}
@@ -36,7 +36,7 @@ button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 <div id="btns"></div>
 <div class="src">진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 미리 계산한 반응을 천천히 보여 줘요. 말풍선은 반응을 보고 붙인 상상 대사예요.</div>
 <div id="panes">
- <div id="left"><canvas id="fly"></canvas><span class="tag">초파리</span><div id="bubble"></div></div>
+ <div id="left"><canvas id="fly"></canvas><span class="tag">초파리 · 손가락으로 돌려 볼 수 있어요</span><div id="bubble"></div></div>
  <div id="right"><canvas id="c"></canvas><span class="tag">초파리 뇌 속 · 손가락으로 돌려 볼 수 있어요</span></div>
 </div>
 <div id="info"><div id="say">초파리에게 무엇을 줘 볼까요? 위 버튼을 눌러 보세요</div><div id="legend">
@@ -75,12 +75,19 @@ function drawBrain(now){
   if(now>busyUntil)return;
   const W=cv.width,H=cv.height,S=Math.min(W,H)*0.44;
   const cx=Math.cos(rx),sx=Math.sin(rx),cy=Math.cos(ry),sy=Math.sin(ry);
+  // Center the rotated bounds, not the dataset's coordinate origin.
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const p of P){const x=p[0]/1000,y=p[1]/1000,z=p[2]/1000;
+    const x1=x*cy+z*sy,y1=y*cx-(-x*sy+z*cy)*sx;
+    minX=Math.min(minX,x1);maxX=Math.max(maxX,x1);minY=Math.min(minY,y1);maxY=Math.max(maxY,y1)}
+  const scale=Math.min(S,(W-24*devicePixelRatio)/(maxX-minX),(H-72*devicePixelRatio)/(maxY-minY));
+  const ox=(minX+maxX)/2,oy=(minY+maxY)/2;
   ctx.fillStyle='#070b14';ctx.fillRect(0,0,W,H);
   if(cur){const tms=(now-t0)*SPEED,ev=DATA.spk[cur];
     while(ei<ev.length&&ev[ei][0]<=tms){const i=ev[ei][1];glow[i]=1;if(C[i]===4&&!acted){acted=true;flyAct(COND[cur][3]);bubble.textContent=COND[cur][1];bubble.style.opacity=1}ei++}
     say.textContent=tms>1000?COND[cur][2]:`뇌 속 시간 ${(tms/1000).toFixed(2)}초 · 반짝인 신경세포 ${new Set(ev.slice(0,ei).map(e=>e[1])).size}개`}
   for(let i=0;i<N;i++){const x=P[i][0]/1000,y=P[i][1]/1000,z=P[i][2]/1000;
-    const x1=x*cy+z*sy,z1=-x*sy+z*cy,y1=y*cx-z1*sx,px=W/2+x1*S,py=H/2+y1*S,g=glow[i];
+    const x1=x*cy+z*sy,z1=-x*sy+z*cy,y1=y*cx-z1*sx,px=W/2+(x1-ox)*scale,py=H/2+(y1-oy)*scale,g=glow[i];
     ctx.fillStyle=COL[C[i]];
     if(g>0.01){ctx.globalAlpha=Math.min(1,g*1.2);ctx.fillRect(px-2,py-2,4+g*3,4+g*3);glow[i]=g*0.94}
     else{ctx.globalAlpha=0.28;ctx.fillRect(px,py,2,2)}}
@@ -93,13 +100,30 @@ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughnes
 try{
   ren=new THREE.WebGLRenderer({canvas:fc,antialias:true});ren.setPixelRatio(devicePixelRatio);
   sc=new THREE.Scene();sc.background=new THREE.Color(0x070b14);sc.fog=new THREE.Fog(0x070b14,6,16);
-  cam=new THREE.PerspectiveCamera(52,1,0.1,50);cam.position.set(5.6,4.2,7.6);cam.lookAt(-0.8,1.7,0);
+  cam=new THREE.PerspectiveCamera(52,1,0.1,50);
   sc.add(new THREE.HemisphereLight(0xbfd4ff,0x223344,1.1));const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(3,5,2);sc.add(dl);
   sc.add(new THREE.GridHelper(20,40,0x1f3550,0x13213a));
   F=createFly(THREE);sc.add(F.object);
   stim=new THREE.Group();sc.add(stim);
 }catch(err){ // 3D를 못 켜도 뇌 활동은 계속 보이게 한다
   ren=null;document.getElementById('left').insertAdjacentHTML('beforeend','<div class="tag" style="top:45%;left:0;right:0;text-align:center;font-size:15px">이 기기에서는 3D 초파리를 켤 수 없어요. 오른쪽 뇌 활동은 그대로 볼 수 있어요.</div>');
+}
+// Orbit the camera independently of the pose restored by F.update(). No auto rotation.
+let flyYaw=Math.atan2(5.6,7.6),flyPitch=.35,flyDrag=null;
+const flyTarget=ren?new THREE.Vector3(0,.8,.3):null;
+fc.onpointerdown=e=>{if(flyDrag||!e.isPrimary||e.button!==0)return;flyDrag={id:e.pointerId,x:e.clientX,y:e.clientY};fc.setPointerCapture(e.pointerId)};
+fc.onpointermove=e=>{if(!flyDrag||e.pointerId!==flyDrag.id)return;
+  flyYaw-=(e.clientX-flyDrag.x)*Math.PI*2/fc.clientWidth;
+  flyPitch=Math.max(.08,Math.min(1.15,flyPitch+(e.clientY-flyDrag.y)*.008));
+  flyDrag.x=e.clientX;flyDrag.y=e.clientY};
+fc.onpointerup=fc.onpointercancel=e=>{if(flyDrag&&e.pointerId===flyDrag.id){flyDrag=null;if(fc.hasPointerCapture(e.pointerId))fc.releasePointerCapture(e.pointerId)}};
+fc.onlostpointercapture=()=>flyDrag=null;
+function aimFly(){
+  // Follow the escape translation so every viewing angle stays inside the pane.
+  flyTarget.set(0,.8,.3).add(F.object.position);
+  const distance=8.2*Math.max(1,1/cam.aspect),horizontal=distance*Math.cos(flyPitch);
+  cam.position.set(flyTarget.x+horizontal*Math.sin(flyYaw),flyTarget.y+distance*Math.sin(flyPitch),flyTarget.z+horizontal*Math.cos(flyYaw));
+  cam.lookAt(flyTarget);cam.updateMatrixWorld();
 }
 // 자극 물체
 function showStim(k){if(!ren)return;stim.clear();stim.position.set(0,0,-1.9);
@@ -120,7 +144,7 @@ function placeBubble(w,h){
 let flyWidth=0,flyHeight=0,flyDpr=0;
 function frame(now){
   if(ren){const w=fc.clientWidth,h=fc.clientHeight,dpr=devicePixelRatio;if(w>0&&h>0&&(w!==flyWidth||h!==flyHeight||dpr!==flyDpr)){ren.setPixelRatio(dpr);ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();flyWidth=w;flyHeight=h;flyDpr=dpr}
-    try{F.update(now);stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam);placeBubble(w,h)}catch(err){ren=null;say.textContent='초파리 그림 오류: '+err.message}} // 초파리 쪽이 멈춰도 뇌는 계속
+    try{F.update(now);aimFly();stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam);placeBubble(w,h)}catch(err){ren=null;say.textContent='초파리 그림 오류: '+err.message}} // 초파리 쪽이 멈춰도 뇌는 계속
   drawBrain(now);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 

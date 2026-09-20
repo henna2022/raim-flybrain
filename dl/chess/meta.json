@@ -1,0 +1,23 @@
+{
+ "n_train": 500000,
+ "n_val": 25000,
+ "target": 500000,
+ "shard": 10,
+ "train_groups": [
+  0,
+  9
+ ],
+ "val_groups": [
+  36
+ ],
+ "min_depth": 20,
+ "bytes_downloaded": 51508395,
+ "url": "https://huggingface.co/datasets/Lichess/chess-position-evaluations/resolve/main/data/data_0010.parquet",
+ "label_mean": 0.5219,
+ "rows_read": 525176,
+ "dropped_illegal": 172,
+ "dropped_no_eval": 0,
+ "dropped_shallow": 0,
+ "dropped_duplicate": 4,
+ "_note": "표본은 샤드 10의 행그룹 [0, 9](학습) · [36](검증)에서만 뽑았다. 검증을 학습에 안 쓴 행그룹에서 통째로 뽑는 이유는 한 대국의 이웃 국면이 같은 행그룹에 뭉쳐 있어서다. 이 미러는 depth>=20로 이미 걸러져 있다. 갈래 사이 비교는 같은 데이터라 유효하지만, 절대 수치를 밖에 말할 때는 이 표본 조건을 같이 적어야 한다."
+}

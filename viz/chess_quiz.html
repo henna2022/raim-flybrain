@@ -1,0 +1,67 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="/app.webmanifest"><meta name="theme-color" content="#070b14">
+<title>체스판 함께 맞히기 | 초파리 뇌 탐험</title>
+<style>
+@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+
+:root{--bg:#070b14;--panel:#0c1220;--line:#1c2538;--cell:#141b2b;--cellLine:#2a3550;--text:#dfe6f2;--muted:#9aa7bd;--accent:#f2c14e}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Paperlogy,sans-serif;word-break:keep-all;touch-action:manipulation;overscroll-behavior:none}button,a{-webkit-tap-highlight-color:transparent}button{font-family:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.55}button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}[hidden]{display:none!important}
+#app{height:100%;padding:0 20px;display:grid;grid-template-rows:72px minmax(0,1fr) 64px}header,.brand,nav{display:flex;align-items:center;gap:16px}header{justify-content:space-between}.brand img{height:30px;width:auto}.sep{height:22px;width:1px;background:var(--cellLine)}h1{font-size:22px;margin:0}nav{gap:8px}.ghost-btn,.home{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 14px;border:1px solid var(--cellLine);background:var(--cell);border-radius:10px;color:var(--text);font-size:16px;text-decoration:none}
+main{display:grid;grid-template-columns:404px minmax(0,1fr);gap:20px;min-height:0}#play{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.turn{margin:0;font-size:17px;line-height:24px}#board{width:min(384px,calc(100vh - 202px));aspect-ratio:1;flex:none;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border-radius:12px;overflow:hidden;outline:1px solid var(--cellLine)}.square{display:flex;align-items:center;justify-content:center;background:#b0b9c9;min-width:0;min-height:0}.square.dark{background:#56647d}.piece{width:88%;height:88%;overflow:visible}.piece.white{color:#f8fafc;--edge:#243049}.piece.black{color:#101625;--edge:#e0e6ef}.piece use{fill:currentColor;stroke:var(--edge);stroke-width:1.8;stroke-linejoin:round}
+#panel{align-self:center;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}h2{margin:0;font-size:26px;line-height:34px}.hint{margin:0;color:var(--muted);font-size:16px;line-height:24px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{height:52px;border:1px solid #8290a8;border-radius:12px;font-size:21px;font-weight:700}.choice.white{background:#e6ecf5;color:#141b2b}.choice.black{background:#202b40;color:#fff}.choice[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}#result{min-height:26px;font-size:18px;line-height:26px;margin:0;color:var(--accent)}.scores{display:grid;gap:6px}.score{display:grid;grid-template-columns:128px minmax(0,1fr) 70px;align-items:center;gap:8px;min-height:44px;padding:6px 10px;background:var(--cell);border:1px solid var(--cellLine);border-radius:10px;font-size:17px}.score strong{font-size:18px}.score .count{text-align:right;font-variant-numeric:tabular-nums}.answer{font-size:16px;color:var(--muted)}.answer.correct{color:#a8e5c0}.answer.wrong{color:#ffb7ac}.score-head{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);line-height:20px}.next,.go{height:48px;border:0;border-radius:12px;background:var(--accent);color:#14110a;font-size:20px;font-weight:700}.next{width:100%}footer{display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:14px;line-height:20px;color:var(--muted)}footer p{margin:0}footer .honesty{color:var(--text)}
+#intro{position:fixed;inset:72px 0 64px;z-index:50;background:rgba(7,11,20,.96);display:flex;align-items:center;justify-content:center;padding:0 24px}.sheet{width:100%;max-width:959px;background:#0f1626;border:1px solid var(--line);border-radius:24px;padding:20px 28px;text-align:center}.sheet h2{font-size:28px;line-height:36px}.sub{margin:4px 0 14px;font-size:17px;color:var(--muted);line-height:24px}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:0;margin:0;list-style:none}.steps li{background:#0a101d;border:1px solid var(--line);border-radius:16px;padding:10px}.steps svg{width:100%;height:68px;display:block}.steps p{font-size:17px;line-height:24px;margin:8px 0 0}.steps b{color:var(--accent)}.go{padding:0 40px;margin-top:12px}.note{margin:12px 0 0;font-size:14px;line-height:21px;color:var(--muted)}#loadStatus{margin:6px 0 0;font-size:15px;line-height:22px;color:var(--muted)}
+@media(max-height:560px){.sheet{padding:12px 24px}.sheet h2{font-size:24px;line-height:30px}.sub{margin-bottom:10px}.steps svg{height:48px}.steps p{margin-top:6px}.note{margin-top:8px}.go{margin-top:10px}#panel{padding:12px;gap:8px}h2{font-size:24px;line-height:30px}.score{min-height:42px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="P"><circle cx="24" cy="13" r="7"/><path d="M20 20h8l3 15H17zM14 36h20v6H14z"/></g>
+<g id="R"><path d="M12 7h6v6h4V7h5v6h4V7h6v13l-6 4 2 12H16l2-12-6-4zM13 36h23v6H13z"/></g>
+<g id="N"><path d="m15 8 8 3 8-2 7 14-9 5-5-4-4 12h15v6H12v-7l9-18-7 4-4-5z"/><circle cx="29" cy="17" r="1.5" fill="var(--edge)" stroke="none"/></g>
+<g id="B"><path d="M24 5c-15 12-12 20-4 23l-4 8h16l-4-8c8-3 11-11-4-23zM13 36h22v6H13z"/><path d="m26 13-6 8" fill="none"/></g>
+<g id="Q"><path d="m10 13 8 8 6-12 6 12 8-8-6 23H16zM13 36h22v6H13z"/><circle cx="10" cy="11" r="3"/><circle cx="24" cy="7" r="3"/><circle cx="38" cy="11" r="3"/></g>
+<g id="K"><path d="M21 4h6v5h5v5h-5v6h-6v-6h-5V9h5zM14 21q10-7 20 0l-4 15H18zM14 36h20v6H14z"/></g>
+</defs></svg>
+<div id="app">
+<header><div class="brand"><img src="/logo_w.png" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>체스판 함께 맞히기</h1></div><nav><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></nav></header>
+<main id="game" inert>
+<section id="play" aria-label="체스판"><p class="turn">흰 편이 둘 차례예요 · <span id="round">1</span>번째 판이에요</p><div id="board" role="img" aria-label="체스판을 불러오고 있어요"></div></section>
+<section id="panel" aria-labelledby="question"><h2 id="question">누가 이기고 있을까요?</h2><p class="hint">더 유리해 보이는 편을 골라요. 말은 옮기지 않아요.</p>
+<div class="choices"><button class="choice white" id="white" aria-pressed="false">흰 편</button><button class="choice black" id="black" aria-pressed="false">검은 편</button></div>
+<p id="result" role="status" aria-live="polite" aria-atomic="true">흰 편과 검은 편 중 하나를 골라요.</p>
+<div class="score-head"><span>이번 답과 결과를 함께 봐요</span><span>맞힌 수 / 푼 수예요</span></div>
+<div class="scores" id="scores"></div><button class="next" id="next" disabled>다음 판</button></section>
+</main>
+<footer><p class="honesty">초파리 뇌 연결을 본뜬 신경망이에요. 초파리 배선을 안 쓴 보통 신경망이 더 잘 맞혀요.</p><p>진짜 초파리가 체스를 두는 게 아니에요. 미리 계산해 둔 두 신경망의 답을 재생해요.</p></footer>
+</div>
+<div id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle"><div class="sheet">
+<h2 id="introTitle">체스판 함께 맞히기</h2><p class="sub">나와 두 신경망의 답을 비교해 봐요.</p>
+<ol class="steps">
+<li><svg viewBox="0 0 100 60" aria-hidden="true"><path d="M24 8h52v44H24z" fill="#56647d"/><path d="M24 8h13v11H24zm26 0h13v11H50zm-13 11h13v11H37zm26 0h13v11H63zM24 30h13v11H24zm26 0h13v11H50zm-13 11h13v11H37zm26 0h13v11H63z" fill="#dfe6f2"/></svg><p><b>1.</b> 판을 보고 어느 편이<br>유리한지 골라요.</p></li>
+<li><svg viewBox="0 0 100 60" aria-hidden="true"><rect x="8" y="15" width="36" height="30" rx="8" fill="#e6ecf5"/><rect x="56" y="15" width="36" height="30" rx="8" fill="#243049" stroke="#8a96ab"/><path d="m20 30 7 7 12-17" fill="none" stroke="#a8824a" stroke-width="4"/></svg><p><b>2.</b> 정답과 두 신경망의 답을<br>한 번에 확인해요.</p></li>
+<li><svg viewBox="0 0 100 60" aria-hidden="true"><g fill="#243049"><rect x="18" y="6" width="64" height="12" rx="5"/><rect x="18" y="24" width="64" height="12" rx="5"/><rect x="18" y="42" width="64" height="12" rx="5"/></g><path d="M25 12h27M25 30h20M25 48h39" stroke="#f2c14e" stroke-width="5"/></svg><p><b>3.</b> 맞힌 수를 쌓으며<br>다음 판도 맞혀 봐요.</p></li>
+</ol>
+<button class="go" id="introGo" disabled>불러오는 중이에요</button><p id="loadStatus" role="status">체스판을 준비하고 있어요.</p>
+<p class="note">학습에 쓰지 않은 판 15,616개에서 초파리 뇌 69%, 보통 신경망 79%, 판을 그대로 계산하면 75%를 맞혔어요. 배선 세기를 안 배우면 60%예요.</p>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+let items=[],position=0,answered=false,total=0,points=[0,0,0],idle=0,lastActivity=Date.now(),loading=false;
+const names=['나','초파리 뇌','보통 신경망'];
+const pieceNames={P:'폰',N:'나이트',B:'비숍',R:'룩',Q:'퀸',K:'킹'};
+const side=value=>value>.5?'흰 편':value<.5?'검은 편':'비슷해요';
+function scores(answers=null,truth=null){$('scores').innerHTML=names.map((name,i)=>`<div class="score"><strong>${name}</strong><span class="answer ${answers?(answers[i]===truth?'correct':'wrong'):''}">${answers?`${answers[i]} · ${answers[i]===truth?'✓ 맞혔어요':'× 틀렸어요'}`:'아직 고르기 전이에요'}</span><span class="count">${points[i]} / ${total}</span></div>`).join('')}
+function render(){answered=false;$('round').textContent=position+1;$('board').innerHTML='';const labels=[];
+ [...items[position].b].forEach((p,i)=>{const cell=document.createElement('div');cell.className='square'+((Math.floor(i/8)+i%8)%2?' dark':'');if(p!=='.'){const white=p===p.toUpperCase();cell.innerHTML=`<svg class="piece ${white?'white':'black'}" viewBox="0 0 48 48" aria-hidden="true"><use href="#${p.toUpperCase()}"/></svg>`;labels.push(`${'abcdefgh'[i%8]}${8-Math.floor(i/8)} ${white?'흰':'검은'} ${pieceNames[p.toUpperCase()]}`)}$('board').appendChild(cell)});
+ $('board').setAttribute('aria-label','흰 편이 둘 차례예요. '+labels.join(', '));['white','black'].forEach(id=>{$(id).disabled=false;$(id).setAttribute('aria-pressed','false')});$('next').disabled=true;$('result').textContent='흰 편과 검은 편 중 하나를 골라요.';scores()}
+function answer(choice){if(answered||!items.length||!$('intro').hidden)return;answered=true;const p=items[position],truth=side(p.y),answers=[choice,side(p.f),side(p.n)];total++;answers.forEach((a,i)=>{if(a===truth)points[i]++});scores(answers,truth);['white','black'].forEach(id=>{$(id).disabled=true;$(id).setAttribute('aria-pressed',String((id==='white'?'흰 편':'검은 편')===choice))});$('result').textContent=`정답은 ${truth}이에요! ${answers.map((a,i)=>names[i]+(a===truth?'는 맞혔어요.':'는 틀렸어요.')).join(' ')}`;$('next').disabled=false;$('next').focus()}
+function openIntro(){ $('intro').hidden=false;$('game').inert=true;$('showIntro').inert=true;$('introGo').focus() }
+function reset(){position=0;total=0;points=[0,0,0];if(items.length)render();openIntro()}
+function activity(){lastActivity=Date.now();clearTimeout(idle);idle=setTimeout(reset,90000)}
+async function load(){if(loading)return;loading=true;$('introGo').disabled=true;try{const res=await fetch('/chess_puzzles.json');if(!res.ok)throw Error('fetch');const data=await res.json();if(data.n!==300||data.items.length!==data.n||!data.items.every(p=>/^[PNBRQKpnbrqk.]{64}$/.test(p.b)&&['y','f','n'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1)&&p.y!==.5))throw Error('data');items=data.items;render();$('introGo').textContent='시작하기';$('loadStatus').textContent='체스 규칙을 몰라도 어느 편이 유리한지 골라 봐요.'}catch(e){$('introGo').textContent='다시 불러오기';$('loadStatus').textContent='판을 불러오지 못했어요. 다시 눌러 주세요.'}finally{loading=false;$('introGo').disabled=false}}
+$('white').onclick=()=>answer('흰 편');$('black').onclick=()=>answer('검은 편');$('next').onclick=()=>{if(!answered)return;position=(position+1)%items.length;render();$('white').focus()};$('introGo').onclick=()=>{if(!items.length){load();return}$('intro').hidden=true;$('game').inert=false;$('showIntro').inert=false;$('white').focus();activity()};$('showIntro').onclick=openIntro;
+// 설명을 여닫아도 진행 중인 점수는 보존하고, 무인 상태에서만 초기화해요.
+$('intro').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();$('introGo').focus()}});
+['pointerdown','keydown'].forEach(type=>addEventListener(type,activity,true));document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastActivity>=90000)reset()});addEventListener('contextmenu',e=>e.preventDefault());scores();openIntro();load();activity();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');
+</script></body></html>

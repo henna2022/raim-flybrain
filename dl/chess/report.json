@@ -1,0 +1,244 @@
+{
+ "_note": "C0 실제 배선 · C1 차수 보존 재배선 · C2 같은 크기 무작위 희소망 · C3 같은 변수 수 MLP · C4 읽기만 학습 · B3 판 780비트 선형. 모든 런이 같은 데이터·같은 걸음 수로 돌았고, 같은 씨앗끼리는 배치 순서까지 같다. 주 지표 better_side_agree는 |승률-0.5| >= 0.05인 판에서 어느 쪽이 유리한지를 맞힌 비율이고, gate.majority는 한쪽으로만 외치는 모델이 그냥 받는 점수라 그 위로 올라야 뭔가 배운 것이다. 절대 수치는 라이체스 파케이 미러 샤드 하나의 행그룹 몇 개에서 뽑은 표본이고 depth>=20으로 이미 걸러진 국면이다. 갈래 사이 비교는 같은 데이터라 유효하지만, 밖에 말할 때는 이 표본 조건을 같이 적어야 한다. 검증은 학습에 안 쓴 행그룹에서 통째로 뽑아 한 대국의 이웃 국면이 양쪽에 걸치지 않게 했다. 학습 표본은 복원추출이라 positions는 뽑은 횟수다. 학습 판 수가 positions와 같으면 실제로 본 서로 다른 판은 그 63% 정도다. arms.init_activity는 학습 전 뉴런 활동 (평균, 최대)이다. C0와 C1·C2는 이 값이 10배쯤 다르니 C0가 이겼을 때 그게 배선 때문인지 활동 범위 때문인지는 이 숫자를 같이 놓고 봐야 한다.",
+ "margin": 0.05,
+ "metric": "better_side_agree",
+ "data": {
+  "n_train": 500000,
+  "n_val": 25000,
+  "target": 500000,
+  "shard": 10,
+  "train_groups": [
+   0,
+   9
+  ],
+  "val_groups": [
+   36
+  ],
+  "min_depth": 20,
+  "bytes_downloaded": 51508395,
+  "url": "https://huggingface.co/datasets/Lichess/chess-position-evaluations/resolve/main/data/data_0010.parquet",
+  "label_mean": 0.5219,
+  "rows_read": 525176,
+  "dropped_illegal": 172,
+  "dropped_no_eval": 0,
+  "dropped_shallow": 0,
+  "dropped_duplicate": 4,
+  "_note": "표본은 샤드 10의 행그룹 [0, 9](학습) · [36](검증)에서만 뽑았다. 검증을 학습에 안 쓴 행그룹에서 통째로 뽑는 이유는 한 대국의 이웃 국면이 같은 행그룹에 뭉쳐 있어서다. 이 미러는 depth>=20로 이미 걸러져 있다. 갈래 사이 비교는 같은 데이터라 유효하지만, 절대 수치를 밖에 말할 때는 이 표본 조건을 같이 적어야 한다."
+ },
+ "arms": {
+  "B3": {
+   "n_params": 781,
+   "init_activity": null,
+   "seeds": {
+    "1": {
+     "better_side_agree": 0.7501,
+     "better_side_agree_all": 0.6725,
+     "val_mae": 0.1509,
+     "val_bce": 0.6551,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  },
+  "C4": {
+   "n_params": 1172,
+   "init_activity": [
+    0.01806,
+    15.389
+   ],
+   "seeds": {
+    "1": {
+     "better_side_agree": 0.5978,
+     "better_side_agree_all": 0.5417,
+     "val_mae": 0.1719,
+     "val_bce": 0.688,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  },
+  "C3": {
+   "n_params": 2743257,
+   "init_activity": null,
+   "seeds": {
+    "3": {
+     "better_side_agree": 0.7868,
+     "better_side_agree_all": 0.7034,
+     "val_mae": 0.1314,
+     "val_bce": 0.6368,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  },
+  "C0": {
+   "n_params": 2743380,
+   "init_activity": [
+    0.01806,
+    15.389
+   ],
+   "seeds": {
+    "1": {
+     "better_side_agree": 0.6919,
+     "better_side_agree_all": 0.6189,
+     "val_mae": 0.1648,
+     "val_bce": 0.6709,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "2": {
+     "better_side_agree": 0.6977,
+     "better_side_agree_all": 0.6238,
+     "val_mae": 0.164,
+     "val_bce": 0.6701,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "3": {
+     "better_side_agree": 0.6895,
+     "better_side_agree_all": 0.6206,
+     "val_mae": 0.1648,
+     "val_bce": 0.6713,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  },
+  "C1": {
+   "n_params": 2743380,
+   "init_activity": [
+    0.00153,
+    1.055
+   ],
+   "seeds": {
+    "1": {
+     "better_side_agree": 0.6619,
+     "better_side_agree_all": 0.5922,
+     "val_mae": 0.1682,
+     "val_bce": 0.6765,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "2": {
+     "better_side_agree": 0.6668,
+     "better_side_agree_all": 0.5969,
+     "val_mae": 0.1682,
+     "val_bce": 0.676,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "3": {
+     "better_side_agree": 0.6732,
+     "better_side_agree_all": 0.6026,
+     "val_mae": 0.168,
+     "val_bce": 0.6762,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  },
+  "C2": {
+   "n_params": 2743380,
+   "init_activity": [
+    0.00181,
+    1.075
+   ],
+   "seeds": {
+    "1": {
+     "better_side_agree": 0.627,
+     "better_side_agree_all": 0.5872,
+     "val_mae": 0.1707,
+     "val_bce": 0.6843,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "2": {
+     "better_side_agree": 0.6427,
+     "better_side_agree_all": 0.5863,
+     "val_mae": 0.1689,
+     "val_bce": 0.6818,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    },
+    "3": {
+     "better_side_agree": 0.6407,
+     "better_side_agree_all": 0.5798,
+     "val_mae": 0.17,
+     "val_bce": 0.6823,
+     "majority": 0.5403,
+     "n_val": 25000,
+     "n_decisive": 15616
+    }
+   }
+  }
+ },
+ "spread": {
+  "B3": {
+   "min": 0.7501,
+   "median": 0.7501,
+   "max": 0.7501,
+   "n": 1
+  },
+  "C4": {
+   "min": 0.5978,
+   "median": 0.5978,
+   "max": 0.5978,
+   "n": 1
+  },
+  "C3": {
+   "min": 0.7868,
+   "median": 0.7868,
+   "max": 0.7868,
+   "n": 1
+  },
+  "C0": {
+   "min": 0.6895,
+   "median": 0.6919,
+   "max": 0.6977,
+   "n": 3
+  },
+  "C1": {
+   "min": 0.6619,
+   "median": 0.6668,
+   "max": 0.6732,
+   "n": 3
+  },
+  "C2": {
+   "min": 0.627,
+   "median": 0.6407,
+   "max": 0.6427,
+   "n": 3
+  }
+ },
+ "gate": {
+  "g0_floor_arms_present": true,
+  "g1_C0_min_beats_C1_max": true,
+  "g2_gap_ge_0.01": true,
+  "g3_paired_ci_above_0": true,
+  "g4_above_floor": false,
+  "g5_three_seeds_each": true,
+  "pass": false,
+  "_전시_문구_허용": false,
+  "paired_ci_worst_C0_minus_best_C1": [
+   0.0108,
+   0.0222
+  ],
+  "floor": 0.7501,
+  "majority": 0.5403
+ },
+ "notes": [
+  "관문은 평균이 아니라 C0 최소값 > C1 최대값으로 본다",
+  "모든 런의 배치·T·국면 수·학습률·검증 판 수가 같은지 먼저 확인했다"
+ ]
+}
