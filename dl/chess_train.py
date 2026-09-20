@@ -100,6 +100,24 @@ def gate_from(runs, majority=0.5):
     return gate
 
 
+def upload():
+    """결과 표와 런별 기록만 묶어 GitHub 비공개 저장소 Release 로 올린다 (체크포인트는 무거워서 뺀다).
+    데스크탑에 원격 접속이 없어서 이게 결과를 가져오는 유일한 길이다. NO_UPLOAD=1 이면 건너뛴다."""
+    import shutil, subprocess, time
+    if os.environ.get('NO_UPLOAD') or not shutil.which('gh'): return
+    if subprocess.run(['gh', 'auth', 'status'], capture_output=True).returncode:
+        print('gh 로그인이 안 돼 있어 못 올렸어요. dl/chess/report.json 을 직접 보내 주세요', flush=True); return
+    zippath = os.path.join(OUT, 'chess_pilot.zip')
+    keep = [os.path.join(OUT, n) for n in ('report.json', 'meta.json')] + \
+           [os.path.join(RUNS, n) for n in sorted(os.listdir(RUNS)) if n.endswith('.json')]
+    subprocess.run([sys.executable, '-m', 'zipfile', '-c', zippath, *[k for k in keep if os.path.exists(k)]], check=True)
+    tag = 'chess-pilot-' + time.strftime('%Y%m%d-%H%M')
+    r = subprocess.run(['gh', 'release', 'create', tag, zippath, '--repo', 'henna2022/raim-flybrain',
+                        '--title', f'체스 파일럿 결과 {tag}', '--notes', f'{POSITIONS:,}국면, 배치 {BATCH}, T={T}'])
+    print(f'Release {tag} 에 올렸어요. Claude에게 알려 주세요' if not r.returncode else
+          '올리지 못했어요. dl/chess/report.json 을 직접 보내 주세요', flush=True)
+
+
 def evaluate(model, bits, y, device):
     """검증 판 전체를 BATCH씩 돌려 지표와 국면별 예측을 낸다"""
     import torch
@@ -258,7 +276,7 @@ if __name__ == '__main__':
         assert (batch_of(fb, y[:50], 7, 'cpu', 1)[0] == batch_of(fb, y[:50], 7, 'cpu', 1)[0]).all()
         print('selftest ok | 라벨 흘림', s[K], '| 난수', s2[K], '| 관문 ok | 이어받기 일치'); sys.exit()
     if a[:1] == ['report']:
-        report(); sys.exit()
+        report(); upload(); sys.exit()
     if a[:1] != ['all'] and not (len(a) == 2 and a[0] in ARMS and a[1].isdigit() and int(a[1]) in ARMS[a[0]]):
         sys.exit(__doc__)
     import torch
@@ -266,6 +284,6 @@ if __name__ == '__main__':
     if a[0] == 'all':
         for arm, seeds in ARMS.items():
             for sd in seeds: train_one(arm, sd, POSITIONS, dev)
-        report()
+        report(); upload()
     else:
         train_one(a[0], int(a[1]), POSITIONS, dev)
