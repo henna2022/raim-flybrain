@@ -6,9 +6,10 @@ from ttt_sim import select
 
 b64 = lambda a: base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 L = select(); ann, comp = L['ann'], L['comp']
-xy = ann[['pos_x', 'pos_y']].to_numpy(float)
-center, scale = (xy.min(0) + xy.max(0)) / 2, (xy.max(0) - xy.min(0)).max() / 2
-to_i16 = lambda ids: np.round((ann.loc[ids, ['pos_x', 'pos_y']].to_numpy(float) - center) / scale * 1000).astype(np.int16)
+# z 는 40나노미터 단면 번호, x·y 는 4나노미터. 10배로 맞춰야 손가락으로 돌렸을 때 평면이 아니라 입체로 보인다
+xyz = ann[['pos_x', 'pos_y', 'pos_z']].to_numpy(float) * [1, 1, 10]
+center, scale = (xyz.min(0) + xyz.max(0)) / 2, (xyz.max(0) - xyz.min(0)).max() / 2
+to_i16 = lambda ids: np.round((ann.loc[ids, ['pos_x', 'pos_y', 'pos_z']].to_numpy(float) * [1, 1, 10] - center) / scale * 1000).astype(np.int16)
 sens_ids, ro_ids = comp.index[L['sens']], L['readout_ids']
 rest = ann.index.difference(sens_ids).difference(ro_ids)
 bg_ids = rest[np.random.default_rng(5).random(len(rest)) < 0.25]      # 배경은 25% 표본이면 뇌 모양이 충분히 보인다

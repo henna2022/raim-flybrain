@@ -37,7 +37,8 @@ def tables(ckpt):
 
 
 def neuron_points(ckpt_model, sample=0.25, seed=5):
-    """뇌 그림용 점: (뉴런 번호, 화면 좌표 x·y, 종류). 종류 0 배경 · 1 감각 · 2 읽기.
+    """뇌 그림용 점: (뉴런 번호, 3차원 좌표 x·y·z, 종류). 종류 0 배경 · 1 감각 · 2 읽기.
+    손가락으로 360도 돌려 볼 수 있어야 해서 깊이(z)까지 담는다.
     좌표 규칙은 틱택토 화면(model/ttt_build_ui.py)과 같게 ±1000 으로 맞춘다."""
     import pandas as pd
     M = os.path.join(HERE, '..', 'model')
@@ -46,9 +47,10 @@ def neuron_points(ckpt_model, sample=0.25, seed=5):
     ann = ann[ann.root_id.isin(comp.index)].drop_duplicates('root_id').set_index('root_id')
     pos = {rid: i for i, rid in enumerate(comp.index)}
     idx = ann.index.map(pos).to_numpy()                      # 좌표가 있는 뉴런의 번호
-    xy = ann[['pos_x', 'pos_y']].to_numpy(float)
-    center, scale = (xy.min(0) + xy.max(0)) / 2, (xy.max(0) - xy.min(0)).max() / 2
-    xy = np.round((xy - center) / scale * 1000).astype(np.int16)
+    xyz = ann[['pos_x', 'pos_y', 'pos_z']].to_numpy(float)
+    xyz[:, 2] *= 10          # z 는 40나노미터 단면 번호, x·y 는 4나노미터. 10배로 맞춰야 진짜 입체가 된다
+    center, scale = (xyz.min(0) + xyz.max(0)) / 2, (xyz.max(0) - xyz.min(0)).max() / 2
+    xy = np.round((xyz - center) / scale * 1000).astype(np.int16)
 
     kind = np.zeros(len(idx), np.uint8)
     sens, ro = set(ckpt_model['sens'].tolist()), set(ckpt_model['ro'].tolist())
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     for k, v in t.items():
         v.tofile(os.path.join(OUT, k + '.bin'))
     nidx, nxy, nkind = neuron_points(torch_model)
-    nidx.tofile(os.path.join(OUT, 'npt_idx.bin')); nxy.tofile(os.path.join(OUT, 'npt_xy.bin'))
+    nidx.tofile(os.path.join(OUT, 'npt_idx.bin')); nxy.tofile(os.path.join(OUT, 'npt_xyz.bin'))
     nkind.tofile(os.path.join(OUT, 'npt_kind.bin'))
     meta = dict(n=N, edges=int(len(t['vals'])), T=int(d['T']), per=int(len(t['sens']) // len(t['gain'])),
                 points=int(len(nidx)), points_sens=int((nkind == 1).sum()), points_ro=int((nkind == 2).sum()),
