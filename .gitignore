@@ -22,3 +22,6 @@ dl/chess/*.npz
 dl/chess/*.npy
 dl/chess/runs/
 dl/chess/head_*.json
+
+# 디자인 평가 기록(로컬 보관)
+.impeccable/

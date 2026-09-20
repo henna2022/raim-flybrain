@@ -1,33 +1,33 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="manifest" href="/app.webmanifest"><meta name="theme-color" content="#070b14"><link rel="apple-touch-icon" href="/icons/fly-180.png"><link rel="icon" href="/icons/fly-192.png">
 <title>초파리에게 간식 주기</title>
 <style>
 @font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 html,body{touch-action:manipulation;overscroll-behavior:none;-webkit-user-select:none;user-select:none;margin:0;height:100%;background:#070b14;color:#dfe6f2;font-family:'Paperlogy',-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;overflow:hidden}
-#wrap{display:grid;grid-template-rows:auto auto 1fr auto;height:100%}
+#wrap{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;height:100%}
 header{padding:12px 18px 4px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .brand img{height:28px;width:auto;display:block}
 .brand .sep{width:1px;height:20px;background:#2a3550}
-.home{color:#dfe6f2;text-decoration:none;border:1px solid #2a3550;background:#141b2b;border-radius:10px;padding:8px 14px;font-size:15px;white-space:nowrap}
+.home{min-height:48px;box-sizing:border-box;display:flex;align-items:center;color:#dfe6f2;text-decoration:none;border:1px solid #2a3550;background:#141b2b;border-radius:10px;padding:8px 14px;font-size:15px;white-space:nowrap}
 #rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:#070b14;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
 #rotate h2{margin:0;font-size:26px;line-height:1.45}
 #rotate p{margin:0;color:#7f8ca3;font-size:17px}
 @media (orientation:portrait){#rotate{display:flex}}
 h1{font-size:18px;margin:0;font-weight:600}
 small{color:#7f8ca3;font-size:12px}
-.src{padding:0 18px 6px;color:#7f8ca3;font-size:12px}
+.src{padding:0 18px 6px;color:#7f8ca3;font-size:12px;line-height:18px}
 #btns{display:flex;gap:8px;padding:6px 18px;flex-wrap:wrap}
-button{background:#141b2b;border:1px solid #2a3550;color:#dfe6f2;border-radius:10px;padding:10px 16px;font-size:15px}
+button{min-height:48px;box-sizing:border-box;background:#141b2b;border:1px solid #2a3550;color:#dfe6f2;border-radius:10px;padding:10px 16px;font-size:15px}
 button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 #panes{display:grid;grid-template-columns:1fr 1fr;min-height:0}
-#panes>div{position:relative;min-width:0}
-#panes canvas{width:100%;height:100%;display:block;touch-action:none}
+#panes>div{position:relative;min-width:0;min-height:0;overflow:hidden}
+#panes canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #left{border-right:1px solid #1c2538}
-.tag{position:absolute;top:10px;left:14px;font-size:11px;letter-spacing:.08em;color:#7f8ca3}
-#bubble{position:absolute;left:50%;top:18%;transform:translateX(-50%);background:#fff;color:#111;border-radius:14px;padding:8px 14px;font-size:16px;opacity:0;transition:opacity .2s;white-space:nowrap}
+.tag{position:absolute;top:10px;left:14px;font-size:14px;letter-spacing:0;line-height:20px;color:#7f8ca3}
+#bubble{position:absolute;left:50%;top:0;transform:translate(-50%,-100%);line-height:22px;pointer-events:none;background:#fff;color:#111;border-radius:14px;padding:8px 14px;font-size:16px;opacity:0;transition:opacity .2s;white-space:nowrap}
 #bubble:after{content:"";position:absolute;left:50%;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;transform:translateX(-50%)}
-#info{padding:8px 18px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px}
+#info{padding:8px 18px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px;line-height:20px}
 #legend span{margin-right:12px;font-size:12px;color:#9aa6bb}
 #legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 @media (max-width:700px){#panes{grid-template-columns:1fr;grid-template-rows:1fr 1fr}#left{border-right:0;border-bottom:1px solid #1c2538}}
@@ -93,7 +93,7 @@ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughnes
 try{
   ren=new THREE.WebGLRenderer({canvas:fc,antialias:true});ren.setPixelRatio(devicePixelRatio);
   sc=new THREE.Scene();sc.background=new THREE.Color(0x070b14);sc.fog=new THREE.Fog(0x070b14,6,16);
-  cam=new THREE.PerspectiveCamera(40,1,0.1,50);cam.position.set(4.6,3.2,5.6);cam.lookAt(0,0.5,-0.6);
+  cam=new THREE.PerspectiveCamera(52,1,0.1,50);cam.position.set(5.6,4.2,7.6);cam.lookAt(-0.8,1.7,0);
   sc.add(new THREE.HemisphereLight(0xbfd4ff,0x223344,1.1));const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(3,5,2);sc.add(dl);
   sc.add(new THREE.GridHelper(20,40,0x1f3550,0x13213a));
   F=createFly(THREE);sc.add(F.object);
@@ -109,9 +109,18 @@ function showStim(k){if(!ren)return;stim.clear();stim.position.set(0,0,-1.9);
   if(k==='loomR'){const s=new THREE.Mesh(new THREE.CircleGeometry(.6,32),M(0x000000,{transparent:true,opacity:.85}));s.rotation.x=-Math.PI/2;s.position.set(1.2,.02,-.5);s.userData.loom=true;stim.add(s)}}
 function flyAct(a){if(F)F.act(a)}
 function flyReset(){if(F)F.reset()}
+// Project a point above the thorax so the speech bubble follows every action.
+const bubbleAnchor=ren?new THREE.Vector3():null;
+function placeBubble(w,h){
+  bubbleAnchor.set(0,1.5,-.27);F.object.localToWorld(bubbleAnchor);bubbleAnchor.project(cam);
+  const half=bubble.offsetWidth/2+8;
+  bubble.style.left=Math.max(half,Math.min(w-half,(bubbleAnchor.x+1)*w/2))+'px';
+  bubble.style.top=Math.max(36+bubble.offsetHeight,Math.min(h-8,(1-bubbleAnchor.y)*h/2-10))+'px';
+}
+let flyWidth=0,flyHeight=0,flyDpr=0;
 function frame(now){
-  if(ren){const w=fc.clientWidth,h=fc.clientHeight;if(fc.width!==w*devicePixelRatio||fc.height!==h*devicePixelRatio){ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
-    try{F.update(now);stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam)}catch(err){ren=null;say.textContent='초파리 그림 오류: '+err.message}} // 초파리 쪽이 멈춰도 뇌는 계속
+  if(ren){const w=fc.clientWidth,h=fc.clientHeight,dpr=devicePixelRatio;if(w>0&&h>0&&(w!==flyWidth||h!==flyHeight||dpr!==flyDpr)){ren.setPixelRatio(dpr);ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();flyWidth=w;flyHeight=h;flyDpr=dpr}
+    try{F.update(now);stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam);placeBubble(w,h)}catch(err){ren=null;say.textContent='초파리 그림 오류: '+err.message}} // 초파리 쪽이 멈춰도 뇌는 계속
   drawBrain(now);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 
