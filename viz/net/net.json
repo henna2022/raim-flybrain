@@ -1,0 +1,15 @@
+{
+ "n": 127400,
+ "edges": 2614028,
+ "T": 10,
+ "per": 7,
+ "points": 31467,
+ "points_sens": 5460,
+ "points_ro": 1171,
+ "bits": 780,
+ "readout": 1171,
+ "seed": 1,
+ "positions": 500000,
+ "step": 3906,
+ "_note": "vals 에 부호·시냅스수·SCALE 이 이미 곱해져 있어요. r=0에서 시작해 r += 0.5*(-r + relu(W r + u + bias)) 를 T번 돌리고, 읽기 뉴런에 head 를 곱해 시그모이드 하면 승률이에요."
+}
