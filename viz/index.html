@@ -28,9 +28,10 @@ footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
 #rotate p{margin:0;color:var(--muted);font-size:17px}
 @media (max-height:560px){main{gap:12px;padding-top:8px}h1{font-size:32px}.lead{margin-top:4px;font-size:17px}.card h2{font-size:21px;margin-top:10px}footer{padding:10px 0 12px}}
 @media (orientation:portrait){#rotate{display:flex}}
-</style></head><body>
+header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;min-height:44px;padding:0 16px;font:inherit;font-size:16px;font-weight:600}
+</style><script src="/i18n.js"></script></head><body>
 <div id="app">
-<header><img src="/logo_w.png" alt="서울로봇인공지능과학관"><span class="sep"></span><span>초파리 뇌 탐험</span></header>
+<header><img src="/logo_w.png" alt="서울로봇인공지능과학관"><span class="sep"></span><span>초파리 뇌 탐험</span><button class="lang" id="langBtn" aria-label="Language">EN</button></header>
 <main>
  <div><h1>오늘은 초파리랑 무엇을 해 볼까요?</h1><p class="lead">진짜 초파리 뇌의 연결을 본뜬 컴퓨터 뇌가 여러분에게 반응해요.</p></div>
  <div class="cards">
