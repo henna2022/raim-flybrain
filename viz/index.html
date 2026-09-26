@@ -14,13 +14,13 @@ header span{color:var(--muted);font-size:16px}
 main{display:flex;flex-direction:column;gap:18px;min-height:0;padding-top:12px}
 h1{margin:0;font-size:40px;font-weight:700;line-height:1.3}
 .lead{margin:8px 0 0;color:var(--muted);font-size:19px;line-height:1.4}
-.cards{display:flex;flex:1;min-height:0;justify-content:center;gap:20px}   /* 카드 수가 바뀌어도 균형이 맞는다 */
-.card{flex:1 1 0;min-width:0;max-width:560px;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:inherit;text-decoration:none;min-height:0}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto auto auto;flex:1;min-height:0;column-gap:20px}   /* 세 카드의 그림·제목·설명·버튼 높이를 함께 맞춘다 */
+.card{flex:1 1 0;min-width:0;max-width:560px;display:grid;grid-template-rows:subgrid;grid-row:span 4;row-gap:0;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;color:inherit;text-decoration:none;min-height:0}
 .card .pic{width:100%;flex:1;min-height:0;border-radius:14px;background:#0a101d;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.card .pic svg{height:78%;width:90%;min-height:0}
+.card .pic svg{height:92%;width:96%;min-height:0}
 .card h2{margin:14px 0 6px;font-size:21px;font-weight:700;line-height:1.3;flex-shrink:0}
 .card p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;flex-shrink:0}
-.go{margin-top:12px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;flex-shrink:0;line-height:24px;align-self:flex-start;background:var(--accent);color:#14110a;border-radius:12px;padding:12px 22px;font-size:18px;font-weight:600}
+.go{margin-top:12px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;flex-shrink:0;line-height:24px;justify-self:start;background:var(--accent);color:#14110a;border-radius:12px;padding:12px 22px;font-size:18px;font-weight:600}
 footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
 .card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 #rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
@@ -41,13 +41,13 @@ footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
    <span class="go">시작하기</span>
   </a>
   <a class="card" href="/ttt.html">
-   <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="3" stroke-linecap="round"><path d="M50 10V70M70 10V70M30 30H90M30 50H90"/></g><circle cx="40" cy="20" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><circle cx="80" cy="60" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><g transform="translate(51 31) scale(.18)"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
+   <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="3" stroke-linecap="round"><path d="M50 10V70M70 10V70M30 30H90M30 50H90"/></g><circle cx="40" cy="20" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><circle cx="80" cy="60" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><g transform="translate(48 28) scale(.24)"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 틱택토</h2>
    <p>초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!</p>
    <span class="go">시작하기</span>
   </a>
   <a class="card" href="/chess.html">
-   <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="22" y="8" width="76" height="64" rx="8" fill="#243049"/><path d="M22 24h76M22 40h76M22 56h76M41 8v64M60 8v64M79 8v64" stroke="#56647d" stroke-width="2"/><g fill="#e6ecf5"><circle cx="46" cy="27" r="8"/><path d="M41 35h10l4 17H37zM35 53h22v6H35z"/></g><path d="m70 29 6 8 6-13 6 13 6-8-5 24H75zM73 54h18v5H73z" fill="#f2c14e"/></svg></div>
+   <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="8" y="58" width="104" height="14" rx="4" fill="#243049"/><path d="M25 58v14M43 58v14M61 58v14M79 58v14M97 58v14" stroke="#56647d" stroke-width="2"/><g fill="#e6ecf5"><circle cx="24" cy="27" r="9"/><path d="M19 36h10l4 16H15zM13 53h22v6H13z"/></g><path d="m40 25 7 8 7-16 7 16 7-8-5 26H45zM43 53h22v6H43z" fill="#f2c14e"/><g transform="translate(60 9) scale(.56)"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" fill-opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 체스</h2>
    <p>초파리와 한 판 둬 봐요. 초파리가 수를 고르는 동안 뇌가 어떻게 반응하는지 볼 수 있어요.</p>
    <span class="go">시작하기</span>

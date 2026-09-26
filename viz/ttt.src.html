@@ -69,12 +69,34 @@ footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
 #rotate p{margin:0;color:var(--muted);font-size:17px}
 @media (orientation:portrait){#rotate{display:flex}}
 #intro,#intro .sheet{box-sizing:border-box}#intro .sheet{overflow:visible;padding:20px 26px}#intro .go{margin-top:34px;min-height:48px}#intro .sub{margin-bottom:14px}#intro .steps svg{height:72px}#intro .steps li{padding:12px}#intro .steps p{font-size:16px;margin-top:8px}#intro .note{margin-top:14px;font-size:14px}#candWrap{min-height:100px;box-sizing:border-box}#candHead{font-size:14px;line-height:1.5}#cands{grid-template-columns:1fr}.row{grid-template-areas:"name num";min-height:44px}.num{color:var(--accent);font-size:16px}.thinkingLine{height:3px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:12px}.thinkingLine[hidden]{display:none}.thinkingLine i{display:block;width:30%;height:100%;background:var(--accent);animation:thinking 1.8s ease-in-out infinite alternate}@keyframes thinking{to{transform:translateX(230%)}}@media(prefers-reduced-motion:reduce){.thinkingLine i{animation:none}.bar i{transition:none}}@media(max-height:560px){#intro .go{margin-top:26px}#intro .steps svg{height:54px}#play{gap:10px}#board{width:min(100%,50vh);height:min(100vw,50vh)}#status{font-size:19px}.pill{padding:10px 20px}}
+
+button,a{box-sizing:border-box;font-family:inherit}button{cursor:pointer}
+.home,.ghost-btn,.pill{min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
+#play{gap:10px}#boardStage{position:relative;width:min(100%,52vh);height:min(100vw,52vh);flex:none}
+#board{width:100%;height:100%}.cell{position:relative;min-width:48px;min-height:48px}
+.cell.arrive .stone{animation:stonePop 250ms ease-out both}
+.cell.arrive::after{content:"";position:absolute;inset:5px;border:3px solid var(--accent);border-radius:50%;pointer-events:none;animation:moveRing 700ms ease-out both}
+@keyframes stonePop{from{transform:scale(.35);opacity:0}70%{transform:scale(1.12);opacity:1}to{transform:scale(1);opacity:1}}
+@keyframes moveRing{from{opacity:1;transform:scale(.65)}to{opacity:0;transform:scale(1)}}
+#result{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;border:1px solid var(--accent);border-radius:16px;background:rgba(7,11,20,.95);text-align:center;box-sizing:border-box}
+#result[hidden],#restart[hidden]{display:none}#result h2{font-size:32px;line-height:1.25;margin:0}#result p{font-size:17px;line-height:1.5;margin:0}
+#again{min-height:56px;width:100%;max-width:250px;background:var(--accent);color:#14110a;border:0;border-radius:12px;font-size:22px;font-weight:700}
+#restart{position:fixed;inset:0;z-index:60;background:rgba(7,11,20,.8);display:grid;place-items:center}
+#restart .sheet{width:340px;padding:24px;border:1px solid var(--cellLine);border-radius:18px;background:var(--panel);text-align:center}
+#restart h2{margin:0 0 20px;font-size:24px}#restart .actions{display:flex;gap:12px}#restart button{flex:1;min-height:48px;font-size:17px;border:1px solid var(--cellLine);border-radius:10px;background:var(--cell);color:var(--text)}#restart #restartYes{background:var(--accent);color:#14110a}
+#intro .truth{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--text)}
+#intro .go{margin-top:20px}#fired{min-height:18px}.boxhead{line-height:1.4}
+@media(max-height:560px){#boardStage{width:248px;height:248px}#play{gap:8px}footer{padding:6px 0;font-size:12px}#candWrap{padding-bottom:10px}#result{gap:10px;padding:12px}#result p{font-size:16px}#intro .sheet{padding:14px 22px}#intro .sub{font-size:16px;margin-bottom:10px}#intro .steps svg{height:40px}#intro .steps li{padding:10px}#intro .steps p{line-height:1.4}#intro .note,#intro .truth{margin-top:10px}#intro .go{margin-top:12px;padding:10px 36px}}
+@media(prefers-reduced-motion:reduce){.cell.arrive .stone{animation:none}.cell.arrive::after{animation:none;opacity:0}}
 </style></head><body><div id="app">
 <header><div class="brand"><img src="__LOGO__" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 틱택토<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 둘 곳을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
 <main>
  <section id="play">
   <div id="status" aria-live="polite"></div>
-  <div id="board"></div>
+  <div id="boardStage"><div id="board"></div>
+   <div id="result" hidden role="region" aria-labelledby="resultTitle"><h2 id="resultTitle"></h2><p id="resultLine"></p><button id="again">한 판 더</button></div>
+  </div>
   <div id="who"><button class="pill" data-who="H">내가 먼저</button><button class="pill" data-who="F">초파리 먼저</button></div>
  </section>
  <section id="brainBox">
@@ -90,10 +112,12 @@ footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
   <h2>초파리와 틱택토</h2>
   <p class="sub">초파리와 한 판 겨뤄 봐요. 규칙은 세 가지예요.</p>
   <ol class="steps" id="introSteps"></ol>
-  <p class="note">초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요.</p>
+  <p class="note">초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요. 초파리 뇌라서 더 잘하는 건 아니에요.</p>
+  <p class="truth">초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.</p>
   <button class="go" id="introGo">시작하기</button>
  </div>
 </div>
+<div id="restart" hidden role="dialog" aria-modal="true" aria-labelledby="restartTitle"><div class="sheet"><h2 id="restartTitle">새로 시작할까요?</h2><div class="actions"><button id="restartNo">계속할래요</button><button id="restartYes">새로 시작해요</button></div></div></div>
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
 <script>
 const DATA=/*DATA*/null;
@@ -127,17 +151,25 @@ function chooseMove(b){let best=-1,bs=-Infinity;for(const i of moves(b)){const s
 const $=id=>document.getElementById(id);
 const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></svg>';
 const HUMAN='<div class="stone human" aria-hidden="true"></div>';
-let board='.........',gen=0,busy=false,winCells=[];
+let board='.........',gen=0,busy=false,winCells=[],finished=false,first='H',pendingWho=null,restartSource=null,statusTimer=0;
+const READY='내 차례예요! 빈칸을 콕 눌러 보세요';
 const cells=[];
 for(let i=0;i<9;i++){const c=document.createElement('button');c.className='cell';c.setAttribute('aria-label',NAMES[i]+' 칸');c.onclick=()=>tap(i);$('board').appendChild(c);cells.push(c)}
-function render(){cells.forEach((c,i)=>{const v=board[i];c.innerHTML=v==='H'?HUMAN:v==='F'?FLY:'';c.setAttribute('aria-label',NAMES[i]+' 칸'+(v==='H'?', 내 돌':v==='F'?', 초파리 돌':''));c.classList.toggle('win',winCells.includes(i))})}
-const status=t=>$('status').textContent=t;
-function ended(){const l=winLine(board);if(l){winCells=l;render();status((board[l[0]]==='F'?'초파리가 이겼어요!':'내가 이겼어요!')+' 아래 버튼을 눌러 한 판 더 해요');return true}
-  if(!board.includes('.')){status('비겼어요! 아래 버튼을 눌러 한 판 더 해요');return true}return false}
-function newGame(who){gen++;busy=false;board='.........';winCells=[];render();rows([]);brainShow(board,-1);
+function render(){cells.forEach((c,i)=>{const v=board[i];c.classList.remove('arrive');c.innerHTML=v==='H'?HUMAN:v==='F'?FLY:'';c.setAttribute('aria-label',NAMES[i]+' 칸'+(v==='H'?', 내 돌':v==='F'?', 초파리 돌':''));c.classList.toggle('win',winCells.includes(i))})}
+const status=t=>{clearTimeout(statusTimer);$('status').textContent=t};
+function ended(){const l=winLine(board);if(!l&&board.includes('.'))return false;
+  finished=true;winCells=l||[];cells.forEach((c,i)=>c.classList.toggle('win',winCells.includes(i)));
+  const winner=l?board[l[0]]:null,title=winner==='H'?'내가 이겼어요!':winner==='F'?'초파리가 이겼어요!':'비겼어요!';
+  $('resultTitle').textContent=title;$('resultLine').textContent=winner==='H'?'초파리: 멋진 한 수였어요!':winner==='F'?'초파리: 다음 판도 함께해요!':'초파리: 팽팽한 한 판이었어요!';
+  const g=gen;const reveal=()=>{if(g===gen&&finished)$('result').hidden=false};
+  if(cells.some(c=>c.classList.contains('arrive')))setTimeout(reveal,300);else reveal();
+  status('한 판 더 도전해 볼까요?');return true}
+function newGame(who){gen++;busy=false;finished=false;first=who;board='.........';winCells=[];$('result').hidden=true;
+  cells.forEach(c=>c.classList.remove('arrive'));render();rows([]);brainShow(board,-1);
   document.querySelectorAll('.pill').forEach(p=>{p.classList.toggle('on',p.dataset.who===who);p.setAttribute('aria-pressed',p.dataset.who===who)});
-  if(who==='F')flyTurn();else status('내 차례예요! 빈칸을 콕 눌러 보세요')}
-function tap(i){if(busy||board[i]!=='.'||winLine(board))return;board=play(board,i,'H');render();rows([]);brainShow(board,-1);if(!ended())flyTurn()}
+  if(who==='F')flyTurn();else status(READY)}
+function tap(i){if(!$('restart').hidden||finished)return;if(busy){status('잠깐만요, 초파리 차례예요');const g=gen;statusTimer=setTimeout(()=>{if(g===gen&&busy)status('뇌 반응을 지켜봐요')},1400);return}
+  if(board[i]!=='.')return;board=play(board,i,'H');render();if(ended())return;rows([]);brainShow(board,-1);flyTurn()}
 async function flyTurn(){
   const g=gen;busy=true;status('뇌 반응을 지켜봐요');
   const ms=moves(board),step=Math.max(320,Math.min(650,3600/ms.length));rows(ms);
@@ -148,9 +180,16 @@ async function flyTurn(){
   const a=assist(board),mv=a?a[0]:best;
   $('candHead').textContent='초파리가 고른 칸이에요 (1 이김 · 0 비김 · -1 짐)';
   if(a)$('candHead').textContent=a[0]===best?`뇌 점수도 규칙 도우미와 같은 ${NAMES[mv]} 칸을 골랐어요`:`뇌 점수로는 ${NAMES[best]} 칸이 1등이었지만, 규칙 도우미가 ${a[1]==='win'?'바로 이기는':'내가 바로 이길'} ${NAMES[mv]} 칸에 뒀어요`;
-  pick(mv);brainShow(play(board,mv,'F'),IDX.get(play(board,mv,'F')));
-  board=play(board,mv,'F');render();busy=false;if(!ended())status('내 차례예요! 빈칸을 콕 눌러 보세요')}
-document.querySelectorAll('.pill').forEach(p=>p.onclick=()=>newGame(p.dataset.who));
+  pick(mv);board=play(board,mv,'F');render();cells.forEach(c=>c.classList.remove('arrive'));cells[mv].classList.add('arrive');
+  busy=false;brainShow(board,IDX.get(board));if(!ended())status(READY)}
+document.querySelectorAll('.pill').forEach(p=>p.onclick=()=>{
+  if(!finished&&(busy||board!== '.........')){pendingWho=p.dataset.who;restartSource=p;$('restart').hidden=false;$('restartNo').focus()}
+  else newGame(p.dataset.who)});
+function closeRestart(){pendingWho=null;$('restart').hidden=true;restartSource?.focus()}
+$('restartNo').onclick=closeRestart;
+$('restartYes').onclick=()=>{const who=pendingWho;closeRestart();if(who)newGame(who)};
+$('restart').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeRestart()}if(e.key==='Tab'){e.preventDefault();(document.activeElement===$('restartNo')?$('restartYes'):$('restartNo')).focus()}};
+$('again').onclick=()=>newGame(first);
 
 // ---------- 선택 결과 ----------
 function rows(ms){$('cands').innerHTML='';$('thinking').hidden=!ms.length;$('candHead').textContent=ms.length?'초파리가 생각하고 있어요':'초파리가 수를 고르면 여기에 선택한 칸과 점수가 나와요'}
@@ -162,7 +201,7 @@ const BG=i16(DATA.bg),SENS=i16(DATA.sens),SCELL=u8(DATA.sensCell),RO=i16(DATA.ro
 const byGroup=Array.from({length:18},()=>[]);for(let n=0;n<SCELL.length;n++)byGroup[SCELL[n]].push(n);
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const HOME_YAW=0,HOME_PITCH=-0.25;
-let yaw=HOME_YAW,pitch=HOME_PITCH,spin=null,restAt=0,restTimer=0;
+let yaw=HOME_YAW,pitch=HOME_PITCH,spin=null;
 let bgImg=null,S=1,W0=0,H0=0,d=1,projectionDirty=true,shown={groups:[],fired:[],t0:0};
 const projectedSens=new Float32Array(SENS.length),projectedRO=new Float32Array(RO.length);
 // A bounding sphere keeps every angle inside the panel, including firing halos.
@@ -178,11 +217,11 @@ function project(){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp
       if(size){const r=size*d*near;b.globalAlpha=alpha*near;b.fillRect(x-r/2,y-r/2,r,r)}}}
   points(BG,null,'#8795ad',1.3,.2);points(RO,projectedRO,'#ef4444',2,.22);points(SENS,projectedSens,'#22c55e',0,0);projectionDirty=false}
 function bindSpin(){
-  cv.onpointerdown=e=>{if(!e.isPrimary||e.button!==0)return;clearTimeout(restTimer);restAt=0;spin={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)};
+  cv.onpointerdown=e=>{if(!e.isPrimary||e.button!==0)return;spin={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)};
   cv.onpointermove=e=>{if(!spin||e.pointerId!==spin.id)return;
     yaw+=(e.clientX-spin.x)*Math.PI*2/cv.clientWidth;yaw=Math.atan2(Math.sin(yaw),Math.cos(yaw));
     pitch=Math.max(-1.2,Math.min(1.2,pitch+(e.clientY-spin.y)*.008));spin.x=e.clientX;spin.y=e.clientY;projectionDirty=true;kick()};
-  const end=e=>{if(!spin||e.pointerId!==spin.id)return;spin=null;restAt=performance.now()+5000;restTimer=setTimeout(kick,5000)};
+  const end=e=>{if(!spin||e.pointerId!==spin.id)return;spin=null};
   cv.onpointerup=end;cv.onpointercancel=end;cv.onlostpointercapture=end}
 function brainShow(b,k){const groups=[];for(let i=0;i<9;i++){if(b[i]==='H')groups.push(i);if(b[i]==='F')groups.push(9+i)}
   const f=k>=0&&have(k)?fired(k):[];shown={groups,fired:f,t0:performance.now()};
@@ -195,17 +234,15 @@ function draw(now){if(!bgImg)return;if(projectionDirty)project();const t=Math.ma
   ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1}
 // Share one capped frame loop between recorded firing pulses and manual rotation.
 let raf=0,lastFrame=0;
-function frame(now){raf=0;if(now-lastFrame<32){kick();return}const returning=!spin&&restAt&&now>=restAt;
-  if(now-lastFrame>=32){
-    if(returning){const k=reducedMotion.matches?1:1-Math.pow(.88,Math.min(64,now-lastFrame)/(1000/60));yaw+=(HOME_YAW-yaw)*k;pitch+=(HOME_PITCH-pitch)*k;
-      if(Math.abs(yaw-HOME_YAW)<.002&&Math.abs(pitch-HOME_PITCH)<.002){yaw=HOME_YAW;pitch=HOME_PITCH;restAt=0}projectionDirty=true}
-    draw(now);lastFrame=now}
-  if(projectionDirty||returning&&restAt||!reducedMotion.matches&&now-shown.t0<280)kick()}
+function frame(now){raf=0;if(now-lastFrame<32){kick();return}
+  draw(now);lastFrame=now;
+  if(projectionDirty||!reducedMotion.matches&&now-shown.t0<280)kick()}
 function kick(){if(!raf)raf=requestAnimationFrame(frame)}
 reducedMotion.addEventListener('change',()=>{lastFrame=0;kick()});
 bindSpin();
 new ResizeObserver(()=>layout()).observe(cv);
-let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>{newGame('H');intro.hidden=false},90000)},true);addEventListener('contextmenu',e=>e.preventDefault());
+let idle=0;function resetIdle(){clearTimeout(idle);idle=setTimeout(()=>location.replace('/'),90000)}
+addEventListener('pointerdown',resetIdle,true);addEventListener('pointermove',e=>{if(e.buttons)resetIdle()},true);resetIdle();addEventListener('contextmenu',e=>e.preventDefault());
 
 // ---------- 안내 문구 ----------
 const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
@@ -216,7 +253,7 @@ const mini=(inner)=>`<svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#3b4
 const ring=(x,y,c='#e6ecf5')=>`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="${c}" stroke-width="3.2"/>`;
 const flyAt=(x,y,k=0.16)=>`<g transform="translate(${x-100*k/2} ${y-100*k/2}) scale(${k})">${FLY.slice(FLY.indexOf('>')+1, FLY.lastIndexOf('</svg>'))}</g>`;
 $('introSteps').innerHTML=[
- [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="8" font-family="inherit">vs</text></svg>`, '<b>1.</b> 누가 먼저 둘지 골라요'],
+ [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="8" font-family="inherit">vs</text></svg>`, '<b>1.</b> 시작한 뒤 판 아래에서 누가 먼저 둘지 골라요'],
  [mini(ring(32,32)+'<rect x="41" y="9" width="14" height="14" rx="3" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-dasharray="4 3"/>'), '<b>2.</b> 빈칸을 콕 눌러 내 동그라미를 놓아요'],
  [mini(ring(16,16,'#f2c14e')+ring(32,32,'#f2c14e')+ring(48,48,'#f2c14e')+'<path d="M16 16L48 48" stroke="#f2c14e" stroke-width="2.4"/>'), '<b>3.</b> 가로·세로·대각선으로 셋을 먼저 만들면 이겨요'],
 ].map(([svg,txt])=>`<li>${svg}<p>${txt}</p></li>`).join('');

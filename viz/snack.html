@@ -4,7 +4,7 @@
 <style>
 @font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 html,body{touch-action:manipulation;overscroll-behavior:none;-webkit-user-select:none;user-select:none;margin:0;height:100%;background:#070b14;color:#dfe6f2;font-family:'Paperlogy',-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;overflow:hidden}
-#wrap{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;height:100%}
+#wrap{display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto auto;height:100%}
 header{padding:12px 18px 4px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .brand img{height:28px;width:auto;display:block}
@@ -16,9 +16,11 @@ header{padding:12px 18px 4px;display:flex;justify-content:space-between;align-it
 @media (orientation:portrait){#rotate{display:flex}}
 h1{font-size:18px;margin:0;font-weight:600}
 small{color:#7f8ca3;font-size:12px}
-.src{padding:0 18px 6px;color:#7f8ca3;font-size:12px;line-height:18px}
+.src{padding:0 18px 8px;color:#7f8ca3;font-size:14px;line-height:20px}
+.guide{padding:0 18px 6px;font-size:16px;line-height:22px}
 #btns{display:flex;gap:8px;padding:6px 18px;flex-wrap:wrap}
-button{min-height:48px;box-sizing:border-box;background:#141b2b;border:1px solid #2a3550;color:#dfe6f2;border-radius:10px;padding:10px 16px;font-size:15px}
+button{min-height:48px;min-width:48px;display:flex;align-items:center;gap:8px;box-sizing:border-box;background:#141b2b;border:1px solid #2a3550;color:#dfe6f2;border-radius:10px;padding:6px 14px;font:600 15px 'Paperlogy',sans-serif;white-space:nowrap}
+button svg{width:32px;height:32px;flex:none}
 button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 #panes{display:grid;grid-template-columns:1fr 1fr;min-height:0}
 #panes>div{position:relative;min-width:0;min-height:0;overflow:hidden}
@@ -27,22 +29,23 @@ button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 .tag{pointer-events:none;position:absolute;top:10px;left:14px;font-size:14px;letter-spacing:0;line-height:20px;color:#7f8ca3}
 #bubble{position:absolute;left:50%;top:0;transform:translate(-50%,-100%);line-height:22px;pointer-events:none;background:#fff;color:#111;border-radius:14px;padding:8px 14px;font-size:16px;opacity:0;transition:opacity .2s;white-space:nowrap}
 #bubble:after{content:"";position:absolute;left:50%;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;transform:translateX(-50%)}
-#info{padding:8px 18px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:14px;line-height:20px}
+#info{padding:6px 18px;display:grid;gap:4px;font-size:14px;line-height:20px}
+#say{min-height:20px}
 #legend span{margin-right:12px;font-size:12px;color:#9aa6bb}
 #legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 @media (max-width:700px){#panes{grid-template-columns:1fr;grid-template-rows:1fr 1fr}#left{border-right:0;border-bottom:1px solid #1c2538}}
 </style></head><body><div id="wrap">
 <header><div class="brand"><img src="/logo_w.png" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리에게 간식 주기</h1></div><a class="home" href="/">처음으로</a></header>
 <div id="btns"></div>
-<div class="src">진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 미리 계산한 반응을 천천히 보여 줘요. 말풍선은 반응을 보고 붙인 상상 대사예요.</div>
+<div class="guide">버튼을 눌러 초파리에게 간식을 줘 봐요</div>
 <div id="panes">
  <div id="left"><canvas id="fly"></canvas><span class="tag">초파리 · 손가락으로 돌려 볼 수 있어요</span><div id="bubble"></div></div>
  <div id="right"><canvas id="c"></canvas><span class="tag">초파리 뇌 속 · 손가락으로 돌려 볼 수 있어요</span></div>
 </div>
 <div id="info"><div id="say">초파리에게 무엇을 줘 볼까요? 위 버튼을 눌러 보세요</div><div id="legend">
 <span><i style="background:#3b82f6"></i>눈 신경</span><span><i style="background:#94a3b8"></i>뇌 가운데</span><span><i style="background:#22c55e"></i>느끼는 신경</span><span><i style="background:#a855f7"></i>눈에서 오는 신경</span><span><i style="background:#ef4444"></i>몸에 명령하는 신경</span></div></div>
-</div>
-<script>addEventListener('error',e=>{const s=document.getElementById('say');if(s)s.textContent='화면 오류: '+(e.message||(e.target&&(e.target.src||e.target.href))||'알 수 없음')},true)</script>
+<footer class="src">진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 미리 계산한 반응을 천천히 보여 줘요. 말풍선은 반응을 보고 붙인 상상 대사예요.</footer></div>
+<script>addEventListener('error',e=>{console.error(e.error||e.message||(e.target&&(e.target.src||e.target.href)));const s=document.getElementById('say');if(s)s.textContent='화면에 문제가 생겼어요. 처음으로를 눌러 주세요.'},true)</script>
 <script src="/vendor/three.r128.min.js"></script>
 <script src="/fly3d.js"></script>
 <script>const DATA=
@@ -59,15 +62,22 @@ const SPEED=0.25; // 1초 시뮬을 4초로 재생
 let cur=null,t0=0,ei=0,acted=false;
 const say=document.getElementById('say'),bubble=document.getElementById('bubble');
 const btns=document.getElementById('btns');
-for(const k in COND){const b=document.createElement('button');b.textContent=COND[k][0];b.onclick=()=>play(k,b);btns.appendChild(b)}
+const sugarIcon='<path d="M5 10 16 5 27 10 16 16Z" fill="#fff"/><path d="M5 10v13l11 5V16Z" fill="#dfe6f2"/><path d="m16 16 11-6v13l-11 5Z" fill="#b9c6d8"/>';
+const bitterIcon='<circle cx="16" cy="18" r="10" fill="#3a7d2c" stroke="#8dc774"/><ellipse cx="13" cy="14" rx="4" ry="3" fill="#8dc774"/>';
+const icons={sugar:sugarIcon,bitter:bitterIcon,water:'<path d="M16 3C13 9 6 16 6 21a10 10 0 0 0 20 0C26 16 19 9 16 3Z" fill="#4fa8ff"/><path d="M11 20q-2 5 4 6" fill="none" stroke="#c9e8ff" stroke-width="2" stroke-linecap="round"/>','sugar+bitter':'<g transform="translate(-3 1) scale(.8)">'+sugarIcon+'</g><g transform="translate(13 10) scale(.6)">'+bitterIcon+'</g>',loomR:'<ellipse cx="16" cy="19" rx="13" ry="8" fill="#000" stroke="#7f8ca3"/><path d="m3 6 8 3M15 3l5 5M25 4l3 6" stroke="#7f8ca3" stroke-width="2" stroke-linecap="round"/>'};
+for(const k in COND){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true">'+icons[k]+'</svg><span>'+COND[k][0]+'</span>';b.onclick=()=>play(k,b);btns.appendChild(b)}
 function play(k,b){busyUntil=performance.now()+1600;[...btns.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cur=k;t0=performance.now();ei=0;acted=false;glow.fill(0);bubble.style.opacity=0;say.textContent='…';showStim(k);flyReset()}
 
 // ---------- 오른쪽: 뇌 점구름 ----------
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const N=DATA.pos.length,P=DATA.pos,C=DATA.cls,glow=new Float32Array(N);
-let rx=-0.3,ry=0.3,drag=null,busyUntil=0; // 자동으로 돌지 않는다. 손가락으로 끌 때와 반응이 퍼지는 동안만 다시 그린다
-cv.onpointerdown=e=>drag=[e.clientX,e.clientY];cv.onpointerup=cv.onpointercancel=()=>drag=null;
-cv.onpointermove=e=>{if(!drag)return;ry+=(e.clientX-drag[0])*.008;rx=Math.max(-1.3,Math.min(1.3,rx+(e.clientY-drag[1])*.008));drag=[e.clientX,e.clientY];busyUntil=performance.now()+100};
+let rx=-0.3,ry=0.3,drag=null,busyUntil=0,brainRestAt=0;
+const bounds=[0,1,2].map(a=>{let lo=Infinity,hi=-Infinity;for(const p of P){lo=Math.min(lo,p[a]/1000);hi=Math.max(hi,p[a]/1000)}return [lo,hi]});
+const brainCenter=bounds.map(b=>(b[0]+b[1])/2);
+const brainRadius=Math.max(...P.map(p=>Math.hypot(...p.map((v,a)=>v/1000-brainCenter[a]))));
+cv.onpointerdown=e=>{if(drag||!e.isPrimary||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY};brainRestAt=0;cv.setPointerCapture(e.pointerId)};
+cv.onpointerup=cv.onpointercancel=cv.onlostpointercapture=e=>{if(!drag||e.pointerId!==drag.id)return;drag=null;brainRestAt=performance.now()+5000;if(cv.hasPointerCapture(e.pointerId))cv.releasePointerCapture(e.pointerId)};
+cv.onpointermove=e=>{if(!drag||e.pointerId!==drag.id)return;ry+=(e.clientX-drag.x)*.008;rx=Math.max(-1.3,Math.min(1.3,rx+(e.clientY-drag.y)*.008));drag.x=e.clientX;drag.y=e.clientY;busyUntil=performance.now()+100};
 function drawBrain(now){
   const bw=Math.round(cv.clientWidth*devicePixelRatio),bh=Math.round(cv.clientHeight*devicePixelRatio);
   if(cv.width!==bw||cv.height!==bh){cv.width=bw;cv.height=bh;busyUntil=now+100}
@@ -75,13 +85,9 @@ function drawBrain(now){
   if(now>busyUntil)return;
   const W=cv.width,H=cv.height,S=Math.min(W,H)*0.44;
   const cx=Math.cos(rx),sx=Math.sin(rx),cy=Math.cos(ry),sy=Math.sin(ry);
-  // Center the rotated bounds, not the dataset's coordinate origin.
-  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
-  for(const p of P){const x=p[0]/1000,y=p[1]/1000,z=p[2]/1000;
-    const x1=x*cy+z*sy,y1=y*cx-(-x*sy+z*cy)*sx;
-    minX=Math.min(minX,x1);maxX=Math.max(maxX,x1);minY=Math.min(minY,y1);maxY=Math.max(maxY,y1)}
-  const scale=Math.min(S,(W-24*devicePixelRatio)/(maxX-minX),(H-72*devicePixelRatio)/(maxY-minY));
-  const ox=(minX+maxX)/2,oy=(minY+maxY)/2;
+  // A fixed enclosing sphere keeps both scale and center stable while rotating.
+  const scale=Math.min(S,(W-24*devicePixelRatio)/(2*brainRadius),(H-72*devicePixelRatio)/(2*brainRadius));
+  const [bx,by,bz]=brainCenter,ox=bx*cy+bz*sy,oy=by*cx-(-bx*sy+bz*cy)*sx;
   ctx.fillStyle='#070b14';ctx.fillRect(0,0,W,H);
   if(cur){const tms=(now-t0)*SPEED,ev=DATA.spk[cur];
     while(ei<ev.length&&ev[ei][0]<=tms){const i=ev[ei][1];glow[i]=1;if(C[i]===4&&!acted){acted=true;flyAct(COND[cur][3]);bubble.textContent=COND[cur][1];bubble.style.opacity=1}ei++}
@@ -109,27 +115,28 @@ try{
   ren=null;document.getElementById('left').insertAdjacentHTML('beforeend','<div class="tag" style="top:45%;left:0;right:0;text-align:center;font-size:15px">이 기기에서는 3D 초파리를 켤 수 없어요. 오른쪽 뇌 활동은 그대로 볼 수 있어요.</div>');
 }
 // Orbit the camera independently of the pose restored by F.update(). No auto rotation.
-let flyYaw=Math.atan2(5.6,7.6),flyPitch=.35,flyDrag=null;
+const HOME_YAW=Math.atan2(5.6,7.6);
+let flyYaw=HOME_YAW,flyPitch=.35,flyDrag=null,flyRestAt=0,flyDistance=8.2,flyFocus=.3;
 const flyTarget=ren?new THREE.Vector3(0,.8,.3):null;
-fc.onpointerdown=e=>{if(flyDrag||!e.isPrimary||e.button!==0)return;flyDrag={id:e.pointerId,x:e.clientX,y:e.clientY};fc.setPointerCapture(e.pointerId)};
+fc.onpointerdown=e=>{if(flyDrag||!e.isPrimary||e.button!==0)return;flyRestAt=0;flyDrag={id:e.pointerId,x:e.clientX,y:e.clientY};fc.setPointerCapture(e.pointerId)};
 fc.onpointermove=e=>{if(!flyDrag||e.pointerId!==flyDrag.id)return;
   flyYaw-=(e.clientX-flyDrag.x)*Math.PI*2/fc.clientWidth;
   flyPitch=Math.max(.08,Math.min(1.15,flyPitch+(e.clientY-flyDrag.y)*.008));
   flyDrag.x=e.clientX;flyDrag.y=e.clientY};
-fc.onpointerup=fc.onpointercancel=e=>{if(flyDrag&&e.pointerId===flyDrag.id){flyDrag=null;if(fc.hasPointerCapture(e.pointerId))fc.releasePointerCapture(e.pointerId)}};
-fc.onlostpointercapture=()=>flyDrag=null;
-function aimFly(){
+fc.onpointerup=fc.onpointercancel=fc.onlostpointercapture=e=>{if(flyDrag&&e.pointerId===flyDrag.id){flyDrag=null;flyRestAt=performance.now()+5000;if(fc.hasPointerCapture(e.pointerId))fc.releasePointerCapture(e.pointerId)}};
+function aimFly(blend){
   // Follow the escape translation so every viewing angle stays inside the pane.
-  flyTarget.set(0,.8,.3).add(F.object.position);
-  const distance=8.2*Math.max(1,1/cam.aspect),horizontal=distance*Math.cos(flyPitch);
+  const feeding=cur&&cur!=='loomR';flyDistance+=((feeding?5.5:8.2)-flyDistance)*blend;flyFocus+=((feeding?-.85:.3)-flyFocus)*blend;
+  flyTarget.set(0,.65,flyFocus).add(F.object.position);
+  const distance=flyDistance*Math.max(1,1/cam.aspect),horizontal=distance*Math.cos(flyPitch);
   cam.position.set(flyTarget.x+horizontal*Math.sin(flyYaw),flyTarget.y+distance*Math.sin(flyPitch),flyTarget.z+horizontal*Math.cos(flyYaw));
   cam.lookAt(flyTarget);cam.updateMatrixWorld();
 }
 // 자극 물체
 function showStim(k){if(!ren)return;stim.clear();stim.position.set(0,0,-1.9);
-  if(k==='sugar'||k==='sugar+bitter'){const c=new THREE.Mesh(new THREE.BoxGeometry(.4,.4,.4),M(0xffffff));c.position.y=.2;stim.add(c)}
-  if(k==='bitter'||k==='sugar+bitter'){const d=new THREE.Mesh(new THREE.SphereGeometry(.16,16,12),M(0x3a7d2c));d.position.set(.35,.16,0);stim.add(d)}
-  if(k==='water'){const d=new THREE.Mesh(new THREE.SphereGeometry(.2,16,12),M(0x4fa8ff,{transparent:true,opacity:.7}));d.position.y=.2;stim.add(d)}
+  if(k==='sugar'||k==='sugar+bitter'){const c=new THREE.Mesh(new THREE.BoxGeometry(.6,.6,.6),M(0xffffff));c.position.y=.3;stim.add(c)}
+  if(k==='bitter'||k==='sugar+bitter'){const d=new THREE.Mesh(new THREE.SphereGeometry(.28,16,12),M(0x3a7d2c));d.position.set(k==='sugar+bitter'?.56:0,.28,0);stim.add(d)}
+  if(k==='water'){const d=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),M(0x4fa8ff,{transparent:true,opacity:.7}));d.scale.y=1.3;d.position.y=.416;stim.add(d)}
   if(k==='loomR'){const s=new THREE.Mesh(new THREE.CircleGeometry(.6,32),M(0x000000,{transparent:true,opacity:.85}));s.rotation.x=-Math.PI/2;s.position.set(1.2,.02,-.5);s.userData.loom=true;stim.add(s)}}
 function flyAct(a){if(F)F.act(a)}
 function flyReset(){if(F)F.reset()}
@@ -141,14 +148,17 @@ function placeBubble(w,h){
   bubble.style.left=Math.max(half,Math.min(w-half,(bubbleAnchor.x+1)*w/2))+'px';
   bubble.style.top=Math.max(36+bubble.offsetHeight,Math.min(h-8,(1-bubbleAnchor.y)*h/2-10))+'px';
 }
-let flyWidth=0,flyHeight=0,flyDpr=0;
+let flyWidth=0,flyHeight=0,flyDpr=0,lastFrame=0;
 function frame(now){
+  const blend=1-Math.exp(-Math.min(64,now-lastFrame)/180);lastFrame=now;
+  if(brainRestAt&&now>=brainRestAt&&!drag){rx+=(-.3-rx)*blend;ry+=(.3-ry)*blend;busyUntil=now+100;if(Math.abs(rx+.3)+Math.abs(ry-.3)<.002){rx=-.3;ry=.3;brainRestAt=0}}
+  if(flyRestAt&&now>=flyRestAt&&!flyDrag){flyYaw+=(HOME_YAW-flyYaw)*blend;flyPitch+=(.35-flyPitch)*blend;if(Math.abs(flyYaw-HOME_YAW)+Math.abs(flyPitch-.35)<.002){flyYaw=HOME_YAW;flyPitch=.35;flyRestAt=0}}
   if(ren){const w=fc.clientWidth,h=fc.clientHeight,dpr=devicePixelRatio;if(w>0&&h>0&&(w!==flyWidth||h!==flyHeight||dpr!==flyDpr)){ren.setPixelRatio(dpr);ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();flyWidth=w;flyHeight=h;flyDpr=dpr}
-    try{F.update(now);aimFly();stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam);placeBubble(w,h)}catch(err){ren=null;say.textContent='초파리 그림 오류: '+err.message}} // 초파리 쪽이 멈춰도 뇌는 계속
+    try{F.update(now);aimFly(blend);stim.children.forEach(s=>{if(s.userData.loom)s.scale.setScalar(1+(cur?Math.min(2.5,((now-t0)*SPEED)/250):0))});ren.render(sc,cam);placeBubble(w,h)}catch(err){console.error(err);ren=null;say.textContent='화면에 문제가 생겼어요. 처음으로를 눌러 주세요.'}} // 초파리 쪽이 멈춰도 뇌는 계속
   drawBrain(now);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 
-let idle=0;addEventListener('pointerdown',()=>{clearTimeout(idle);idle=setTimeout(()=>location.reload(),90000)},true);
+let lastTouch=performance.now();for(const ev of ['pointerdown','pointermove','pointerup','keydown'])addEventListener(ev,()=>lastTouch=performance.now(),{passive:true});setInterval(()=>{if(performance.now()-lastTouch>=90000)location.replace('/')},1000);
 addEventListener('contextmenu',e=>e.preventDefault());
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script>
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div></body></html>
