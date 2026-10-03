@@ -84,7 +84,7 @@ header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
 #again{grid-area:btn;margin-top:12px;min-height:52px;width:100%;background:var(--accent);color:#14110a;border:0;border-radius:12px;font-size:22px;font-weight:700}
 #restart{position:fixed;inset:0;z-index:60;background:rgba(7,11,20,.8);display:grid;place-items:center}
 #restart .sheet{width:340px;padding:24px;border:1px solid var(--cellLine);border-radius:18px;background:var(--panel);text-align:center}
-#restart h2{margin:0 0 20px;font-size:24px}#restart .actions{display:flex;gap:12px}#restart button{flex:1;min-height:48px;font-size:17px;border:1px solid var(--cellLine);border-radius:10px;background:var(--cell);color:var(--text)}#restart #restartYes{background:var(--accent);color:#14110a}
+#restart h2{margin:0 0 20px;font-size:24px}#restart .actions{display:flex;gap:12px}#restart button{flex:1;min-height:48px;font-size:17px;border:1px solid var(--cellLine);border-radius:10px;background:var(--cell);color:var(--text)}#restart #restartNo{background:var(--accent);color:#14110a}
 #intro .truth{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--text)}
 #intro .go{margin-top:20px}#fired{min-height:18px}.boxhead{line-height:1.4}
 @media(max-height:560px){#boardStage{width:248px;height:248px}#play{gap:8px}footer{padding:6px 0 8px}#candWrap{padding-bottom:10px}#result{padding:8px 10px 10px;grid-template-columns:36px minmax(0,1fr);column-gap:8px}#result .fly{width:36px;height:36px}#result h2{font-size:19px;white-space:nowrap}#result p{font-size:14px}#again{margin-top:6px;min-height:48px;font-size:18px}#intro .sheet{padding:14px 22px}#intro .sub{font-size:16px;margin-bottom:10px}#intro .steps svg{height:40px}#intro .steps li{padding:10px}#intro .steps p{line-height:1.4}#intro .note,#intro .truth{margin-top:10px}#intro .go{margin-top:12px;padding:10px 36px}}
@@ -149,7 +149,7 @@ function assist(b){for(const p of 'FH')for(const i of moves(b))if(winLine(play(b
 function chooseMove(b){let best=-1,bs=-Infinity;for(const i of moves(b)){const s=score(IDX.get(play(b,i,'F')));if(s>bs){bs=s;best=i}}return best}
 
 const $=id=>document.getElementById(id);
-const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="31" cy="44" rx="25" ry="12" transform="rotate(-28 31 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="69" cy="44" rx="25" ry="12" transform="rotate(28 69 44)" fill="#dde6ff" opacity=".5"/><ellipse cx="50" cy="62" rx="15" ry="25" fill="#a8824a"/><circle cx="50" cy="32" r="13" fill="#9c7a44"/><circle cx="42" cy="29" r="7" fill="#ff3b2a"/><circle cx="58" cy="29" r="7" fill="#ff3b2a"/></svg>';
+const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></svg>';
 const HUMAN='<div class="stone human" aria-hidden="true"></div>';
 let board='.........',gen=0,busy=false,winCells=[],finished=false,first='H',pendingWho=null,restartSource=null,statusTimer=0;
 const READY='내 차례예요! 빈칸을 콕 눌러 보세요';
@@ -254,7 +254,7 @@ const mini=(inner)=>`<svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#3b4
 const ring=(x,y,c='#e6ecf5')=>`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="${c}" stroke-width="3.2"/>`;
 const flyAt=(x,y,k=0.16)=>`<g transform="translate(${x-100*k/2} ${y-100*k/2}) scale(${k})">${FLY.slice(FLY.indexOf('>')+1, FLY.lastIndexOf('</svg>'))}</g>`;
 $('introSteps').innerHTML=[
- [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="8" font-family="inherit">vs</text></svg>`, '<b>1.</b> 시작한 뒤 판 아래에서 누가 먼저 둘지 골라요'],
+ [`<svg viewBox="0 0 60 60" aria-hidden="true">${ring(12,30)}${flyAt(48,30,0.26)}<text x="30" y="34" text-anchor="middle" fill="#8a96ab" font-size="11" font-family="inherit">vs</text></svg>`, '<b>1.</b> 시작한 뒤 판 아래에서 누가 먼저 둘지 골라요'],
  [mini(ring(32,32)+'<rect x="41" y="9" width="14" height="14" rx="3" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-dasharray="4 3"/>'), '<b>2.</b> 빈칸을 콕 눌러 내 동그라미를 놓아요'],
  [mini(ring(16,16,'#f2c14e')+ring(32,32,'#f2c14e')+ring(48,48,'#f2c14e')+'<path d="M16 16L48 48" stroke="#f2c14e" stroke-width="2.4"/>'), '<b>3.</b> 가로·세로·대각선으로 셋을 먼저 만들면 이겨요'],
 ].map(([svg,txt])=>`<li>${svg}<p>${txt}</p></li>`).join('');
