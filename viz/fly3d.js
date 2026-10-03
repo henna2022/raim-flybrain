@@ -8,13 +8,13 @@ window.createFly = function (THREE) {
     opts = opts || {}; for (k in opts) s[k] = opts[k];
     return new THREE.MeshStandardMaterial(s);
   }
-  var tan = mat(0xd4ad70), amber = mat(0xba894d), dark = mat(0x513724);
-  var legMat = mat(0x795435), bandMat = mat(0x65432d);
-  var black = mat(0x17110d), mouthMat = mat(0x5b3028);
-  var eyeMat = mat(0xf12c25, { roughness: 0.38, emissive: 0x3a0303, flatShading: true });
-  var wingMat = mat(0xffffff, { vertexColors: true, transparent: true, opacity: 0.20, side: THREE.DoubleSide, depthWrite: false, roughness: 0.18, metalness: 0.16 });
-  var veinMat = new THREE.LineBasicMaterial({ color: 0x7f9aa0, transparent: true, opacity: 0.72 });
-  var hairMat = new THREE.LineBasicMaterial({ color: 0x352219 });
+  var tan = mat(0xcf9f62), amber = mat(0xb8874a), faceMat = mat(0xc4955a);
+  var legMat = mat(0xb5874c), bandMat = mat(0x654027), rearMat = mat(0x513321), tailMat = mat(0x3e291d);
+  var mouthMat = mat(0x5b3028);
+  var eyeMat = mat(0xff241c, { roughness: 0.38, emissive: 0x580503, flatShading: true });
+  var wingMat = mat(0xe5e5e1, { vertexColors: true, transparent: true, opacity: 0.30, side: THREE.DoubleSide, depthWrite: false, roughness: 0.18, metalness: 0.16 });
+  var veinMat = new THREE.LineBasicMaterial({ color: 0x8a7a5a, transparent: true, opacity: 0.70 });
+  var hairMat = new THREE.LineBasicMaterial({ color: 0x795435, transparent: true, opacity: 0.65 });
   var sphere18 = new THREE.SphereGeometry(1, 18, 12);
   var sphere12 = new THREE.SphereGeometry(1, 12, 8);
   var cylinder8 = new THREE.CylinderGeometry(1, 1, 1, 8, 1);
@@ -27,23 +27,23 @@ window.createFly = function (THREE) {
     e.position.set(x, y, z); e.scale.set(sx, sy, sz); return e;
   }
 
-  // Rounded pale shell, with narrow tergite margins only on the rear half.
   // Longitudinal axis is z: head negative, tail positive.
+  // A compact oval shell; broad dorsal tergite bands leave the belly tan.
   var abdomen = new THREE.Group(); abdomen.name = 'abdomen'; object.add(abdomen);
   var i, side;
-  ellipsoid('abdomenShell',0,.72,.78,.39,.34,.78,tan,abdomen);
-  function shellPatch(name, start, end, material) {
-    var vertices = [], indices = [], row, col, z, r, angle;
-    for (row=0;row<=4;row++) {
-      z=start+(end-start)*row/4;
-      r=Math.sqrt(Math.max(0,1-Math.pow((z-.78)/.78,2)));
-      for(col=0;col<=32;col++) {
-        angle=col*Math.PI*2/32;
-        vertices.push((.39*r+.0015)*Math.cos(angle),
-          .72+(.34*r+.0015)*Math.sin(angle),z);
-        if(row<4 && col<32) {
-          var n=row*33+col;
-          indices.push(n,n+1,n+33,n+1,n+34,n+33);
+  function shellPatch(name, start, end, material, dorsal) {
+    var vertices = [], indices = [], row, col, z, r, angle, u;
+    var rows=dorsal?3:(name==='abdomenShell'?18:6), cols=24, lift=name==='abdomenShell'?0:.002;
+    for (row=0;row<=rows;row++) {
+      z=start+(end-start)*row/rows; u=(z-.64)/.60;
+      r=Math.sqrt(Math.max(0,1-u*u))*(1-.12*u);
+      for(col=0;col<=cols;col++) {
+        angle=dorsal?-.12+col*(Math.PI+.24)/cols:col*Math.PI*2/cols;
+        vertices.push((.39*r+lift)*Math.cos(angle),
+          .72+(.31*r+lift)*Math.sin(angle),z);
+        if(row<rows && col<cols) {
+          var n=row*(cols+1)+col;
+          indices.push(n,n+1,n+cols+1,n+1,n+cols+2,n+cols+1);
         }
       }
     }
@@ -52,37 +52,40 @@ window.createFly = function (THREE) {
     g.setIndex(indices); g.computeVertexNormals();
     mesh(g,material,name,abdomen);
   }
-  shellPatch('rearBand1',.91,.937,bandMat);
-  shellPatch('rearBand2',1.12,1.148,bandMat);
-  shellPatch('rearBand3',1.31,1.338,bandMat);
-  shellPatch('darkTailTip',1.46,1.56,bandMat);
-  var thorax = ellipsoid('thorax', 0,.72,-.27,.49,.48,.58,tan); thorax.rotation.x = -.06;
+  shellPatch('abdomenShell',.04,1.24,tan,false);
+  shellPatch('rearBand1',.35,.47,bandMat,true);
+  shellPatch('rearBand2',.60,.76,rearMat,true);
+  shellPatch('rearBand3',.88,1.07,tailMat,true);
+  shellPatch('darkTailTip',1.12,1.24,tailMat,false);
+  var thorax = ellipsoid('thorax', 0,.76,-.27,.37,.38,.49,amber); thorax.rotation.x = -.14;
   var headPivot = new THREE.Group(); headPivot.name = 'headPivot';
   headPivot.position.set(0,.75,-.72); object.add(headPivot);
-  ellipsoid('head',0,0,-.19,.30,.32,.32,amber,headPivot);
-  var eyeL = ellipsoid('leftCompoundEye',-.255,.04,-.32,.225,.29,.235,eyeMat,headPivot);
-  var eyeR = ellipsoid('rightCompoundEye',.255,.04,-.32,.225,.29,.235,eyeMat,headPivot);
+  ellipsoid('head',0,0,-.19,.24,.265,.255,faceMat,headPivot);
+  ellipsoid('paleFace',0,-.025,-.405,.115,.19,.065,faceMat,headPivot);
+  var eyeL = ellipsoid('leftCompoundEye',-.205,.035,-.245,.175,.265,.225,eyeMat,headPivot);
+  var eyeR = ellipsoid('rightCompoundEye',.205,.035,-.245,.175,.265,.225,eyeMat,headPivot);
   eyeL.rotation.z = -.12; eyeR.rotation.z = .12;
 
-  var proboscis = new THREE.Group(); proboscis.name = 'proboscis';
+  var proboscis = new THREE.Group(); proboscis.name = 'proboscis'; proboscis.visible = false;
   proboscis.position.set(0,-.24,-.35); proboscis.rotation.x = .34; headPivot.add(proboscis);
   var probStem = mesh(cylinder8,mouthMat,'proboscisStem',proboscis);
   probStem.position.y = -.105; probStem.scale.set(.045,.21,.045);
   var labellum = ellipsoid('labellum',0,-.225,0,.095,.055,.075,mouthMat,proboscis);
 
-  // Short antennae end in branched aristae.
-  var antennae = [], side;
+  // Tiny facial antennae carry fine, laterally branching aristae.
+  var antennae = [];
   for (side = -1; side <= 1; side += 2) {
     var ant = new THREE.Group(); ant.name = side < 0 ? 'leftAntenna' : 'rightAntenna';
-    ant.position.set(side*.13,.15,-.50); ant.rotation.z = side*-.16; headPivot.add(ant);
-    var stalk = mesh(cylinder6,dark,'antennaStalk',ant);
-    stalk.position.set(side*.025,.025,-.075); stalk.scale.set(.025,.15,.025); stalk.rotation.x = Math.PI*.5;
-    ellipsoid('antennaClub',side*.025,.025,-.16,.055,.06,.075,dark,ant);
+    ant.position.set(side*.065,.095,-.445); ant.rotation.z = side*-.16; headPivot.add(ant);
+    var stalk = mesh(cylinder6,amber,'antennaStalk',ant);
+    stalk.position.set(side*.008,0,-.018); stalk.scale.set(.012,.036,.012); stalk.rotation.x = Math.PI*.5;
+    ellipsoid('antennaClub',side*.010,-.009,-.044,.023,.032,.025,amber,ant);
     var av = [
-      side*.025,.04,-.20, side*.15,.10,-.38,
-      side*.07,.06,-.26, side*.16,.18,-.33,
-      side*.095,.075,-.30, side*.19,.08,-.34,
-      side*.12,.085,-.34, side*.19,0,-.36
+      side*.018,.012,-.055, side*.135,.105,-.085,
+      side*.044,.033,-.062, side*.045,.077,-.065,
+      side*.068,.052,-.068, side*.105,.039,-.092,
+      side*.090,.070,-.074, side*.095,.115,-.078,
+      side*.111,.087,-.080, side*.145,.078,-.100
     ];
     var ag = new THREE.BufferGeometry();
     ag.setAttribute('position',new THREE.Float32BufferAttribute(av,3));
@@ -93,8 +96,8 @@ window.createFly = function (THREE) {
   // Long clear wings fold flat, inward across the back, beyond the tail.
   var ws = new THREE.Shape(); ws.moveTo(0,0);
   ws.bezierCurveTo(.24,.04,.49,.43,.49,.95);
-  ws.bezierCurveTo(.51,1.65,.30,2.28,.12,2.38);
-  ws.bezierCurveTo(-.12,2.28,-.13,.65,0,0);
+  ws.bezierCurveTo(.51,1.65,.34,2.38,.12,2.38);
+  ws.bezierCurveTo(-.10,2.38,-.13,.65,0,0);
   var wingGeometry = new THREE.ShapeGeometry(ws,18);
   // Quiet lavender-to-mint sheen under the transparent membrane.
   var wingColors=[], wingPositions=wingGeometry.attributes.position;
@@ -116,39 +119,40 @@ window.createFly = function (THREE) {
   var wingPivots = [];
   for (side = -1; side <= 1; side += 2) {
     var wp = new THREE.Group(); wp.name = side < 0 ? 'leftWing' : 'rightWing';
-    wp.position.set(side*.19,1.235+(side>0?.012:0),-.38); wp.rotation.order = 'YXZ';
-    wp.rotation.y = side*-.16; wp.rotation.x = Math.PI*.5; object.add(wp);
+    wp.position.set(side*.14,1.15+(side>0?.012:0),-.30); wp.rotation.order = 'YXZ';
+    wp.scale.set(.86,.72,1); wp.rotation.y = side*-.19; wp.rotation.x = Math.PI*.5; object.add(wp);
     var wing = mesh(wingGeometry,wingMat,'wingMembrane',wp); wing.scale.x = side;
     var veins = new THREE.LineSegments(vg,veinMat); veins.name = 'wingVeins'; veins.scale.x = side; wp.add(veins);
     wingPivots.push(wp);
   }
 
-  // Six articulated legs, each with femur, tibia, tarsus, and a planted foot.
-  var middleLegs = [], legZ = [-.52,-.22,.08], angles = [.96,1.15,.82], li;
+  // Short legs radiate forward, sideways and back; raised knees form a wide stance.
+  var middleLegs = [], legZ = [-.52,-.22,.08], angles = [1.78,1.82,1.78], li;
   var footWorld = new THREE.Vector3(), footBox = new THREE.Box3();
   for (li = 0; li < 3; li++) for (side = -1; side <= 1; side += 2) {
     var hip = new THREE.Group();
     hip.name = (side < 0 ? 'left' : 'right') + ['FrontLeg','MiddleLeg','HindLeg'][li];
-    hip.position.set(side*.30,.63,legZ[li]); hip.rotation.z = side*angles[li];
-    hip.rotation.x = li === 0 ? -.38 : (li === 2 ? .48 : .05); object.add(hip);
-    var femur = mesh(cylinder6,legMat,'femur',hip); femur.position.y = -.24; femur.scale.set(.027,.48,.027);
-    var knee = new THREE.Group(); knee.name = 'knee'; knee.position.y = -.48;
-    knee.rotation.z = side*-.72; hip.add(knee);
-    var tibia = mesh(cylinder6,legMat,'tibia',knee); tibia.position.y = -.25; tibia.scale.set(.020,.50,.020);
+    hip.position.set(side*.25,.46,legZ[li]); hip.rotation.order = 'YZX';
+    hip.rotation.z = side*angles[li];
+    hip.rotation.y = side*(li === 0 ? .70 : (li === 2 ? -.78 : 0)); object.add(hip);
+    var femur = mesh(cylinder6,legMat,'femur',hip); femur.position.y = -.18; femur.scale.set(.022,.36,.022);
+    var knee = new THREE.Group(); knee.name = 'knee'; knee.position.y = -.36;
+    knee.rotation.z = side*-1.55; hip.add(knee);
+    var tibia = mesh(cylinder6,legMat,'tibia',knee); tibia.position.y = -.1875; tibia.scale.set(.016,.375,.016);
     var hairs = [], h;
-    for(h=0;h<6;h++) {
-      var hy=-.07-h*.075;
-      hairs.push(.016,hy,0,.055,hy-.035,.014,
-        -.016,hy,0,-.05,hy-.025,-.012);
+    for(h=0;h<2;h++) {
+      var hy=-.10-h*.15;
+      hairs.push(.016,hy,0,.035,hy-.025,.008,
+        -.016,hy,0,-.032,hy-.02,-.008);
     }
     var hg=new THREE.BufferGeometry();
     hg.setAttribute('position',new THREE.Float32BufferAttribute(hairs,3));
     var legHairs=new THREE.LineSegments(hg,hairMat); legHairs.name='legBristles'; knee.add(legHairs);
-    var ankle = new THREE.Group(); ankle.name = 'ankle'; ankle.position.y = -.50;
-    ankle.rotation.z = side*-.20; knee.add(ankle);
-    var tarsus = mesh(cylinder6,legMat,'tarsus',ankle); tarsus.position.y = -.115; tarsus.scale.set(.020,.23,.020);
-    var foot = mesh(sphere12,black,'foot',ankle);
-    foot.position.set(side*.035,-.255,-.045); foot.scale.set(.045,.020,.10);
+    var ankle = new THREE.Group(); ankle.name = 'ankle'; ankle.position.y = -.375;
+    ankle.rotation.z = side*-.10; knee.add(ankle);
+    var tarsus = mesh(cylinder6,legMat,'tarsus',ankle); tarsus.position.y = -.086; tarsus.scale.set(.012,.172,.012);
+    var foot = mesh(sphere12,legMat,'foot',ankle);
+    foot.position.set(side*.025,-.19,-.030); foot.scale.set(.022,.016,.055);
     object.updateMatrixWorld(true); foot.getWorldPosition(footWorld);
     hip.position.y += .025 - footWorld.y;
     object.updateMatrixWorld(true); footBox.setFromObject(foot);
@@ -156,25 +160,13 @@ window.createFly = function (THREE) {
     if (li === 1) middleLegs.push(hip);
   }
 
-  // A few readable thoracic bristles.
-  var bd = [[-.28,.99,-.36,-.42],[.28,.99,-.36,.42],[-.22,1.04,-.12,-.30],
-            [.22,1.04,-.12,.30],[-.18,.99,.04,-.22],[.18,.99,.04,.22]];
-  for (i = 0; i < bd.length; i++) {
-    var b = mesh(cylinder6,black,'thoraxBristle');
-    b.position.set(bd[i][0],bd[i][1]+.20,bd[i][2]);
-    b.scale.set(.010,.13,.010); b.rotation.z = bd[i][3];
-  }
-
-  // Muted longitudinal thoracic markings follow the curved dorsal surface.
-  var pattern = [], stripe, step;
-  for(stripe=-1;stripe<=1;stripe+=2) for(step=0;step<18;step++) {
-    var z0=-.64+step*.035, z1=z0+.035, px=stripe*.14;
-    pattern.push(px,.72+.48*Math.sqrt(1-px*px/(.49*.49)-Math.pow((z0+.27)/.58,2))+.007,z0,
-      px,.72+.48*Math.sqrt(1-px*px/(.49*.49)-Math.pow((z1+.27)/.58,2))+.007,z1);
-  }
-  var pg=new THREE.BufferGeometry(); pg.setAttribute('position',new THREE.Float32BufferAttribute(pattern,3));
-  var markings=new THREE.LineSegments(pg,new THREE.LineBasicMaterial({color:0x825b36,transparent:true,opacity:.55}));
-  markings.name='thoraxMarkings'; object.add(markings);
+  // Just four fine bristles on the tan dome, without thoracic stripes.
+  var bg = new THREE.BufferGeometry();
+  bg.setAttribute('position',new THREE.Float32BufferAttribute([
+    -.23,1.04,-.40,-.26,1.11,-.42, .23,1.04,-.40,.26,1.11,-.42,
+    -.20,1.06,-.12,-.23,1.13,-.10, .20,1.06,-.12,.23,1.13,-.10
+  ],3));
+  var bristles = new THREE.LineSegments(bg,hairMat); bristles.name='thoraxBristles'; object.add(bristles);
 
   // Store the exact constructed pose. update() starts from it without allocations.
   var poseObjects = [], poseValues = [];
@@ -191,6 +183,7 @@ window.createFly = function (THREE) {
   function pulse(t,a,z) { return Math.sin(clamp01((t-a)/(z-a))*Math.PI); }
   function restorePose() {
     var j, o, v;
+    proboscis.visible = false;
     for (j = 0; j < poseObjects.length; j++) {
       o = poseObjects[j]; v = poseValues[j];
       o.position.set(v[0],v[1],v[2]); o.rotation.set(v[3],v[4],v[5]); o.scale.set(v[6],v[7],v[8]);
@@ -213,7 +206,7 @@ window.createFly = function (THREE) {
       antennae[j].rotation.z += (j===0?-1:1)*Math.sin(seconds*3.7+j)*.025;
     }
     if (currentAction === 'extend') {
-      k=smooth(elapsed/.65); headPivot.rotation.x+=k*.22; proboscis.rotation.x+=k*.55;
+      k=smooth(elapsed/.65); proboscis.visible=k>0; proboscis.scale.y=k; headPivot.rotation.x+=k*.22; proboscis.rotation.x+=k*.55;
       probStem.scale.y*=1+k*2.8; probStem.position.y-=k*.294; labellum.position.y-=k*.588;
     } else if (currentAction === 'refuse') {
       k=1-smooth((elapsed-1.25)/.55); shake=Math.sin(elapsed*TWO_PI*2.5)*.30*k;
@@ -224,6 +217,7 @@ window.createFly = function (THREE) {
       for(j=0;j<2;j++){antennae[j].rotation.z+=(j===0?-1:1)*Math.sin(elapsed*17+j)*.14*k;antennae[j].rotation.x=Math.sin(elapsed*13+j*1.7)*.07*k;}
     } else if (currentAction === 'hesitate') {
       if(elapsed<.55) k=smooth(elapsed/.55)*.48; else if(elapsed<1.10) k=.48; else k=.48*(1-smooth((elapsed-1.10)/.65));
+      proboscis.visible=k>0; proboscis.scale.y=k;
       probStem.scale.y*=1+k; probStem.position.y-=k*.08; labellum.position.y-=k*.17; headPivot.rotation.x+=k*.19;
       shake=pulse(elapsed,1.55,2.35); headPivot.rotation.y=Math.sin((elapsed-1.55)*11)*.13*shake;
     } else if (currentAction === 'escape') {

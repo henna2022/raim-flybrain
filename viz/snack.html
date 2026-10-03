@@ -118,7 +118,7 @@ try{
 }
 // Orbit the camera independently of the pose restored by F.update(). No auto rotation.
 const HOME_YAW=Math.atan2(5.6,7.6);
-let flyYaw=HOME_YAW,flyPitch=.35,flyDrag=null,flyRestAt=0,flyDistance=8.2,flyFocus=.3;
+let flyYaw=HOME_YAW,flyPitch=.35,flyDrag=null,flyRestAt=0,flyDistance=5,flyFocus=.3;
 const flyTarget=ren?new THREE.Vector3(0,.8,.3):null;
 fc.onpointerdown=e=>{if(flyDrag||!e.isPrimary||e.button!==0)return;flyRestAt=0;flyDrag={id:e.pointerId,x:e.clientX,y:e.clientY};fc.setPointerCapture(e.pointerId)};
 fc.onpointermove=e=>{if(!flyDrag||e.pointerId!==flyDrag.id)return;
@@ -128,7 +128,7 @@ fc.onpointermove=e=>{if(!flyDrag||e.pointerId!==flyDrag.id)return;
 fc.onpointerup=fc.onpointercancel=fc.onlostpointercapture=e=>{if(flyDrag&&e.pointerId===flyDrag.id){flyDrag=null;flyRestAt=performance.now()+5000;if(fc.hasPointerCapture(e.pointerId))fc.releasePointerCapture(e.pointerId)}};
 function aimFly(blend){
   // Follow the escape translation so every viewing angle stays inside the pane.
-  const feeding=cur&&cur!=='loomR';flyDistance+=((feeding?5.5:8.2)-flyDistance)*blend;flyFocus+=((feeding?-.85:.3)-flyFocus)*blend;
+  const feeding=cur&&cur!=='loomR';flyDistance+=((feeding?4.6:5)-flyDistance)*blend;flyFocus+=((feeding?-.85:.3)-flyFocus)*blend;
   flyTarget.set(0,.65,flyFocus).add(F.object.position);
   const distance=flyDistance*Math.max(1,1/cam.aspect),horizontal=distance*Math.cos(flyPitch);
   cam.position.set(flyTarget.x+horizontal*Math.sin(flyYaw),flyTarget.y+distance*Math.sin(flyPitch),flyTarget.z+horizontal*Math.cos(flyYaw));
