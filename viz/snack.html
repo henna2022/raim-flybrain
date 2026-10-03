@@ -21,7 +21,7 @@ small{color:#7f8ca3;font-size:12px}
 #btns{display:flex;gap:8px;padding:6px 18px;flex-wrap:wrap}
 button{min-height:48px;min-width:48px;display:flex;align-items:center;gap:8px;box-sizing:border-box;background:#141b2b;border:1px solid #2a3550;color:#dfe6f2;border-radius:10px;padding:6px 14px;font:600 15px 'Paperlogy',sans-serif;white-space:nowrap}
 button svg{width:32px;height:32px;flex:none}
-button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
+button.on{background:#f2c14e;color:#111;border-color:#f2c14e}button.next{border:2px dashed #f2c14e}
 #panes{display:grid;grid-template-columns:1fr 1fr;min-height:0}
 #panes>div{position:relative;min-width:0;min-height:0;overflow:hidden}
 #panes canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
@@ -31,7 +31,7 @@ button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
 #bubble:after{content:"";position:absolute;left:50%;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;transform:translateX(-50%)}
 #info{padding:6px 18px;display:grid;gap:4px;font-size:14px;line-height:20px}
 #say{min-height:20px}
-#legend span{margin-right:12px;font-size:12px;color:#9aa6bb}
+#legend span{margin-right:12px;font-size:13px;color:#9aa6bb}
 #legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 @media (max-width:700px){#panes{grid-template-columns:1fr;grid-template-rows:1fr 1fr}#left{border-right:0;border-bottom:1px solid #1c2538}}
 </style><script src="/i18n.js"></script></head><body><div id="wrap">
@@ -65,29 +65,31 @@ const btns=document.getElementById('btns');
 const sugarIcon='<path d="M5 10 16 5 27 10 16 16Z" fill="#fff"/><path d="M5 10v13l11 5V16Z" fill="#dfe6f2"/><path d="m16 16 11-6v13l-11 5Z" fill="#b9c6d8"/>';
 const bitterIcon='<circle cx="16" cy="18" r="10" fill="#3a7d2c" stroke="#8dc774"/><ellipse cx="13" cy="14" rx="4" ry="3" fill="#8dc774"/>';
 const icons={sugar:sugarIcon,bitter:bitterIcon,water:'<path d="M16 3C13 9 6 16 6 21a10 10 0 0 0 20 0C26 16 19 9 16 3Z" fill="#4fa8ff"/><path d="M11 20q-2 5 4 6" fill="none" stroke="#c9e8ff" stroke-width="2" stroke-linecap="round"/>','sugar+bitter':'<g transform="translate(-3 1) scale(.8)">'+sugarIcon+'</g><g transform="translate(13 10) scale(.6)">'+bitterIcon+'</g>',loomR:'<ellipse cx="16" cy="19" rx="13" ry="8" fill="#000" stroke="#7f8ca3"/><path d="m3 6 8 3M15 3l5 5M25 4l3 6" stroke="#7f8ca3" stroke-width="2" stroke-linecap="round"/>'};
-for(const k in COND){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true">'+icons[k]+'</svg><span>'+COND[k][0]+'</span>';b.onclick=()=>play(k,b);btns.appendChild(b)}
-function play(k,b){busyUntil=performance.now()+1600;[...btns.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');cur=k;t0=performance.now();ei=0;acted=false;glow.fill(0);bubble.style.opacity=0;say.textContent='…';showStim(k);flyReset()}
+for(const k in COND){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true">'+icons[k]+'</svg><span>'+COND[k][0]+'</span>';b.onclick=()=>tapStim(k,b);btns.appendChild(b)}
+// 반응이 재생되는 동안 다른 버튼을 누르면 다음 차례로 걸어 두고, 설명 문장을 읽을 틈(1.6초) 뒤 이어서 재생한다
+let next=null;
+function tapStim(k,b){if(cur&&(performance.now()-t0)*SPEED<1000){if(k!==cur){next=[k,b];[...btns.children].forEach(x=>x.classList.toggle('next',x===b))}return}play(k,b)}
+function play(k,b){busyUntil=performance.now()+1600;next=null;[...btns.children].forEach(x=>x.classList.remove('on','next'));b.classList.add('on');cur=k;t0=performance.now();ei=0;acted=false;glow.fill(0);bubble.style.opacity=0;say.textContent='…';showStim(k);flyReset()}
 
 // ---------- 오른쪽: 뇌 점구름 ----------
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 const N=DATA.pos.length,P=DATA.pos,C=DATA.cls,glow=new Float32Array(N);
 let rx=-0.3,ry=0.3,drag=null,busyUntil=0,brainRestAt=0;
-const bounds=[0,1,2].map(a=>{let lo=Infinity,hi=-Infinity;for(const p of P){lo=Math.min(lo,p[a]/1000);hi=Math.max(hi,p[a]/1000)}return [lo,hi]});
-const brainCenter=bounds.map(b=>(b[0]+b[1])/2);
-const brainRadius=Math.max(...P.map(p=>Math.hypot(...p.map((v,a)=>v/1000-brainCenter[a]))));
 cv.onpointerdown=e=>{if(drag||!e.isPrimary||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY};brainRestAt=0;cv.setPointerCapture(e.pointerId)};
 cv.onpointerup=cv.onpointercancel=cv.onlostpointercapture=e=>{if(!drag||e.pointerId!==drag.id)return;drag=null;brainRestAt=performance.now()+5000;if(cv.hasPointerCapture(e.pointerId))cv.releasePointerCapture(e.pointerId)};
 cv.onpointermove=e=>{if(!drag||e.pointerId!==drag.id)return;ry+=(e.clientX-drag.x)*.008;rx=Math.max(-1.3,Math.min(1.3,rx+(e.clientY-drag.y)*.008));drag.x=e.clientX;drag.y=e.clientY;busyUntil=performance.now()+100};
 function drawBrain(now){
   const bw=Math.round(cv.clientWidth*devicePixelRatio),bh=Math.round(cv.clientHeight*devicePixelRatio);
   if(cv.width!==bw||cv.height!==bh){cv.width=bw;cv.height=bh;busyUntil=now+100}
-  if(cur&&(now-t0)*SPEED<1000)busyUntil=now+1600;
+  if(cur&&((now-t0)*SPEED<1000||next))busyUntil=now+1600;
+  if(next&&(now-t0)*SPEED>=1400){play(...next);return}
   if(now>busyUntil)return;
-  const W=cv.width,H=cv.height,S=Math.min(W,H)*0.44;
+  const W=cv.width,H=cv.height;
   const cx=Math.cos(rx),sx=Math.sin(rx),cy=Math.cos(ry),sy=Math.sin(ry);
-  // A fixed enclosing sphere keeps both scale and center stable while rotating.
-  const scale=Math.min(S,(W-24*devicePixelRatio)/(2*brainRadius),(H-72*devicePixelRatio)/(2*brainRadius));
-  const [bx,by,bz]=brainCenter,ox=bx*cy+bz*sy,oy=by*cx-(-bx*sy+bz*cy)*sx;
+  // 지금 각도에서 보이는 크기에 맞춰 패널을 채운다. 돌리면 크기가 따라 바뀐다
+  let x0=Infinity,x9=-Infinity,y0=Infinity,y9=-Infinity;
+  for(let i=0;i<N;i++){const x=P[i][0]/1000,y=P[i][1]/1000,z=P[i][2]/1000,x1=x*cy+z*sy,y1=y*cx-(-x*sy+z*cy)*sx;if(x1<x0)x0=x1;if(x1>x9)x9=x1;if(y1<y0)y0=y1;if(y1>y9)y9=y1}
+  const scale=Math.min((W-24*devicePixelRatio)/(x9-x0),(H-72*devicePixelRatio)/(y9-y0)),ox=(x0+x9)/2,oy=(y0+y9)/2;
   ctx.fillStyle='#070b14';ctx.fillRect(0,0,W,H);
   if(cur){const tms=(now-t0)*SPEED,ev=DATA.spk[cur];
     while(ei<ev.length&&ev[ei][0]<=tms){const i=ev[ei][1];glow[i]=1;if(C[i]===4&&!acted){acted=true;flyAct(COND[cur][3]);bubble.textContent=COND[cur][1];bubble.style.opacity=1}ei++}

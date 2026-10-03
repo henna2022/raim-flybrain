@@ -33,7 +33,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;m
 .legend span{margin-right:12px}
 #brainCanvas{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}
 #brain{width:100%;height:100%;min-height:0;display:block;touch-action:none}
-.spinHint{padding:0 16px 6px;font-size:12px;color:var(--muted)}
+.spinHint{padding:0 16px 6px;font-size:13px;color:var(--muted)}
 #candWrap{padding:4px 16px 14px}
 #candHead{font-size:13px;color:var(--muted);margin-bottom:6px}
 #cands{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -48,7 +48,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;m
 .bar i{display:block;height:100%;width:0;background:#8795ad;border-radius:5px;transition:width .3s}
 .row.pick .bar i{background:var(--accent)}
 .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
-footer{color:var(--muted);font-size:13px;padding:10px 0 14px;line-height:1.55}
+footer{color:var(--muted);font-size:14px;padding:10px 0 14px;line-height:1.5}
 #intro{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;background:rgba(7,11,20,.92);display:flex;align-items:center;justify-content:center;padding:24px}
 #intro[hidden]{display:none}
 #intro .sheet{background:var(--card,#0f1626);border:1px solid var(--line);border-radius:24px;padding:28px 32px;max-width:900px;width:100%;max-height:100%;overflow:auto;text-align:center}
@@ -79,23 +79,23 @@ header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
 .cell.arrive::after{content:"";position:absolute;inset:5px;border:3px solid var(--accent);border-radius:50%;pointer-events:none;animation:moveRing 700ms ease-out both}
 @keyframes stonePop{from{transform:scale(.35);opacity:0}70%{transform:scale(1.12);opacity:1}to{transform:scale(1);opacity:1}}
 @keyframes moveRing{from{opacity:1;transform:scale(.65)}to{opacity:0;transform:scale(1)}}
-#result{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;border:1px solid var(--accent);border-radius:16px;background:rgba(7,11,20,.95);text-align:center;box-sizing:border-box}
-#result[hidden],#restart[hidden]{display:none}#result h2{font-size:32px;line-height:1.25;margin:0}#result p{font-size:17px;line-height:1.5;margin:0}
-#again{min-height:56px;width:100%;max-width:250px;background:var(--accent);color:#14110a;border:0;border-radius:12px;font-size:22px;font-weight:700}
+#result{position:absolute;inset:auto 0 0;z-index:2;display:grid;grid-template-columns:48px minmax(0,1fr);grid-template-areas:"fly title" "fly line" "btn btn";align-items:center;gap:2px 12px;padding:14px 16px 16px;border:1px solid var(--accent);border-radius:16px;background:rgba(7,11,20,.93);text-align:left;animation:resultUp 420ms cubic-bezier(.16,1,.3,1) both;box-sizing:border-box}
+#result[hidden],#restart[hidden]{display:none}#result h2{grid-area:title;font-size:26px;line-height:1.25;margin:0}#result p{grid-area:line;font-size:17px;line-height:1.4;margin:0}#result .fly{grid-area:fly;width:48px;height:48px}#result .fly svg{display:block;width:100%;height:100%}#result.top{inset:0 0 auto}@keyframes resultUp{from{opacity:0;transform:translateY(16px)}}#result.F .fly{animation:flyHop 520ms cubic-bezier(.3,0,.3,1) 3}#result.H .fly{animation:flyDroop 900ms ease-out both}#result.D .fly{animation:flyWiggle 700ms ease-in-out 2}@keyframes flyHop{50%{transform:translateY(-12px) rotate(-6deg)}}@keyframes flyDroop{to{transform:rotate(160deg) translateY(-4px)}}@keyframes flyWiggle{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}.cell.win .stone{animation:winPulse 600ms ease-in-out 2}@keyframes winPulse{50%{transform:scale(1.14)}}
+#again{grid-area:btn;margin-top:12px;min-height:52px;width:100%;background:var(--accent);color:#14110a;border:0;border-radius:12px;font-size:22px;font-weight:700}
 #restart{position:fixed;inset:0;z-index:60;background:rgba(7,11,20,.8);display:grid;place-items:center}
 #restart .sheet{width:340px;padding:24px;border:1px solid var(--cellLine);border-radius:18px;background:var(--panel);text-align:center}
 #restart h2{margin:0 0 20px;font-size:24px}#restart .actions{display:flex;gap:12px}#restart button{flex:1;min-height:48px;font-size:17px;border:1px solid var(--cellLine);border-radius:10px;background:var(--cell);color:var(--text)}#restart #restartYes{background:var(--accent);color:#14110a}
 #intro .truth{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--text)}
 #intro .go{margin-top:20px}#fired{min-height:18px}.boxhead{line-height:1.4}
-@media(max-height:560px){#boardStage{width:248px;height:248px}#play{gap:8px}footer{padding:6px 0;font-size:12px}#candWrap{padding-bottom:10px}#result{gap:10px;padding:12px}#result p{font-size:16px}#intro .sheet{padding:14px 22px}#intro .sub{font-size:16px;margin-bottom:10px}#intro .steps svg{height:40px}#intro .steps li{padding:10px}#intro .steps p{line-height:1.4}#intro .note,#intro .truth{margin-top:10px}#intro .go{margin-top:12px;padding:10px 36px}}
-@media(prefers-reduced-motion:reduce){.cell.arrive .stone{animation:none}.cell.arrive::after{animation:none;opacity:0}}
+@media(max-height:560px){#boardStage{width:248px;height:248px}#play{gap:8px}footer{padding:6px 0 8px}#candWrap{padding-bottom:10px}#result{padding:10px 12px 12px}#result h2{font-size:22px}#result p{font-size:15px}#again{margin-top:8px;min-height:48px;font-size:19px}#intro .sheet{padding:14px 22px}#intro .sub{font-size:16px;margin-bottom:10px}#intro .steps svg{height:40px}#intro .steps li{padding:10px}#intro .steps p{line-height:1.4}#intro .note,#intro .truth{margin-top:10px}#intro .go{margin-top:12px;padding:10px 36px}}
+@media(prefers-reduced-motion:reduce){#result,#result .fly,.cell.win .stone{animation:none!important}.cell.arrive .stone{animation:none}.cell.arrive::after{animation:none;opacity:0}}
 </style><script src="/i18n.js"></script></head><body><div id="app">
 <header><div class="brand"><img src="data:image/png;base64,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" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 틱택토<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 둘 곳을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="langBtn" aria-label="Language">EN</button><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
 <main>
  <section id="play">
   <div id="status" aria-live="polite"></div>
   <div id="boardStage"><div id="board"></div>
-   <div id="result" hidden role="region" aria-labelledby="resultTitle"><h2 id="resultTitle"></h2><p id="resultLine"></p><button id="again">한 판 더</button></div>
+   <div id="result" hidden role="region" aria-labelledby="resultTitle"><span class="fly" id="resultFly"></span><h2 id="resultTitle"></h2><p id="resultLine"></p><button id="again">한 판 더</button></div>
   </div>
   <div id="who"><button class="pill" data-who="H">내가 먼저</button><button class="pill" data-who="F">초파리 먼저</button></div>
  </section>
@@ -161,8 +161,8 @@ function ended(){const l=winLine(board);if(!l&&board.includes('.'))return false;
   finished=true;winCells=l||[];cells.forEach((c,i)=>c.classList.toggle('win',winCells.includes(i)));
   const winner=l?board[l[0]]:null,title=winner==='H'?'내가 이겼어요!':winner==='F'?'초파리가 이겼어요!':'비겼어요!';
   $('resultTitle').textContent=title;$('resultLine').textContent=winner==='H'?'초파리: 멋진 한 수였어요!':winner==='F'?'초파리: 다음 판도 함께해요!':'초파리: 팽팽한 한 판이었어요!';
-  const g=gen;const reveal=()=>{if(g===gen&&finished)$('result').hidden=false};
-  if(cells.some(c=>c.classList.contains('arrive')))setTimeout(reveal,300);else reveal();
+  const r=$('result');r.className=winner||'D';r.classList.toggle('top',winCells.length>0&&winCells.every(i=>i>=3));
+  const g=gen;setTimeout(()=>{if(g===gen&&finished)r.hidden=false},winCells.length?1200:500);
   status('한 판 더 도전해 볼까요?');return true}
 function newGame(who){gen++;busy=false;finished=false;first=who;board='.........';winCells=[];$('result').hidden=true;
   cells.forEach(c=>c.classList.remove('arrive'));render();rows([]);brainShow(board,-1);
@@ -180,7 +180,7 @@ async function flyTurn(){
   const a=assist(board),mv=a?a[0]:best;
   $('candHead').textContent='초파리가 고른 칸이에요 (1 이김 · 0 비김 · -1 짐)';
   if(a)$('candHead').textContent=a[0]===best?`뇌 점수도 규칙 도우미와 같은 ${NAMES[mv]} 칸을 골랐어요`:`뇌 점수로는 ${NAMES[best]} 칸이 1등이었지만, 규칙 도우미가 ${a[1]==='win'?'바로 이기는':'내가 바로 이길'} ${NAMES[mv]} 칸에 뒀어요`;
-  pick(mv);board=play(board,mv,'F');render();cells.forEach(c=>c.classList.remove('arrive'));cells[mv].classList.add('arrive');
+  pick(mv,a&&a[0]!==best);board=play(board,mv,'F');render();cells.forEach(c=>c.classList.remove('arrive'));cells[mv].classList.add('arrive');
   busy=false;brainShow(board,IDX.get(board));if(!ended())status(READY)}
 document.querySelectorAll('.pill').forEach(p=>p.onclick=()=>{
   if(!finished&&(busy||board!== '.........')){pendingWho=p.dataset.who;restartSource=p;$('restart').hidden=false;$('restartNo').focus()}
@@ -193,7 +193,7 @@ $('again').onclick=()=>newGame(first);
 
 // ---------- 선택 결과 ----------
 function rows(ms){$('cands').innerHTML='';$('thinking').hidden=!ms.length;$('candHead').textContent=ms.length?'초파리가 생각하고 있어요':'초파리가 수를 고르면 여기에 선택한 칸과 점수가 나와요'}
-function pick(i){const k=IDX.get(play(board,i,'F')),s=score(k);$('thinking').hidden=true;$('cands').innerHTML=`<div class="row done pick"><span>${NAMES[i]}</span><span class="num">${have(k)?(Math.abs(s)<0.005?0:s).toFixed(2):'계산 전'}</span></div>`}
+function pick(i,byHelper){const k=IDX.get(play(board,i,'F')),s=score(k);$('thinking').hidden=true;$('cands').innerHTML=`<div class="row done pick"><span>${NAMES[i]}</span><span class="num">${byHelper?'규칙 도우미':have(k)?(Math.abs(s)<0.005?0:s).toFixed(2):'계산 전'}</span></div>`}
 
 // ---------- 뇌 패널 ----------
 const cv=$('brain'),ctx=cv.getContext('2d');
@@ -204,15 +204,16 @@ const HOME_YAW=0,HOME_PITCH=-0.25;
 let yaw=HOME_YAW,pitch=HOME_PITCH,spin=null;
 let bgImg=null,S=1,W0=0,H0=0,d=1,projectionDirty=true,shown={groups:[],fired:[],t0:0};
 const projectedSens=new Float32Array(SENS.length),projectedRO=new Float32Array(RO.length);
-// A bounding sphere keeps every angle inside the panel, including firing halos.
-let radius=1;for(const points of [BG,SENS,RO])for(let n=0;n<points.length;n+=3)radius=Math.max(radius,Math.hypot(points[n],points[n+1],points[n+2]));
 function layout(){const r=cv.getBoundingClientRect();d=Math.min(devicePixelRatio||1,1.5);cv.width=Math.max(1,Math.round(r.width*d));cv.height=Math.max(1,Math.round(r.height*d));W0=cv.width;H0=cv.height;
-  S=Math.max(1,Math.min(W0,H0)/2-32*d)/radius;
   if(!bgImg)bgImg=document.createElement('canvas');bgImg.width=W0;bgImg.height=H0;projectionDirty=true;kick()}
 function project(){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),b=bgImg.getContext('2d');b.clearRect(0,0,W0,H0);
+  // 지금 각도에서 보이는 크기에 맞춰 패널을 채운다 (번짐 자리 32px 남김). 돌리면 크기가 따라 바뀐다
+  let x0=Infinity,x9=-Infinity,y0=Infinity,y9=-Infinity;
+  for(const src of [BG,SENS,RO])for(let n=0;n<src.length;n+=3){const X=src[n],Y=src[n+1],Z=src[n+2],x1=X*cy+Z*sy,y1=Y*cp-(Z*cy-X*sy)*sp;if(x1<x0)x0=x1;if(x1>x9)x9=x1;if(y1<y0)y0=y1;if(y1>y9)y9=y1}
+  S=Math.max(1e-4,Math.min((W0-64*d)/(x9-x0),(H0-64*d)/(y9-y0)));const ox=(x0+x9)/2,oy=(y0+y9)/2;
   function points(src,dst,color,size,alpha){b.fillStyle=color;
     for(let n=0;n<src.length;n+=3){const X=src[n],Y=src[n+1],Z=src[n+2],x1=X*cy+Z*sy,z1=Z*cy-X*sy,y1=Y*cp-z1*sp,z2=Y*sp+z1*cp;
-      const x=W0/2+x1*S,y=H0/2+y1*S,near=.55+.45*Math.max(0,Math.min(1,(z2+1000)/2000));
+      const x=W0/2+(x1-ox)*S,y=H0/2+(y1-oy)*S,near=.55+.45*Math.max(0,Math.min(1,(z2+1000)/2000));
       if(dst){dst[n]=x;dst[n+1]=y;dst[n+2]=near}
       if(size){const r=size*d*near;b.globalAlpha=alpha*near;b.fillRect(x-r/2,y-r/2,r,r)}}}
   points(BG,null,'#8795ad',1.3,.2);points(RO,projectedRO,'#ef4444',2,.22);points(SENS,projectedSens,'#22c55e',0,0);projectionDirty=false}
@@ -245,8 +246,8 @@ let idle=0;function resetIdle(){clearTimeout(idle);idle=setTimeout(()=>location.
 addEventListener('pointerdown',resetIdle,true);addEventListener('pointermove',e=>{if(e.buttons)resetIdle()},true);resetIdle();addEventListener('contextmenu',e=>e.preventDefault());
 
 // ---------- 안내 문구 ----------
-const nSens=SCELL.length.toLocaleString(),nRO=NRO.toLocaleString();
-$('foot').innerHTML=`진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요. 판 모양을 느끼는 신경 ${nSens}개에 넣고, 몸에 명령하는 신경 ${nRO}개의 반응을 읽어요.<br>점수는 뇌 밖의 판독기가 매겨요. 판독기는 컴퓨터가 끝까지 따져 본 정답(이김·비김·짐)을 보고 배웠어요. 초파리 뇌가 틱택토를 배운 건 아니에요.<br>뇌 밖에 규칙 도우미도 두 가지 있어요. 바로 이길 수 있으면 이기고, 내가 바로 이길 칸은 막아요. 뇌 반응은 판마다 미리 계산해 두었어요.`;
+$('foot').innerHTML='<span>진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요.</span> <span>초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.</span>';
+$('resultFly').innerHTML=FLY;
 if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
 // ---------- 시작 전 설명 ----------
 const mini=(inner)=>`<svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="2.4" stroke-linecap="round"><path d="M24 8V52M40 8V52M8 24H56M8 40H56"/></g>${inner}</svg>`;

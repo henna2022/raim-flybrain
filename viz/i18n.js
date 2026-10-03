@@ -1,6 +1,6 @@
 // 한/영 전환. 한국어가 원문이고, 화면에 찍힌 글자를 그 자리에서 영어로 바꾼다.
 // 게임 코드는 한국어만 쓰면 되고, 이 파일이 글자 노드와 aria-label 을 지켜보다가 바꿔 준다.
-// 선택은 localStorage 'lang' 에 남아 다른 화면으로 넘어가도 유지된다. 기본은 한국어.
+// 선택은 localStorage 'lang' 에 남아 다른 화면으로 넘어가도 유지되고, 80초 손을 안 대면 한국어로 돌아간다. 기본은 한국어.
 (function () {
   const EN = {
     // 공통
@@ -42,12 +42,14 @@
     // 틱택토
     '초파리 뇌 신호로 둘 곳을 골라요': 'It picks its square from fly brain signals',
     '내가 먼저': 'I go first', '초파리 먼저': 'Fly goes first',
-    '판 모양을 넣는 신경(느끼는 신경)': 'Neurons that receive the board (sensing neurons)',
-    '반응을 읽는 신경(몸에 명령하는 신경)': 'Neurons we read the answer from (command neurons)',
+    '판 모양을 넣는 신경(느끼는 신경)': 'Sensing neurons',
+    '반응을 읽는 신경(몸에 명령하는 신경)': 'Command neurons',
+    '진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요.': 'A computer model built from the real fly brain map (FlyWire connectome v630, Shiu et al. 2024).',
     '초파리와 한 판 겨뤄 봐요. 규칙은 세 가지예요.': 'Play a round against the fly. There are three rules.',
     '초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요. 초파리 뇌라서 더 잘하는 건 아니에요.':
       'For every empty square the fly feeds “what if I play here” into its brain and picks the highest score. Being a fly brain does not make it better.',
     '초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.': 'The fly brain did not learn tic-tac-toe; a reader outside the brain did, and there are two rule helpers.',
+    '규칙 도우미': 'Rule helper',
     '새로 시작할까요?': 'Start over?', '계속할래요': 'Keep playing', '새로 시작해요': 'Start over',
     '실제 뇌 반응, 손가락으로 끌어 입체 회전': 'Real brain reaction, drag to rotate in 3D',
     '왼쪽 위': 'top left', '위': 'top', '오른쪽 위': 'top right', '왼쪽': 'left', '가운데': 'center', '오른쪽': 'right', '왼쪽 아래': 'bottom left', '아래': 'bottom', '오른쪽 아래': 'bottom right',
@@ -66,7 +68,7 @@
     '초파리와 체스 | 초파리 뇌 탐험': 'Chess with the fly | Fly Brain Explorer',
     '새 판': 'New game', '내 차례예요! 흰 말을 골라요': 'Your turn! Pick a white piece', '초파리': 'Fly', '나': 'Me',
     '초파리 연결 모양을 본뜬 신경망': 'A neural network shaped like the fly’s wiring',
-    '판을 입력하는 신경': 'Neurons that receive the board', '점수를 읽는 신경': 'Neurons we read the score from',
+    '판을 입력하는 신경': 'Board-input neurons', '점수를 읽는 신경': 'Score neurons',
     '밝기 = 실제 계산 반응 · 수마다 최대값 기준': 'Brightness = real computed activity · scaled per move',
     '흰 말을 누르고, 노란 칸을 눌러요': 'Tap a white piece, then a yellow square',
     '점수는 신경망이 계산한 초파리의 승리 가능성이에요.': 'The score is the network’s estimate of the fly’s chance to win.',
@@ -108,14 +110,8 @@
     [/^뇌 속 시간 ([\d.]+)초 · 반짝인 신경세포 ([\d,]+)개$/, (m) => `Brain time ${m[1]} s · ${m[2]} neurons flashed`],
     [/^뇌 점수도 규칙 도우미와 같은 (.+) 칸을 골랐어요$/, (m) => `The brain score also picked the ${cell(m[1])} square, same as the rule helper`],
     [/^뇌 점수로는 (.+) 칸이 1등이었지만, 규칙 도우미가 (바로 이기는|내가 바로 이길) (.+) 칸에 뒀어요$/,
-      (m) => `The brain score ranked ${cell(m[1])} first, but the rule helper played ${cell(m[3])} to ${m[2] === '바로 이기는' ? 'win right away' : 'block my win'}`],
+      (m) => `The brain score ranked the ${cell(m[1])} square first, but the rule helper played ${cell(m[3])} to ${m[2] === '바로 이기는' ? 'win right away' : 'block my win'}`],
     [/^(.+) 칸(, 내 돌|, 초파리 돌)?$/, (m) => `${cell(m[1])} square${m[2] === ', 내 돌' ? ', my stone' : m[2] === ', 초파리 돌' ? ', fly’s stone' : ''}`],
-    [/^진짜 초파리 뇌 지도\(FlyWire 연결체 630 버전, Shiu 외 2024\)로 만든 컴퓨터 모델이에요\. 판 모양을 느끼는 신경 ([\d,]+)개에 넣고, 몸에 명령하는 신경 ([\d,]+)개의 반응을 읽어요\.$/,
-      (m) => `A computer model built from the real fly brain map (FlyWire connectome v630, Shiu et al. 2024). The board goes into ${m[1]} sensing neurons and we read the reaction of ${m[2]} command neurons.`],
-    ['점수는 뇌 밖의 판독기가 매겨요. 판독기는 컴퓨터가 끝까지 따져 본 정답(이김·비김·짐)을 보고 배웠어요. 초파리 뇌가 틱택토를 배운 건 아니에요.',
-      'The score comes from a reader outside the brain. The reader learned from answers a computer worked out to the end (win, draw, loss). The fly brain did not learn tic-tac-toe.'],
-    ['뇌 밖에 규칙 도우미도 두 가지 있어요. 바로 이길 수 있으면 이기고, 내가 바로 이길 칸은 막아요. 뇌 반응은 판마다 미리 계산해 두었어요.',
-      'There are also two rule helpers outside the brain: win right away if possible, and block a square where I could win right away. The brain reactions were computed in advance for every board.'],
     [/^개발용 데이터 · 뇌 계산 ([\d,]+)\/([\d,]+)판$/, (m) => `Dev data · brain computed for ${m[1]}/${m[2]} boards`],
     [/^선택 · (.+)$/, (m) => `Chose ${m[1]}`],
     [/^(체크메이트|스테일메이트|무승부) · 한 판 더 해 볼까요\?$/, (m) => `${EN[m[1]]} · play again?`],
@@ -161,7 +157,7 @@
   // 영어는 한국어보다 길어서 헤더가 꽉 찬다. 영어일 때만 헤더 글자를 조금 줄이고 버튼 안에서 줄이 안 접히게 한다
   const CSS = 'html[lang=en] header h1{font-size:20px}html[lang=en] header .sub,html[lang=en] header .tagline,html[lang=en] header>span:not([style]){font-size:13px}'
     + 'html[lang=en] header button,html[lang=en] header a,html[lang=en] header .button,html[lang=en] header .ghost-btn,html[lang=en] header .home,html[lang=en] .lang{white-space:nowrap;font-size:15px;padding-left:12px;padding-right:12px}'
-    + 'html[lang=en] .card h2{font-size:22px}html[lang=en] .card p{font-size:15px}html[lang=en] footer,html[lang=en] .foot,html[lang=en] #foot,html[lang=en] .src{font-size:12px}';
+    + 'html[lang=en] .card h2{font-size:22px}html[lang=en] .card p{font-size:15px}';
   function apply() {
     applying = true;
     if (!document.getElementById('i18nStyle')) { const st = document.createElement('style'); st.id = 'i18nStyle'; st.textContent = CSS; document.head.appendChild(st); }
@@ -185,6 +181,11 @@
     apply();
     const b = document.getElementById('langBtn');
     if (b) b.onclick = () => { lang = lang === 'en' ? 'ko' : 'en'; localStorage.setItem('lang', lang); apply(); };
+    // 전시 태블릿이라 다음 관람객은 한국어로 시작한다. 80초 손을 안 대면 되돌린다 (화면들의 90초 첫 화면 복귀보다 먼저)
+    let idle = 0;
+    const touch = () => { clearTimeout(idle); idle = setTimeout(() => { localStorage.removeItem('lang'); if (lang !== 'ko') { lang = 'ko'; apply(); } }, 80000); };
+    for (const ev of ['pointerdown', 'keydown']) addEventListener(ev, touch, { capture: true, passive: true });
+    touch();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
