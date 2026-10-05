@@ -132,9 +132,30 @@ export function moves(s) {
   });
 }
 
-/** 'checkmate' | 'stalemate' | 'draw50' | null */
-export function result(s) {
+/** 남은 말로는 어느 쪽도 체크메이트를 할 수 없는가 (킹끼리, 킹+나이트 하나, 킹+비숍들이 모두 같은 색 칸) */
+export function insufficient(b) {
+  const rest = [];
+  for (let i = 0; i < 64; i++) if (b[i] !== '.' && b[i].toUpperCase() !== 'K') rest.push(i);
+  if (rest.length === 0) return true;
+  if (rest.some(i => 'PpRrQq'.includes(b[i]))) return false;
+  if (rest.length === 1) return true;                                  // 나이트 하나 또는 비숍 하나
+  if (rest.some(i => 'Nn'.includes(b[i]))) return false;
+  const color = i => (file(i) + rank(i)) & 1;                          // 비숍만 남았으면 모두 같은 색 칸일 때만
+  return rest.every(i => color(i) === color(rest[0]));
+}
+
+/** 같은 판인지 가르는 열쇠. 앙파상은 실제로 잡을 수 있을 때만 다른 판으로 친다 */
+export function positionKey(s) {
+  const ep = s.ep >= 0 && moves(s).some(m => m[1] === s.ep && s.b[m[0]].toUpperCase() === 'P') ? s.ep : -1;
+  return s.b + (s.w ? 'w' : 'b') + s.cas + ep;
+}
+
+/** 'checkmate' | 'stalemate' | 'insufficient' | 'repetition' | 'draw50' | null
+ *  seen 은 게임 동안 나온 판의 횟수(positionKey -> 횟수). 주면 같은 판 세 번을 무승부로 본다 */
+export function result(s, seen) {
   if (moves(s).length === 0) return inCheck(s) ? 'checkmate' : 'stalemate';
+  if (insufficient(s.b)) return 'insufficient';
+  if (seen && (seen.get(positionKey(s)) || 0) >= 3) return 'repetition';
   return s.half >= 100 ? 'draw50' : null;
 }
 
