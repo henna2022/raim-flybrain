@@ -19,8 +19,8 @@
     '초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!': 'The fly picks its square from brain signals. Who gets three in a row first? Play a round!',
     '초파리와 체스': 'Chess with the fly',
     '초파리와 한 판 둬 봐요. 초파리가 수를 고르는 동안 뇌가 어떻게 반응하는지 볼 수 있어요.': 'Play a game against the fly and watch its brain react while it chooses a move.',
-    '진짜 초파리가 아니라, 초파리 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요. 간식 주기와 틱택토의 뇌 반응은 미리 계산해 두었고, 체스는 태블릿이 그 자리에서 계산해요.':
-      'This is not a real fly but a computer model built from the FlyWire fly brain map. The snack and tic-tac-toe brain reactions were computed in advance; chess is computed right here on the tablet.',
+    '진짜 초파리가 아니라, 암컷 초파리 한 마리의 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요. 간식 주기와 틱택토의 뇌 반응은 미리 계산해 두었고, 체스는 태블릿이 그 자리에서 계산해요.':
+      'This is not a real fly but a computer model built from the FlyWire brain map of one female fly. The snack and tic-tac-toe brain reactions were computed in advance; chess is computed right here on the tablet.',
     // 간식
     '버튼을 눌러 초파리에게 간식을 줘 봐요': 'Tap a button to give the fly a snack',
     '초파리 · 손가락으로 돌려 볼 수 있어요': 'The fly · drag with your finger to turn it',
@@ -131,13 +131,14 @@
   ];
   const H1 = { '초파리와 틱택토': 'Fly Tic-tac-toe', '초파리와 체스': 'Fly Chess' };   // 헤더 제목만 짧게 (530 높이에서 안 접히게)
   function translate(ko, tag) {
-    const t = ko.trim();
-    if (tag === 'H1' && H1[t]) return ko.replace(t, H1[t]);
+    const t = ko.replace(/\s+/g, ' ').trim(); // 화면용 줄바꿈(white-space:pre-line)이 들어와도 사전 키와 맞게
+    const wrap = en => ko.match(/^\s*/)[0] + en + ko.match(/\s*$/)[0]; // 앞뒤 공백만 남기고 통째로 바꾼다(줄바꿈 든 원문도 됨)
+    if (tag === 'H1' && H1[t]) return wrap(H1[t]);
     if (!/[가-힣]/.test(t)) return ko;
     let en = EN[t];
     if (en === undefined) for (const [re, fn] of RULES) { if (typeof re === 'string') { if (t === re) { en = fn; break; } continue; } const m = t.match(re); if (m) { en = fn(m); break; } }
     if (en === undefined) { missing.add(t); return ko; }
-    return ko.replace(t, en);
+    return wrap(en);
   }
   const missing = new Set();                 // 영어가 없는 한국어. 콘솔 i18nMissing() 로 볼 수 있다
   window.i18nMissing = () => [...missing];

@@ -19,9 +19,9 @@ h1{margin:0;font-size:40px;font-weight:700;line-height:1.3}
 .card .pic{width:100%;flex:1;min-height:0;border-radius:14px;background:#0a101d;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .card .pic svg{height:92%;width:96%;min-height:0}
 .card h2{margin:14px 0 6px;font-size:21px;font-weight:700;line-height:1.3;flex-shrink:0}
-.card p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;flex-shrink:0}
+.card p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;flex-shrink:0;white-space:pre-line}
 .go{margin-top:12px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;flex-shrink:0;line-height:24px;justify-self:start;background:var(--accent);color:#14110a;border-radius:12px;padding:12px 22px;font-size:18px;font-weight:600}
-footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5}
+footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5;white-space:pre-line}
 .card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 #rotate{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:12px}
 #rotate h2{margin:0;font-size:26px;line-height:1.45}
@@ -38,24 +38,31 @@ header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--c
   <a class="card" href="/snack.html">
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="78" y="46" width="18" height="18" rx="3" fill="#f5f7fb"/><g transform="translate(18 6) scale(.68)"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리에게 간식 주기</h2>
-   <p>달콤한 설탕, 쓴 먹이, 물을 줘 봐요. 초파리 뇌 속 신경이 어떻게 반짝이는지 볼 수 있어요.</p>
+   <p>달콤한 설탕, 쓴 먹이, 물을 줘 봐요.
+초파리 뇌 속 신경이 어떻게
+반짝이는지 볼 수 있어요.</p>
    <span class="go">시작하기</span>
   </a>
   <a class="card" href="/ttt.html">
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="3" stroke-linecap="round"><path d="M50 10V70M70 10V70M30 30H90M30 50H90"/></g><circle cx="40" cy="20" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><circle cx="80" cy="60" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><g transform="translate(48 28) scale(.24)"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 틱택토</h2>
-   <p>초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!</p>
+   <p>초파리가 뇌 신호로 둘 곳을 골라요.
+누가 먼저 세 줄을 만들까요?
+한 판 겨뤄 봐요!</p>
    <span class="go">시작하기</span>
   </a>
   <a class="card" href="/chess.html">
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="8" y="58" width="104" height="14" rx="4" fill="#243049"/><path d="M25 58v14M43 58v14M61 58v14M79 58v14M97 58v14" stroke="#56647d" stroke-width="2"/><g fill="#e6ecf5"><circle cx="24" cy="27" r="9"/><path d="M19 36h10l4 16H15zM13 53h22v6H13z"/></g><path d="m40 25 7 8 7-16 7 16 7-8-5 26H45zM43 53h22v6H43z" fill="#f2c14e"/><g transform="translate(60 9) scale(.56)"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 체스</h2>
-   <p>초파리와 한 판 둬 봐요. 초파리가 수를 고르는 동안 뇌가 어떻게 반응하는지 볼 수 있어요.</p>
+   <p>초파리와 한 판 둬 봐요.
+초파리가 수를 고르는 동안
+뇌가 어떻게 반응하는지 볼 수 있어요.</p>
    <span class="go">시작하기</span>
   </a>
  </div>
 </main>
-<footer>진짜 초파리가 아니라, 초파리 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요. 간식 주기와 틱택토의 뇌 반응은 미리 계산해 두었고, 체스는 태블릿이 그 자리에서 계산해요.</footer>
+<footer>진짜 초파리가 아니라, 암컷 초파리 한 마리의 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요.
+간식 주기와 틱택토의 뇌 반응은 미리 계산해 두었고, 체스는 태블릿이 그 자리에서 계산해요.</footer>
 </div>
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
 <script>addEventListener('contextmenu',e=>e.preventDefault());if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script>
