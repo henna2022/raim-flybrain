@@ -66,4 +66,7 @@ header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--c
 </div>
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
 <script>addEventListener('contextmenu',e=>e.preventDefault());if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script>
+<script src="/collect.js"></script>
+<script>// 이용 집계: 카드를 고를 때 1번. 시험 기기(localhost)에서는 켜지 않는다
+if(!['localhost','127.0.0.1'].includes(location.hostname)){RaimCollect.init('flybrain');document.querySelectorAll('.cards a').forEach(a=>a.addEventListener('click',()=>RaimCollect.record()))}</script>
 </body></html>
