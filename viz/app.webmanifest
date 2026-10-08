@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "초파리 뇌 연구소",
-  "short_name": "초파리 뇌 연구소",
+  "name": "초파리 뇌 탐험 연구소",
+  "short_name": "초파리 뇌 탐험 연구소",
   "start_url": "/",
   "scope": "/",
   "display": "fullscreen",

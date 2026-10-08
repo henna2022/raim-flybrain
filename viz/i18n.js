@@ -4,7 +4,7 @@
 (function () {
   const EN = {
     // 공통
-    '초파리 뇌 연구소': 'Fly Brain Lab',
+    '초파리 뇌 탐험 연구소': 'Fly Brain Lab',
     '서울로봇인공지능과학관': 'Seoul Robot & AI Museum',
     '처음으로': 'Home', '설명': 'Help', '시작하기': 'Start', '계속하기': 'Continue', '한 판 더': 'Play again',
     '태블릿이 세로로 되어 있다면': 'If the tablet is upright,', '가로로 세팅해 주세요!': 'please turn it sideways!',
@@ -65,7 +65,7 @@
     '빈칸을 콕 눌러 내 동그라미를 놓아요': 'Tap an empty square to place your circle',
     '가로·세로·대각선으로 셋을 먼저 만들면 이겨요': 'Three in a row, column, or diagonal wins',
     // 체스
-    '초파리와 체스 | 초파리 뇌 연구소': 'Chess with the fly | Fly Brain Lab',
+    '초파리와 체스 | 초파리 뇌 탐험 연구소': 'Chess with the fly | Fly Brain Lab',
     '새 판': 'New game', '내 차례예요! 흰 말을 골라요': 'Your turn! Pick a white piece', '초파리': 'Fly', '나': 'Me',
     '초파리 연결 모양을 본뜬 신경망': 'A neural network shaped like the fly’s wiring',
     '판을 입력하는 신경': 'Board-input neurons', '점수를 읽는 신경': 'Score neurons',
