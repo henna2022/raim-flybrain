@@ -3,6 +3,16 @@
 <link rel="manifest" href="/app.webmanifest"><meta name="theme-color" content="#070b14"><link rel="apple-touch-icon" href="/icons/fly-180.png"><link rel="icon" href="/icons/fly-192.png">
 <title>초파리 뇌 연구소</title>
 <style>
+/* ko-linebreak:2026-10-08 한국어 줄바꿈 기본값. lang="ko" 인 글에만 적용 */
+[lang|="ko"] { word-break: keep-all; line-break: strict; overflow-wrap: break-word; }
+:where(h1, h2, h3, h4, caption, figcaption, th):where(:lang(ko)) { text-wrap-style: balance; }
+:where(p, li, dd, td, blockquote, .note):where(:lang(ko)) { text-wrap-style: pretty; }
+:where(code, .url):where(:lang(ko)) { overflow-wrap: anywhere; }
+:where(button, .btn, .badge, .chip):where(:lang(ko)) { white-space: nowrap; }
+:where(.user-text):where(:lang(ko)) { white-space: pre-line; }
+/* /ko-linebreak */
+</style>
+<style>
 @font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}@font-face{font-family:'Paperlogy';src:url('/fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 :root{--bg:#070b14;--card:#0f1626;--line:#222c42;--text:#e6ecf5;--muted:#8a96ab;--accent:#f2c14e}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:'Paperlogy',-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;word-break:keep-all;overflow:hidden;touch-action:manipulation;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
