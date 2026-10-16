@@ -37,6 +37,8 @@ footer{color:var(--muted);font-size:14px;padding:12px 0 18px;line-height:1.5;whi
 #rotate h2{margin:0;font-size:26px;line-height:1.45}
 #rotate p{margin:0;color:var(--muted);font-size:17px}
 @media (max-height:560px){main{gap:12px;padding-top:8px}h1{font-size:32px}.lead{margin-top:4px;font-size:17px}.card h2{font-size:21px;margin-top:10px}footer{padding:10px 0 12px}}
+/* 휴대폰 가로처럼 낮은 화면: 카드 설명을 접고(제목·그림·시작하기만) 위아래 여백을 줄여 꼬리말과 겹치지 않게 */
+@media (max-height:450px){header{padding:8px 0 2px}main{gap:8px;padding-top:4px}h1{line-height:1.2}.card{padding:12px 14px}.card h2{margin-top:8px}.card p{display:none}.go{margin-top:10px}footer{padding:6px 0 8px;line-height:1.4}}
 @media (orientation:portrait){#rotate{display:flex}}
 header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;min-height:48px;padding:0 16px;font:inherit;font-size:16px;font-weight:600}
 </style><script src="/i18n.js"></script></head><body>
@@ -56,7 +58,7 @@ header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--c
   <a class="card" href="/ttt.html">
    <div class="pic"><svg viewBox="0 0 120 80" aria-hidden="true"><g stroke="#3b4a6b" stroke-width="3" stroke-linecap="round"><path d="M50 10V70M70 10V70M30 30H90M30 50H90"/></g><circle cx="40" cy="20" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><circle cx="80" cy="60" r="6" fill="none" stroke="#e6ecf5" stroke-width="3"/><g transform="translate(48 28) scale(.24)"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></g></svg></div>
    <h2>초파리와 틱택토</h2>
-   <p>초파리가 뇌 신호로 둘 곳을 골라요.
+   <p>초파리가 뇌 신호와 규칙 도우미로 둘 곳을 골라요.
 누가 먼저 세 줄을 만들까요?
 한 판 겨뤄 봐요!</p>
    <span class="go">시작하기</span>
@@ -77,6 +79,6 @@ header{display:flex;align-items:center}.lang{margin-left:auto;background:var(--c
 <div id="rotate"><h2>태블릿이 세로로 되어 있다면<br>가로로 세팅해 주세요!</h2><p>이 체험은 가로 화면에서 진행됩니다.</p></div>
 <script>addEventListener('contextmenu',e=>e.preventDefault());if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script>
 <script src="/collect.js"></script>
-<script>// 이용 집계: 카드를 고를 때 1번. 시험 기기(localhost)에서는 켜지 않는다
-if(!['localhost','127.0.0.1'].includes(location.hostname)){RaimCollect.init('flybrain');document.querySelectorAll('.cards a').forEach(a=>a.addEventListener('click',()=>RaimCollect.record()))}</script>
+<script>// 이용 집계: 카드를 고를 때 1번. 실제 주소에서만 켠다(시험 기기·같은 와이파이 IP·Vercel 미리보기 주소는 세지 않는다)
+if(location.hostname==='raim-flybrain.vercel.app'){RaimCollect.init('flybrain');document.querySelectorAll('.cards a').forEach(a=>a.addEventListener('click',()=>RaimCollect.record()))}</script>
 </body></html>

@@ -57,16 +57,18 @@ export function evaluate(net, bits) {
   return { p: 1 / (1 + Math.exp(-z)), r };
 }
 
-// 자기 차례 쪽 눈으로 본 780비트. board 는 64글자(맨 앞 8글자가 8번째 줄), 대문자가 자기 편.
-// 자기 편이 소문자일 때는 위아래를 뒤집고 대소문자를 바꿔 늘 대문자가 둘 차례가 되게 한다(학습 때와 같은 규칙).
+// 자기 차례 쪽 눈으로 본 780비트(dl/chess_data.py encode 와 같은 규칙). board 는 64글자(맨 앞 8글자가 8번째 줄), 대문자가 자기 편.
+// 자기 편이 소문자일 때는 위아래를 뒤집고 대소문자를 바꿔 늘 대문자가 둘 차례가 되게 한다(학습 때와 같은 규칙). 캐슬링 글자도 바꾼다.
+// cas 는 'KQkq' 꼴(없으면 '-'), ep 는 앙파상 칸 번호(-1 없음). 앙파상은 열만 쓰므로 뒤집어도 그대로다.
 const PIECES = 'PNBRQKpnbrqk';
-export function encodeBoard(board, mine = 'w') {
+const swap = c => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase();
+export function encodeBoard(board, mine = 'w', cas = '-', ep = -1) {
   let b = board;
   if (mine === 'b') {
     let f = '';
     for (let row = 7; row >= 0; row--) {
       const s = b.slice(row * 8, row * 8 + 8);
-      for (const c of s) f += c === '.' ? '.' : (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase());
+      for (const c of s) f += swap(c);
     }
     b = f;
   }
@@ -75,5 +77,7 @@ export function encodeBoard(board, mine = 'w') {
     const c = b[i];
     if (c !== '.') on.push(PIECES.indexOf(c) * 64 + i);
   }
-  return on;                       // 캐슬링·앙파상 비트(768~779)는 이 화면에서 쓰지 않는다
+  for (const c of cas) { const k = 'KQkq'.indexOf(mine === 'b' ? swap(c) : c); if (k >= 0) on.push(768 + k); }   // 768~771
+  if (ep >= 0) on.push(772 + (ep & 7));                                                                         // 772~779 앙파상 열
+  return on;
 }

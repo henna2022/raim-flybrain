@@ -82,7 +82,8 @@ footer{color:var(--muted);font-size:14px;padding:10px 0 14px;line-height:1.5}
 
 button,a{box-sizing:border-box;font-family:inherit}button{cursor:pointer}
 .home,.ghost-btn,.pill{min-height:48px;display:inline-flex;align-items:center;justify-content:center}
-header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
+header{padding:8px 0;flex-shrink:0;position:relative;z-index:51} /* 설명 창(50) 위에 두어 시작 전에도 EN 버튼을 누를 수 있게 */
+.brand{gap:12px}.brand>.sub{font-size:12px}
 #play{gap:10px}#boardStage{position:relative;width:min(100%,52vh);height:min(100vw,52vh);flex:none}
 #board{width:100%;height:100%}.cell{position:relative;min-width:48px;min-height:48px}
 .cell.arrive .stone{animation:stonePop 250ms ease-out both}
@@ -90,7 +91,7 @@ header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
 @keyframes stonePop{from{transform:scale(.35);opacity:0}70%{transform:scale(1.12);opacity:1}to{transform:scale(1);opacity:1}}
 @keyframes moveRing{from{opacity:1;transform:scale(.65)}to{opacity:0;transform:scale(1)}}
 #result{position:absolute;inset:auto 0 0;z-index:2;display:grid;grid-template-columns:48px minmax(0,1fr);grid-template-areas:"fly title" "fly line" "btn btn";align-items:center;gap:2px 12px;padding:14px 16px 16px;border:1px solid var(--accent);border-radius:16px;background:rgba(7,11,20,.93);text-align:left;animation:resultUp 420ms cubic-bezier(.16,1,.3,1) both;box-sizing:border-box}
-#result[hidden],#restart[hidden]{display:none}#result h2{grid-area:title;font-size:26px;line-height:1.25;margin:0}#result p{grid-area:line;font-size:17px;line-height:1.4;margin:0}#result .fly{grid-area:fly;width:48px;height:48px}#result .fly svg{display:block;width:100%;height:100%}#result.top{inset:0 0 auto}@keyframes resultUp{from{opacity:0;transform:translateY(16px)}}#result.F .fly{animation:flyHop 520ms cubic-bezier(.3,0,.3,1) 3}#result.H .fly{animation:flyDroop 900ms ease-out both}#result.D .fly{animation:flyWiggle 700ms ease-in-out 2}@keyframes flyHop{50%{transform:translateY(-12px) rotate(-6deg)}}@keyframes flyDroop{to{transform:rotate(160deg) translateY(-4px)}}@keyframes flyWiggle{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}.cell.win .stone{animation:winPulse 600ms ease-in-out 2}@keyframes winPulse{50%{transform:scale(1.14)}}
+#result[hidden],#restart[hidden]{display:none}#result h2{grid-area:title;font-size:26px;line-height:1.25;margin:0}#result p{grid-area:line;font-size:17px;line-height:1.4;margin:0}#result .fly{grid-area:fly;width:48px;height:48px}#result .fly svg{display:block;width:100%;height:100%}#result.top{inset:0 0 auto}#result.below{inset:calc(100% + 6px) 0 auto;padding:6px 10px 8px;grid-template-columns:36px minmax(0,1fr);column-gap:8px}#result.below .fly{width:36px;height:36px}#result.below h2{font-size:19px;line-height:1.2}#result.below p{font-size:14px;line-height:1.3}#result.below #again{margin-top:6px;min-height:48px;font-size:18px}@keyframes resultUp{from{opacity:0;transform:translateY(16px)}}#result.F .fly{animation:flyHop 520ms cubic-bezier(.3,0,.3,1) 3}#result.H .fly{animation:flyDroop 900ms ease-out both}#result.D .fly{animation:flyWiggle 700ms ease-in-out 2}@keyframes flyHop{50%{transform:translateY(-12px) rotate(-6deg)}}@keyframes flyDroop{to{transform:rotate(160deg) translateY(-4px)}}@keyframes flyWiggle{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}.cell.win .stone{animation:winPulse 600ms ease-in-out 2}@keyframes winPulse{50%{transform:scale(1.14)}}
 #again{grid-area:btn;margin-top:12px;min-height:52px;width:100%;background:var(--accent);color:#14110a;border:0;border-radius:12px;font-size:22px;font-weight:700}
 #restart{position:fixed;inset:0;z-index:60;background:rgba(7,11,20,.8);display:grid;place-items:center}
 #restart .sheet{width:340px;padding:24px;border:1px solid var(--cellLine);border-radius:18px;background:var(--panel);text-align:center}
@@ -99,6 +100,12 @@ header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
 #intro .go{margin-top:20px}#fired{min-height:18px}.boxhead{line-height:1.4}
 @media(max-height:560px){#boardStage{width:248px;height:248px}#play{gap:8px}footer{padding:6px 0 8px}#candWrap{padding-bottom:10px}#result{padding:8px 10px 10px;grid-template-columns:36px minmax(0,1fr);column-gap:8px}#result .fly{width:36px;height:36px}#result h2{font-size:19px;white-space:nowrap}#result p{font-size:14px}#again{margin-top:6px;min-height:48px;font-size:18px}#intro .sheet{padding:14px 22px}#intro .sub{font-size:16px;margin-bottom:10px}#intro .steps svg{height:40px}#intro .steps li{padding:10px}#intro .steps p{line-height:1.4}#intro .note,#intro .truth{margin-top:10px}#intro .go{margin-top:12px;padding:10px 36px}}
 @media(prefers-reduced-motion:reduce){#result,#result .fly,.cell.win .stone{animation:none!important}.cell.arrive .stone{animation:none}.cell.arrive::after{animation:none;opacity:0}}
+/* 설명 창이 화면보다 높으면 창 안에서 스크롤(margin:auto 로 위가 잘리지 않게) */
+#intro{overflow-y:auto;overscroll-behavior:contain}#intro .sheet{max-height:none;margin:auto}
+/* 낮은 화면: 판 밑 결과 띠(.below)는 '누가 먼저' 자리에 한 줄로, 판 양옆 여백까지 넓혀 꼬리말을 덮지 않게 */
+@media(max-height:560px){#play{container-type:inline-size}#result.below{left:calc((100% - 100cqw)/2);right:calc((100% - 100cqw)/2);grid-template-columns:36px minmax(0,1fr) auto;grid-template-areas:"fly title btn" "fly line btn";padding:4px 6px 4px 10px;column-gap:10px}#result.below #again{margin-top:0;width:auto;padding:0 18px}}
+/* 휴대폰 가로(높이 450 이하): 판·누가 먼저(결과 띠)·뇌 그림은 한 화면에, 꼬리말만 아래로 스크롤. 판과 뇌 칸을 반반. main 높이는 고정값(자동이면 캔버스 크기가 다시 높이를 키우는 순환이 생김) */
+@media(max-height:450px){html,body{height:auto}html{overflow-y:auto}body{overflow:visible}#app{height:auto;min-height:100dvh}header{padding:4px 0;background:var(--bg)}.brand>.sub{display:none}main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:330px}#play{gap:6px;padding-bottom:10px}#boardStage{width:232px;height:232px}#intro{padding:62px 20px 8px}#intro .steps svg{height:32px}#intro .go{margin-top:10px}#intro .goBar{position:sticky;bottom:-8px;padding-bottom:8px;background:var(--card,#0f1626)}}
 </style><script src="/i18n.js"></script></head><body><div id="app">
 <header><div class="brand"><img src="data:image/png;base64,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" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리와 틱택토<span class="dev" id="dev" hidden></span></h1><span class="sub">초파리 뇌 신호로 둘 곳을 골라요</span></div><span style="display:flex;gap:8px"><button class="ghost-btn" id="langBtn" aria-label="Language">EN</button><button class="ghost-btn" id="showIntro">설명</button><a class="home" href="/">처음으로</a></span></header>
 <main>
@@ -111,20 +118,20 @@ header{padding:8px 0;flex-shrink:0}.brand{gap:12px}.brand>.sub{font-size:12px}
  </section>
  <section id="brainBox">
   <div class="boxhead"><span class="legend"><span><i style="background:var(--in)"></i>판 모양을 넣는 신경(느끼는 신경)</span><span><i style="background:var(--out)"></i>반응을 읽는 신경(몸에 명령하는 신경)</span></span><span id="fired"></span></div>
-  <div id="brainCanvas"><canvas id="brain" aria-label="실제 뇌 반응, 손가락으로 끌어 입체 회전" aria-describedby="spinHint"></canvas><span class="spinHint" id="spinHint">손가락으로 돌려 볼 수 있어요</span></div>
+  <div id="brainCanvas"><canvas id="brain" aria-label="계산한 뇌 반응, 손가락으로 끌어 입체 회전" aria-describedby="spinHint"></canvas><span class="spinHint" id="spinHint">손가락으로 돌려 볼 수 있어요</span></div>
   <div id="candWrap"><div id="candHead"></div><div class="thinkingLine" id="thinking" hidden aria-hidden="true"><i></i></div><div id="cands"></div></div>
  </section>
 </main>
 <footer id="foot"></footer>
 </div>
-<div id="intro">
+<div id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
  <div class="sheet">
-  <h2>초파리와 틱택토</h2>
+  <h2 id="introTitle">초파리와 틱택토</h2>
   <p class="sub">초파리와 한 판 겨뤄 봐요. 규칙은 세 가지예요.</p>
   <ol class="steps" id="introSteps"></ol>
   <p class="note">초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요. 초파리 뇌라서 더 잘하는 건 아니에요.</p>
   <p class="truth">초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.</p>
-  <button class="go" id="introGo">시작하기</button>
+  <div class="goBar"><button class="go" id="introGo">시작하기</button></div>
  </div>
 </div>
 <div id="restart" hidden role="dialog" aria-modal="true" aria-labelledby="restartTitle"><div class="sheet"><h2 id="restartTitle">새로 시작할까요?</h2><div class="actions"><button id="restartNo">계속할래요</button><button id="restartYes">새로 시작해요</button></div></div></div>
@@ -156,7 +163,6 @@ const play=(b,i,p)=>b.slice(0,i)+p+b.slice(i+1);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 // 뇌 밖 보조 규칙 두 가지: 바로 이기는 칸이 있으면 두고, 없으면 사람이 바로 이길 칸을 막는다
 function assist(b){for(const p of 'FH')for(const i of moves(b))if(winLine(play(b,i,p)))return[i,p==='F'?'win':'block'];return null}
-function chooseMove(b){let best=-1,bs=-Infinity;for(const i of moves(b)){const s=score(IDX.get(play(b,i,'F')));if(s>bs){bs=s;best=i}}return best}
 
 const $=id=>document.getElementById(id);
 const FLY='<svg class="stone" viewBox="0 0 100 100" aria-hidden="true"><path d="M38 37L25 29M37 44L22 45M39 51L27 61M62 37L75 29M63 44L78 45M61 51L73 61" stroke="#8a6a3e" stroke-width="2.6" stroke-linecap="round" fill="none"/><ellipse cx="50" cy="66" rx="14" ry="21" fill="#cf9f62"/><path d="M36.1 61Q50 64 63.9 61L63.7 66Q50 69 36.3 66ZM36.5 71Q50 74 63.5 71L62.3 76Q50 79 37.7 76ZM39 80Q50 83 61 80L57 85.5Q50 88.5 43 85.5Z" fill="#5a3a22"/><ellipse cx="45" cy="64" rx="9" ry="27" transform="rotate(9 45 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="55" cy="64" rx="9" ry="27" transform="rotate(-9 55 64)" fill="#eef3ff" fill-opacity=".38" stroke="#d6deee" stroke-opacity=".8" stroke-width="1.4"/><ellipse cx="50" cy="42" rx="13" ry="12" fill="#b8874a"/><ellipse cx="50" cy="26" rx="10" ry="8" fill="#c4955a"/><ellipse cx="41.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/><ellipse cx="58.5" cy="25" rx="7" ry="8.5" fill="#ff3b2a"/></svg>';
@@ -171,9 +177,12 @@ function ended(){const l=winLine(board);if(!l&&board.includes('.'))return false;
   finished=true;winCells=l||[];cells.forEach((c,i)=>c.classList.toggle('win',winCells.includes(i)));
   const winner=l?board[l[0]]:null,title=winner==='H'?'내가 이겼어요!':winner==='F'?'초파리가 이겼어요!':'비겼어요!';
   $('resultTitle').textContent=title;$('resultLine').textContent=winner==='H'?'초파리: 멋진 한 수였어요!':winner==='F'?'초파리: 다음 판도 함께해요!':'초파리: 팽팽한 한 판이었어요!';
-  const r=$('result');r.className=winner||'D';r.classList.toggle('top',winCells.length>0&&winCells.every(i=>i>=3));
-  const g=gen;setTimeout(()=>{if(g===gen&&finished){r.hidden=false;$('who').style.visibility='hidden'}},winCells.length?1200:500);
+  const r=$('result');r.className=winner||'D';
+  const g=gen;setTimeout(()=>{if(g===gen&&finished){r.hidden=false;placeResult(r);$('who').style.visibility='hidden'}},winCells.length?1200:500);
   status('한 판 더 도전해 볼까요?');return true}
+// 결과 띠는 이긴 줄의 칸을 가리지 않는 첫 자리에 둔다: 판 안 아래 → 판 안 위 → 판 밑(누가 먼저 버튼 자리)
+function placeResult(r){for(const c of ['','top','below']){r.classList.remove('top','below');if(c)r.classList.add(c);
+  const a=r.offsetTop,b=a+r.offsetHeight;if(!winCells.some(i=>cells[i].offsetTop<b&&cells[i].offsetTop+cells[i].offsetHeight>a))return}}
 function newGame(who){gen++;busy=false;finished=false;first=who;board='.........';winCells=[];$('result').hidden=true;$('who').style.visibility='';
   cells.forEach(c=>c.classList.remove('arrive'));render();rows([]);brainShow(board,-1);
   document.querySelectorAll('.pill').forEach(p=>{p.classList.toggle('on',p.dataset.who===who);p.setAttribute('aria-pressed',p.dataset.who===who)});
@@ -203,7 +212,7 @@ $('again').onclick=()=>newGame(first);
 
 // ---------- 선택 결과 ----------
 function rows(ms){$('cands').innerHTML='';$('thinking').hidden=!ms.length;$('candHead').textContent=ms.length?'초파리가 생각하고 있어요':'초파리가 수를 고르면 여기에 선택한 칸과 점수가 나와요'}
-function pick(i,byHelper){const k=IDX.get(play(board,i,'F')),s=score(k);$('thinking').hidden=true;$('cands').innerHTML=`<div class="row done pick"><span>${NAMES[i]}</span><span class="num">${byHelper?'규칙 도우미':have(k)?(Math.abs(s)<0.005?0:s).toFixed(2):'계산 전'}</span></div>`}
+function pick(i,byHelper){const k=IDX.get(play(board,i,'F')),s=score(k);$('thinking').hidden=true;$('cands').innerHTML=`<div class="row done pick"><span>${NAMES[i]}</span><span class="num">${byHelper?'규칙 도우미':have(k)?(Math.abs(s)<0.005?0:Math.max(-1,Math.min(1,s))).toFixed(2):'계산 전'}</span></div>`}
 
 // ---------- 뇌 패널 ----------
 const cv=$('brain'),ctx=cv.getContext('2d');
@@ -256,7 +265,7 @@ let idle=0;function resetIdle(){clearTimeout(idle);idle=setTimeout(()=>location.
 addEventListener('pointerdown',resetIdle,true);addEventListener('pointermove',e=>{if(e.buttons)resetIdle()},true);resetIdle();addEventListener('contextmenu',e=>e.preventDefault());
 
 // ---------- 안내 문구 ----------
-$('foot').innerHTML='<span>진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요.</span> <span>초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.</span>';
+$('foot').innerHTML='<span>진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요.</span> <span>판마다 뇌 반응은 미리 계산해 두었어요.</span> <span>초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.</span>';
 $('resultFly').innerHTML=FLY;
 if(DATA.dev){$('dev').hidden=false;$('dev').textContent=`개발용 데이터 · 뇌 계산 ${DATA.nHave.toLocaleString()}/${NB.toLocaleString()}판`}
 // ---------- 시작 전 설명 ----------
@@ -268,9 +277,12 @@ $('introSteps').innerHTML=[
  [mini(ring(32,32)+'<rect x="41" y="9" width="14" height="14" rx="3" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-dasharray="4 3"/>'), '<b>2.</b> 빈칸을 콕 눌러 내 동그라미를 놓아요'],
  [mini(ring(16,16,'#f2c14e')+ring(32,32,'#f2c14e')+ring(48,48,'#f2c14e')+'<path d="M16 16L48 48" stroke="#f2c14e" stroke-width="2.4"/>'), '<b>3.</b> 가로·세로·대각선으로 셋을 먼저 만들면 이겨요'],
 ].map(([svg,txt])=>`<li>${svg}<p>${txt}</p></li>`).join('');
-const intro=$('intro');
-$('introGo').onclick=()=>{intro.hidden=true;newGame('H')};
-$('showIntro').onclick=()=>intro.hidden=false;
-layout();newGame('H');
+// 판이 진행 중이면 '계속하기'로 설명만 닫고, 아니면 '시작하기'로 새 판을 연다
+const intro=$('intro'),introGo=$('introGo');let introNew=true,introFrom=null;
+function openIntro(){introNew=finished||!busy&&board==='.........';introGo.textContent=introNew?'시작하기':'계속하기';introFrom=document.activeElement;intro.hidden=false;introGo.focus()}
+function closeIntro(){intro.hidden=true;if(introNew)newGame(first);introFrom?.focus()}
+introGo.onclick=closeIntro;$('showIntro').onclick=openIntro;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!intro.hidden){e.preventDefault();closeIntro()}});
+layout();newGame('H');openIntro();
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script></body></html>

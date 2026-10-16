@@ -15,12 +15,12 @@
     '진짜 초파리 뇌의 연결을 본뜬 컴퓨터 뇌가 여러분에게 반응해요.': 'A computer brain modeled on the wiring of a real fruit fly brain reacts to you.',
     '초파리에게 간식 주기': 'Feed the fruit fly a snack',
     '달콤한 설탕, 쓴 먹이, 물을 줘 봐요. 초파리 뇌 속 신경이 어떻게 반짝이는지 볼 수 있어요.': 'Give it sugar, something bitter, or water and watch how the neurons in its brain light up.',
-    '초파리와 틱택토': 'Tic-tac-toe with the fruit fly',
-    '초파리가 뇌 신호로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!': 'The fruit fly uses brain signals to pick its square. Who gets three in a row first? Play a round!',
+    '초파리와 틱택토': 'Tic-\u2060tac-\u2060toe with the fruit fly',
+    '초파리가 뇌 신호와 규칙 도우미로 둘 곳을 골라요. 누가 먼저 세 줄을 만들까요? 한 판 겨뤄 봐요!': 'The fruit fly uses brain signals and two rule helpers to pick its square. Who gets three in a row first? Play a round!',
     '초파리와 체스': 'Chess with the fruit fly',
     '초파리와 한 판 둬 봐요. 초파리가 수를 고르는 동안 뇌가 어떻게 반응하는지 볼 수 있어요.': 'Play a game against the fruit fly and watch its brain react while it chooses a move.',
     '진짜 초파리가 아니라, 암컷 초파리 한 마리의 뇌 지도(FlyWire 연결체)로 만든 컴퓨터 모델이에요. 간식 주기와 틱택토의 뇌 반응은 미리 계산해 두었고, 체스는 태블릿이 그 자리에서 계산해요.':
-      'This is not a real fruit fly but a computer model built from the FlyWire brain map of one female fruit fly. The snack and tic-tac-toe brain reactions were computed in advance; chess is computed right here on the tablet.',
+      'This is not a real fruit fly but a computer model built from the FlyWire brain map of one female fruit fly. The snack and tic-\u2060tac-\u2060toe brain reactions were computed in advance; chess is computed right here on the tablet.',
     // 간식
     '버튼을 눌러 초파리에게 간식을 줘 봐요': 'Tap a button to give the fruit fly a snack',
     '초파리 · 손가락으로 돌려 볼 수 있어요': 'The fruit fly · drag with your finger to turn it',
@@ -38,20 +38,21 @@
     '몸에 명령하는 신경이 거의 조용해요. 주둥이를 뻗지 않아요.': 'The body-control neurons stay almost silent. It doesn’t stick out its proboscis.',
     '이 정도 물로는 주둥이를 뻗는 신경이 켜지지 않았어요.': 'A drop of water wasn’t enough to switch on the proboscis neuron.',
     '쓴맛 신호가 단맛 신호를 눌러서, 주둥이를 거의 안 뻗어요.': 'The bitter signal overrides the sweet one, so it barely sticks out its proboscis.',
-    '도망치라고 명령하는 큰 신경(자이언트 파이버)과 뒤로 걷게 하는 신경이 켜졌어요.': 'The big escape neuron (giant fiber) and the backward-walking neurons switched on.',
+    '도망치라고 명령하는 큰 신경(자이언트 파이버)이 강하게 켜졌어요.': 'The big escape neuron (giant fiber) switched on strongly.',
     // 틱택토
     '초파리 뇌 신호로 둘 곳을 골라요': 'It uses fruit fly brain signals to pick its square',
     '내가 먼저': 'I go first', '초파리 먼저': 'Fruit fly goes first',
     '판 모양을 넣는 신경(느끼는 신경)': 'Board input (sensory neurons)',
     '반응을 읽는 신경(몸에 명령하는 신경)': 'Readout (body-control neurons)',
     '진짜 초파리 뇌 지도(FlyWire 연결체 630 버전, Shiu 외 2024)로 만든 컴퓨터 모델이에요.': 'A computer model built from a real fruit fly brain map (FlyWire connectome v630, Shiu et al. 2024).',
+    '판마다 뇌 반응은 미리 계산해 두었어요.': 'The brain response for every board was computed in advance.',
     '초파리와 한 판 겨뤄 봐요. 규칙은 세 가지예요.': 'Play a round against the fruit fly. There are three rules.',
     '초파리는 빈칸마다 "그 칸에 두면 어떻게 될까"를 뇌에 넣어 보고, 점수가 가장 높은 칸을 골라요. 초파리 뇌라서 더 잘하는 건 아니에요.':
       'For every empty square the fruit fly feeds “what if I play here” into its brain and picks the highest score. Having a fruit fly brain doesn’t make it play any better.',
-    '초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.': 'The fruit fly brain did not learn tic-tac-toe; a decoder outside the brain did, and there are two rule helpers.',
+    '초파리 뇌가 틱택토를 배운 게 아니라 뇌 밖 판독기가 배웠고, 규칙 도우미가 둘 있어요.': 'The fruit fly brain did not learn tic-\u2060tac-\u2060toe; a decoder outside the brain did, and there are two rule helpers.',
     '규칙 도우미': 'Rule helper',
     '새로 시작할까요?': 'Start over?', '계속할래요': 'Keep playing', '새로 시작해요': 'Start over',
-    '실제 뇌 반응, 손가락으로 끌어 입체 회전': 'Computed brain response, drag to rotate in 3D',
+    '계산한 뇌 반응, 손가락으로 끌어 입체 회전': 'Computed brain response, drag to rotate in 3D',
     '왼쪽 위': 'top left', '위': 'top', '오른쪽 위': 'top right', '왼쪽': 'left', '가운데': 'center', '오른쪽': 'right', '왼쪽 아래': 'bottom left', '아래': 'bottom', '오른쪽 아래': 'bottom right',
     '내 차례예요! 빈칸을 콕 눌러 보세요': 'Your turn! Tap an empty square',
     '내가 이겼어요!': 'You won!', '초파리가 이겼어요!': 'The fruit fly won!', '비겼어요!': 'It’s a draw!',
@@ -77,7 +78,7 @@
     '나는 흰 편, 초파리는 검은 편. 상대 왕이 피할 곳이 없게 만들어요!': 'You play white, the fruit fly plays black. Trap the other king so it cannot escape!',
     '나는 흰 편, 초파리는 검은 편': 'You play white, the fruit fly plays black',
     '내 흰 말을 눌러요': 'Tap one of your white pieces', '다른 말을 눌러 바꿀 수 있어요': 'Tap another piece to switch',
-    '노란 칸을 눌러 옮겨요': 'Tap a yellow square to move', '상대 말이 있으면 잡아요': 'If an enemy piece is there, you capture it',
+    '노란 칸을 눌러 옮겨요': 'Tap a yellow square to move', '상대 말이 있으면 잡아요': 'If an enemy piece is there, you capture\u00a0it',
     '초파리가 수를 시험해요': 'The fruit fly tries out its moves', '뇌 반응과 점수를 지켜봐요': 'Watch the brain activity and the score',
     '진짜 초파리가 아니라, 뇌의 연결 모양을 본뜬 컴퓨터 신경망이에요.': 'This is not a real fruit fly but a computer network modeled on the wiring of a fruit fly brain.',
     '어른을 위한 설명 · 학습에 안 쓴, 유불리가 뚜렷한 판에서 어느 편이 유리한지 맞힌 비율: 초파리 배선 신경망 69%, 보통 신경망 79%, 판 그대로 계산 75%': 'For adults · On positions not used in training where one side is clearly ahead, how often each model picked the right side: fruit-fly-wired network 69%, standard network 79%, simple board model 75%',
@@ -98,12 +99,12 @@
     '초파리 폰이 끝에 닿아 퀸이 됐어요': 'The fruit fly\u2019s pawn reached the end and became a queen',
     '한 수는 40초 안에 둬요.': 'You have 40 seconds for each move.',
     '시간 초과 · 한 수는 40초 안에 둬야 해요': 'Out of time · 40 seconds per move',
-    '시간 초과지만 초파리도 킹만 남아 비겼어요': 'Out of time, but the fruit fly has only its king, so it is a draw',
+    '시간 초과지만 초파리 말로는 체크메이트를 할 수 없어 비겼어요': 'Out of time, but the fruit fly does not have enough pieces to checkmate, so it is a draw',
     '초파리: 시간이 다 됐어요! 한 판 더 해요!': 'Fruit fly: Time is up! Let\u2019s play again!',
     '체크! 내 왕을 안전하게 지켜요': 'Check! Keep your king safe', '체크! 초파리 왕이 위험해요': 'Check! The fruit fly\u2019s king is in danger',
     '왕을 피할 곳이 없어요. 흰 편 승리!': 'The king cannot escape. You win!', '왕을 피할 곳이 없어요. 초파리 승리!': 'The king cannot escape. The fruit fly wins!',
     '움직일 수 없어 비겼어요!': 'No moves left. It’s a draw!', '한참 동안 아무도 잡지 않고 폰도 안 움직여서 비겼어요!': 'Nothing captured and no pawn moved for a long time. It’s a draw!',
-    '이 말은 갈 곳이 없어요. 다른 말을 골라요': 'This piece has nowhere to go. Pick another', '갈 곳이 없어요. 다른 말을 골라요': 'has nowhere to go. Pick another',
+    '이 말은 갈 곳이 없어요. 다른 말을 골라요': 'This piece has nowhere to go. Pick another', '갈 곳이 없어요. 다른 말을 골라요': 'It has nowhere to go. Pick another piece',
     '가장 높은 점수의 수를 뒀어요 · 이제 내 차례!': 'It played the highest-scoring move · your turn!',
     '뇌 자료를 가져오지 못했어요': 'Could not load the brain data',
     '다시 불러오기를 눌러 주세요. 계속 안 되면 선생님을 불러 주세요.': 'Please tap Reload. If it keeps failing, ask a staff member.',
@@ -113,7 +114,7 @@
   const cell = s => EN[s] || s;
   const RULES = [
     [/^명령 신경 ([\d,]+)개 중 ([\d,]+)개가 반짝였어요$/, (m) => `${m[2]} of ${m[1]} body-control neurons lit up`],
-    [/^뇌 속 시간 ([\d.]+)초 · 반짝인 신경세포 ([\d,]+)개$/, (m) => `Simulated time ${m[1]} s · ${m[2]} neurons lit up`],
+    [/^뇌 속 시간 ([\d.]+)초 · 그림에서 반짝인 신경세포 ([\d,]+)개$/, (m) => `Simulated time ${m[1]} s · ${m[2]} neurons lit up in the picture`],
     [/^뇌 점수도 규칙 도우미와 같은 (.+) 칸을 골랐어요$/, (m) => `The brain score also picked the ${cell(m[1])} square, same as the rule helper`],
     [/^뇌 점수로는 (.+) 칸이 1등이었지만, 규칙 도우미가 (바로 이기는|내가 바로 이길) (.+) 칸에 뒀어요$/,
       (m) => `The brain score ranked the ${cell(m[1])} square first, but the rule helper played ${cell(m[3])} to ${m[2] === '바로 이기는' ? 'win right away' : 'block your win'}`],
@@ -129,7 +130,7 @@
     [/^([a-h][1-8]) (흰|검은) (왕|퀸|룩|비숍|나이트|폰)( 이동 가능)?$/, (m) => `${m[1]} ${m[2] === '흰' ? 'white' : 'black'} ${EN[m[3]].toLowerCase()}${m[4] ? ', can move here' : ''}`],
     [/^([a-h][1-8]) 빈칸( 이동 가능)?$/, (m) => `${m[1]} empty${m[2] ? ', can move here' : ''}`],
   ];
-  const H1 = { '초파리와 틱택토': 'Fruit Fly Tic-tac-toe', '초파리와 체스': 'Fruit Fly Chess' };   // 헤더 제목만 짧게 (530 높이에서 안 접히게)
+  const H1 = { '초파리와 틱택토': 'Fruit Fly Tic-\u2060tac-\u2060toe', '초파리와 체스': 'Fruit Fly Chess' };   // 헤더 제목만 짧게 (530 높이에서 안 접히게)
   function translate(ko, tag) {
     const t = ko.replace(/\s+/g, ' ').trim(); // 화면용 줄바꿈(white-space:pre-line)이 들어와도 사전 키와 맞게
     const wrap = en => ko.match(/^\s*/)[0] + en + ko.match(/\s*$/)[0]; // 앞뒤 공백만 남기고 통째로 바꾼다(줄바꿈 든 원문도 됨)
@@ -157,12 +158,15 @@
     el.__ko = el.__ko || {};
     const cur = el.getAttribute(a);
     if (lang === 'en') { if (el.__ko[a] === undefined || (cur !== el.__en?.[a])) el.__ko[a] = cur; const en = translate(el.__ko[a]); el.__en = el.__en || {}; el.__en[a] = en; if (en !== cur) el.setAttribute(a, en); }
-    else if (el.__ko[a] !== undefined && cur !== el.__ko[a]) el.setAttribute(a, el.__ko[a]);
+    // 한국어: 우리가 넣은 영어가 그대로 있으면(언어 전환) 저장한 한국어로 되돌리고, 앱이 새로 바꾼 값이면 그 값을 받아 저장한다
+    else if (el.__en?.[a] !== undefined && cur === el.__en[a]) { if (cur !== el.__ko[a]) el.setAttribute(a, el.__ko[a]); }
+    else el.__ko[a] = cur;
   }
   function fnText(n) {
     const cur = n.nodeValue;
     if (lang === 'en') { if (n.__ko === undefined || cur !== n.__en) n.__ko = cur; const en = translate(n.__ko, n.parentElement && n.parentElement.tagName); n.__en = en; if (en !== cur) n.nodeValue = en; }
-    else if (n.__ko !== undefined && cur !== n.__ko) n.nodeValue = n.__ko;
+    else if (n.__en !== undefined && cur === n.__en) { if (cur !== n.__ko) n.nodeValue = n.__ko; }
+    else n.__ko = cur;
   }
   // 영어는 한국어보다 길어서 헤더가 꽉 찬다. 영어일 때만 헤더 글자를 조금 줄이고 버튼 안에서 줄이 안 접히게 한다
   const CSS = 'html[lang=en] header h1{font-size:20px}html[lang=en] header .sub,html[lang=en] header .tagline,html[lang=en] header>span:not([style]){font-size:13px}'

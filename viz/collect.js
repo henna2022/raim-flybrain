@@ -15,6 +15,7 @@
    설계 원칙 세 가지
      1. 절대로 전시를 멈추지 않습니다. 무슨 일이 있어도 예외를 밖으로 던지지 않습니다.
      2. 인터넷이 없어도 잃지 않습니다. 기기에 쌓아 두었다가 연결되면 밀어 넣습니다.
+        단, 화면을 떠나는 순간 허브가 오류를 내면 그 한 번은 버립니다(두 번 세는 것보다 낫기 때문).
         (언어 연구소처럼 오프라인 전제로 만든 전시물 때문에 반드시 필요합니다)
      3. 개인정보를 보내지 않습니다. 나가는 것은 전시물 이름, 날짜, 사건 이름, 횟수뿐입니다.
         기기 번호도 쿠키도 없습니다.
@@ -28,6 +29,7 @@
   var exhibit = '';
   var hub = HUB;
   var sending = false;
+  var leaving = false;     /* 화면을 떠나는 중(pagehide). 이때 나는 fetch 실패는 진짜 실패가 아닙니다 */
 
   function today() {
     var d = new Date();
@@ -64,6 +66,23 @@
     saveQ(q);
   }
 
+  /* 못 보낸 줄을 대기열 앞에 되돌립니다. 그 사이 새로 쌓인 같은 줄과는 횟수를 합칩니다. */
+  function putBack(sent) {
+    var q = sent.slice(), now = loadQ();
+    for (var i = 0; i < now.length; i++) {
+      var cur = now[i], hit = false;
+      for (var j = 0; j < q.length; j++) {
+        if (q[j].exhibit === cur.exhibit && q[j].day === cur.day && q[j].event === cur.event) {
+          q[j] = { exhibit: cur.exhibit, day: cur.day, event: cur.event, n: q[j].n + cur.n };
+          hit = true; break;
+        }
+      }
+      if (!hit) q.push(cur);
+    }
+    if (q.length > MAX_ROWS) q = q.slice(q.length - MAX_ROWS);
+    saveQ(q);
+  }
+
   function flush() {
     if (sending || !exhibit) return;
     var q = loadQ();
@@ -72,26 +91,19 @@
 
     sending = true;
     var sent = q.slice(0, 200);
+    /* 보내기 전에 먼저 대기열에서 뺍니다. 카드를 누르면 화면이 바로 넘어가 응답을 못 받는데,
+       그때 대기열에 남겨 두면 다음에 홈을 열 때 또 보내서 두 번 세게 됩니다. */
+    saveQ(q.slice(200));
 
     var done = function (ok) {
       sending = false;
-      if (!ok) return;                       /* 실패하면 대기열을 그대로 둡니다 */
-      /* 보내는 동안 새로 쌓인 것이 있을 수 있으므로, 보낸 것만 정확히 빼냅니다. */
-      var now = loadQ(), rest = [];
-      for (var i = 0; i < now.length; i++) {
-        var cur = now[i], hit = null;
-        for (var j = 0; j < sent.length; j++) {
-          var s = sent[j];
-          if (s.exhibit === cur.exhibit && s.day === cur.day && s.event === cur.event) { hit = s; break; }
-        }
-        if (!hit) { rest.push(cur); continue; }
-        var left = cur.n - hit.n;
-        if (left > 0) rest.push({ exhibit: cur.exhibit, day: cur.day, event: cur.event, n: left });
-      }
-      saveQ(rest);
+      /* 인터넷 끊김·서버 오류(5xx)는 되돌려 두고 다음 기회에.
+         단, 화면을 떠날 때 브라우저는 keepalive 요청을 끝까지 보내 주면서도 페이지 쪽엔 "Failed to fetch" 를 줍니다.
+         그걸 믿고 되돌리면 두 번 셉니다(크롬에서 확인). */
+      if (!ok) { if (!leaving) putBack(sent); return; }
       /* 보내는 동안 새로 쌓인 것이 남아 있으면 이어서 보냅니다.
          이게 없으면 마지막 관람객의 기록이 다음 관람객이 올 때까지 대기열에 묶여 있습니다. */
-      if (rest.length) setTimeout(flush, 400);
+      if (loadQ().length) setTimeout(flush, 400);
     };
 
     try {
@@ -101,8 +113,8 @@
         body: JSON.stringify({ items: sent }),
         keepalive: true
       })
-        .then(function (r) { return r.ok ? r.json().catch(function () { return { ok: true }; }) : null; })
-        .then(function (d) { done(!!(d && d.ok)); })
+        /* 4xx(잘못된 날짜 등)는 다시 보내도 또 거절되므로 버립니다 */
+        .then(function (r) { done(r.status < 500); })
         .catch(function () { done(false); });
     } catch (e) {
       done(false);
@@ -117,7 +129,8 @@
         if (opts && opts.hub) hub = opts.hub;
         flush();                                        /* 지난번에 못 보낸 것부터 */
         g.addEventListener('online', flush);            /* 와이파이가 돌아오면 */
-        g.addEventListener('pageshow', flush);          /* 태블릿을 깨웠을 때 */
+        g.addEventListener('pageshow', function () { leaving = false; flush(); });   /* 태블릿을 깨웠을 때 */
+        g.addEventListener('pagehide', function () { leaving = true; });
       } catch (e) {}
     },
     record: function (ev) {

@@ -63,6 +63,8 @@ button.on{background:#f2c14e;color:#111;border-color:#f2c14e}button.next{border:
 #legend{top:auto;bottom:8px;right:14px}#legend span{margin-right:12px;font-size:13px;color:#9aa6bb;white-space:nowrap}
 #legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 @media (max-width:700px){#panes{grid-template-columns:1fr;grid-template-rows:1fr 1fr}#left{border-right:0;border-bottom:1px solid #1c2538}}
+/* 낮은 화면: 뇌 그림은 아래위 48px 를 비우고 그려지니, 범례(두 줄)를 그 안(아래 4px, 줄 17px)에 넣어 그림을 덮지 않게 */
+@media (max-height:560px){#legend{bottom:4px;line-height:17px}}
 </style><script src="/i18n.js"></script></head><body><div id="wrap">
 <header><div class="brand"><img src="/logo_w.png" alt="서울로봇인공지능과학관"><span class="sep"></span><h1>초파리에게 간식 주기</h1></div><span style="display:flex;gap:8px"><button class="home" id="langBtn" aria-label="Language" style="font:inherit">EN</button><a class="home" href="/">처음으로</a></span></header>
 <div id="panes">
@@ -84,7 +86,7 @@ const COND={
  bitter:['쓴 먹이','우웩, 안 먹을래.','몸에 명령하는 신경이 거의 조용해요. 주둥이를 뻗지 않아요.','refuse'],
  water:['물 한 방울','음… 지금은 괜찮아.','이 정도 물로는 주둥이를 뻗는 신경이 켜지지 않았어요.','sniff'],
  'sugar+bitter':['설탕 + 쓴 먹이','달긴 한데 써…','쓴맛 신호가 단맛 신호를 눌러서, 주둥이를 거의 안 뻗어요.','hesitate'],
- loomR:['그림자로 놀라게 하기','으악, 도망!','도망치라고 명령하는 큰 신경(자이언트 파이버)과 뒤로 걷게 하는 신경이 켜졌어요.','escape']};
+ loomR:['그림자로 놀라게 하기','으악, 도망!','도망치라고 명령하는 큰 신경(자이언트 파이버)이 강하게 켜졌어요.','escape']};
 const COL=['#3b82f6','#94a3b8','#22c55e','#a855f7','#ef4444'];
 const SPEED=0.25; // 1초 시뮬을 4초로 재생
 let cur=null,t0=0,ei=0,acted=false;
@@ -94,10 +96,10 @@ const sugarIcon='<path d="M5 10 16 5 27 10 16 16Z" fill="#fff"/><path d="M5 10v1
 const bitterIcon='<circle cx="16" cy="18" r="10" fill="#3a7d2c" stroke="#8dc774"/><ellipse cx="13" cy="14" rx="4" ry="3" fill="#8dc774"/>';
 const icons={sugar:sugarIcon,bitter:bitterIcon,water:'<path d="M16 3C13 9 6 16 6 21a10 10 0 0 0 20 0C26 16 19 9 16 3Z" fill="#4fa8ff"/><path d="M11 20q-2 5 4 6" fill="none" stroke="#c9e8ff" stroke-width="2" stroke-linecap="round"/>','sugar+bitter':'<g transform="translate(-3 1) scale(.8)">'+sugarIcon+'</g><g transform="translate(13 10) scale(.6)">'+bitterIcon+'</g>',loomR:'<ellipse cx="16" cy="9" rx="13" ry="6" fill="#000" stroke="#7f8ca3" stroke-width="1.5"/><path d="M9 17l-2 3M16 17v4M23 17l2 3" stroke="#7f8ca3" stroke-width="2" stroke-linecap="round"/><ellipse cx="16" cy="27" rx="4" ry="3" fill="#c9995c"/><circle cx="13.5" cy="25.5" r="1.6" fill="#ff3b2a"/><circle cx="18.5" cy="25.5" r="1.6" fill="#ff3b2a"/>'};
 for(const k in COND){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true">'+icons[k]+'</svg><span>'+COND[k][0]+'</span>';b.onclick=()=>tapStim(k,b);btns.appendChild(b)}
-// 반응이 재생되는 동안 다른 버튼을 누르면 다음 차례로 걸어 두고, 설명 문장을 읽을 틈(1.6초) 뒤 이어서 재생한다
-let next=null;
+// 반응이 재생되는 동안(뇌 속 1초) 다른 버튼을 누르면 다음 차례로 걸어 두고, 설명 문장을 읽을 틈을 둔 뒤 뇌 속 2.5초(실제 10초)가 되면 이어서 재생한다
+let next=null,lit=new Set(); // lit: 이번 재생에서 반짝인 신경세포(프레임마다 새 사건만 더한다)
 function tapStim(k,b){if(cur&&(performance.now()-t0)*SPEED<1000){if(k!==cur){next=[k,b];[...btns.children].forEach(x=>x.classList.toggle('next',x===b))}return}play(k,b)}
-function play(k,b){busyUntil=performance.now()+1600;next=null;btns.classList.add('used');[...btns.children].forEach(x=>x.classList.remove('on','next'));b.classList.add('on');cur=k;t0=performance.now();ei=0;acted=false;glow.fill(0);bubble.style.opacity=0;say.textContent='…';showStim(k);flyReset()}
+function play(k,b){busyUntil=performance.now()+1600;next=null;btns.classList.add('used');[...btns.children].forEach(x=>x.classList.remove('on','next'));b.classList.add('on');cur=k;t0=performance.now();ei=0;lit.clear();acted=false;glow.fill(0);bubble.style.opacity=0;say.textContent='…';showStim(k);flyReset()}
 
 // ---------- 오른쪽: 뇌 점구름 ----------
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
@@ -120,8 +122,8 @@ function drawBrain(now){
   const scale=Math.min((W-24*devicePixelRatio)/(x9-x0),(H-96*devicePixelRatio)/(y9-y0)),ox=(x0+x9)/2,oy=(y0+y9)/2;
   ctx.fillStyle='#070b14';ctx.fillRect(0,0,W,H);
   if(cur){const tms=(now-t0)*SPEED,ev=DATA.spk[cur];
-    while(ei<ev.length&&ev[ei][0]<=tms){const i=ev[ei][1];glow[i]=1;if(C[i]===4&&!acted){acted=true;flyAct(COND[cur][3]);bubble.textContent=COND[cur][1];bubble.style.opacity=1}ei++}
-    say.textContent=tms>1000?COND[cur][2]:`뇌 속 시간 ${(tms/1000).toFixed(2)}초 · 반짝인 신경세포 ${new Set(ev.slice(0,ei).map(e=>e[1])).size}개`}
+    while(ei<ev.length&&ev[ei][0]<=tms){const i=ev[ei][1];glow[i]=1;lit.add(i);if(C[i]===4&&!acted){acted=true;flyAct(COND[cur][3]);bubble.textContent=COND[cur][1];bubble.style.opacity=1}ei++}
+    say.textContent=tms>1000?COND[cur][2]:`뇌 속 시간 ${(tms/1000).toFixed(2)}초 · 그림에서 반짝인 신경세포 ${lit.size}개`}
   for(let i=0;i<N;i++){const x=P[i][0]/1000,y=P[i][1]/1000,z=P[i][2]/1000;
     const x1=x*cy+z*sy,z1=-x*sy+z*cy,y1=y*cx-z1*sx,px=W/2+(x1-ox)*scale,py=H/2+(y1-oy)*scale,g=glow[i];
     ctx.fillStyle=COL[C[i]];
@@ -164,7 +166,7 @@ function aimFly(blend){
   cam.lookAt(flyTarget);cam.updateMatrixWorld();
 }
 // 자극 물체
-function showStim(k){if(!ren)return;stim.clear();stim.position.set(0,0,-1.9);
+function showStim(k){if(!ren)return;stim.traverse(o=>{o.geometry?.dispose();o.material?.dispose()});stim.clear();stim.position.set(0,0,-1.9);
   if(k==='sugar'||k==='sugar+bitter'){const c=new THREE.Mesh(new THREE.BoxGeometry(.6,.6,.6),M(0xffffff));c.position.y=.3;stim.add(c)}
   if(k==='bitter'||k==='sugar+bitter'){const d=new THREE.Mesh(new THREE.SphereGeometry(.28,16,12),M(0x3a7d2c));d.position.set(k==='sugar+bitter'?.56:0,.28,0);stim.add(d)}
   if(k==='water'){const d=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),M(0x4fa8ff,{transparent:true,opacity:.7}));d.scale.y=1.3;d.position.y=.416;stim.add(d)}
