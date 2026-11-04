@@ -19,8 +19,10 @@ __pycache__/
 dl/chess/*.parquet
 dl/chess/*.npz
 !dl/chess/neurons.npz
+!dl/chess/neurons783.npz
 dl/chess/*.npy
 dl/chess/runs/
+dl/chess/runs783/
 dl/chess/head_*.json
 
 # 디자인 평가 기록(로컬 보관)

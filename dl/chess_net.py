@@ -11,11 +11,13 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 from conn_op import Conn, conn_matmul, self_test
 
 BITS = 780                                   # 말×칸 768 + 캐슬링 4 + 앙파상 8
-PARAMS = 2743380                             # C0의 학습 변수 수. C3이 이 수를 맞춘다
+V = os.environ.get('FLYWIRE', '630')         # FLYWIRE=783 이면 783 배선. dl/bench_gpu.py가 같은 변수로 연결 파일을 고른다
+PARAMS = {'630': 2743380, '783': 2841342}[V] # C0의 학습 변수 수(연결 + 뉴런 치우침 + 입력 세기 780 + 읽기 + 1). C3이 이 수를 맞춘다
 CHESS = os.path.join(HERE, 'chess')
 # 배선 세기 손잡이. 맥에서 실제 배선·판 4개로 잰 T=10 활동(최대값): 0.01→1.1, 0.02→17, 0.03→237, 0.05→9827.
 # bench_gpu가 쓰던 0.05는 속도 재려고 고른 값이라 실제 배선에서는 터진다. 갈래마다 다르게 주면 공정성이 깨지니 여기 하나만 고친다.
-SCALE = 0.02
+# 783 (2026-11-04, 검증 판 첫 4개, 평균·최대): 0.02→0.011·6.6, 0.022→0.019·11.9, 0.025→0.040·27. 같은 판으로 630 0.02는 0.021·11.5라 783은 0.022로 활동을 맞춘다
+SCALE = {'630': 0.02, '783': 0.022}[V]
 
 
 def _bg():
@@ -72,12 +74,12 @@ def random_wire(pre, post, sign, count, n, seed):
 def neurons():
     """입력 감각 뉴런과 읽기 뉴런. 시드 0 고정이라 C0·C1·C2·C4가 완전히 같은 입력 배선을 받는다.
     min_syn을 인자로 받지 않는 건 npz 캐시가 그걸 모르기 때문이다. edges_table의 기본값을 바꾸면 이 파일을 지울 것"""
-    path = os.path.join(CHESS, 'neurons.npz')
+    path = os.path.join(CHESS, 'neurons.npz' if V == '630' else f'neurons{V}.npz')
     if os.path.exists(path):
         z = np.load(path); return dict(sens=z['sens'], ro=z['ro'], per=int(z['per']))
     import pandas as pd
     m = os.path.join(HERE, '..', 'model')
-    comp = pd.read_csv(os.path.join(m, '2023_03_23_completeness_630_final.csv'), index_col=0)   # 이 행 순서가 뉴런 인덱스를 정의한다
+    comp = pd.read_csv(os.path.join(m, {'630': '2023_03_23_completeness_630_final.csv', '783': 'Completeness_783.csv'}[V]), index_col=0)   # 이 행 순서가 뉴런 인덱스를 정의한다
     ann = pd.read_csv(os.path.join(m, 'flywire_annotations_v630.tsv'), sep='\t', low_memory=False)
     ann = ann[ann.root_id.isin(comp.index)].drop_duplicates('root_id').set_index('root_id')
     pos = {rid: i for i, rid in enumerate(comp.index)}
@@ -234,7 +236,7 @@ if __name__ == '__main__':
     c4 = mk(False); c4(x).sum().backward()
     assert n_params(c4) == 11 and c4.logw.grad is None and c4.head.bias.grad is not None, 'C4가 배선까지 학습한다'
 
-    assert hidden_for() == 3508 and abs(n_params(mlp(3508)) - PARAMS) / PARAMS < 0.01
+    assert hidden_for() == {'630': 3508, '783': 3633}[V] and abs(n_params(mlp(hidden_for())) - PARAMS) / PARAMS < 0.01
     assert n_params(mlp(0)) == 781 and mlp(0)(torch.zeros(3, BITS)).shape == (3,)
     mb, ib = build('B3', 1, 'cpu', 32)
     assert ib['n_params'] == 781 and 'bench_gpu' not in sys.modules, 'B3가 연결체 파케이를 읽었다'

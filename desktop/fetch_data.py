@@ -1,5 +1,5 @@
 """연결체 데이터 받기와 SHA-256 확인. 리눅스·WSL·윈도우·맥 어디서나 같은 파이썬으로 돈다.
-사용: python desktop/fetch_data.py [all|dl]   (dl은 딥러닝 벤치에 필요한 연결 목록 하나만)"""
+사용: python desktop/fetch_data.py [all|dl]   (dl은 딥러닝 벤치에 필요한 연결 목록 하나만, FLYWIRE=783 이면 783 것)"""
 import hashlib, os, shutil, subprocess, sys, urllib.request
 
 MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'model')
@@ -10,6 +10,8 @@ FILES = {  # 파일 이름: (sha256, 주소)
     '2023_03_23_connectivity_630_final.parquet': ('94db8c650533bc36ffa3223f2e62325d5648b8d6bd31c3a4e1c804628c7557b3', f'{SHIU}/2023_03_23_connectivity_630_final.parquet'),
     '2023_03_23_completeness_630_final.csv': ('e6b71e17671a9bdb05f55e4bc6774640a1418cb7a05125e0fc994ad40f9bfdfb', f'{SHIU}/2023_03_23_completeness_630_final.csv'),
     'flywire_annotations_v630.tsv': ('9a4f8b2f843196074431ebd7cd883536afa1be86c8a4ce90970441e8be81d1be', ANN),
+    'Connectivity_783.parquet': ('efeb23fb99098e9c390f6869969b2a121a2ee92c833cfc45ecb2c1d8e1af0347', f'{SHIU}/Connectivity_783.parquet'),
+    'Completeness_783.csv': ('bbb847a4cc2caaa7a16349722d220c087317b946d148d4d592d94d250617a311', f'{SHIU}/Completeness_783.csv'),
 }
 
 
@@ -45,6 +47,6 @@ def fetch(name):
 
 if __name__ == '__main__':
     which = sys.argv[1] if len(sys.argv) > 1 else 'all'
-    for name in (['2023_03_23_connectivity_630_final.parquet'] if which == 'dl' else FILES):
+    for name in ([{'630': '2023_03_23_connectivity_630_final.parquet', '783': 'Connectivity_783.parquet'}[os.environ.get('FLYWIRE', '630')]] if which == 'dl' else FILES):
         fetch(name)
     print('데이터 준비 끝')

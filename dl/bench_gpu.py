@@ -14,12 +14,13 @@ from conn_op import Conn, conn_matmul, self_test
 sys.path.insert(0, os.path.join(HERE, '..', 'desktop'))
 from fetch_data import fetch
 
-N, READOUT, SENSORY = 127400, 1171, 8126
+V = os.environ.get('FLYWIRE', '630')   # FLYWIRE=783 이면 783 배선 (model/ttt_sim.py와 같은 스위치)
+N, READOUT, SENSORY = {'630': (127400, 1171, 8126), '783': (138639, 1409, 16352)}[V]
 LIMIT_S = 60
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 sync = torch.cuda.synchronize if device == 'cuda' else (lambda: None)
 vram = torch.cuda.get_device_properties(0).total_memory / 2**30 if device == 'cuda' else None
-con = pd.read_parquet(fetch('2023_03_23_connectivity_630_final.parquet'),
+con = pd.read_parquet(fetch({'630': '2023_03_23_connectivity_630_final.parquet', '783': 'Connectivity_783.parquet'}[V]),
                       columns=['Presynaptic_Index', 'Postsynaptic_Index', 'Connectivity', 'Excitatory'])
 
 

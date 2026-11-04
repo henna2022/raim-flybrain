@@ -12,7 +12,8 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'chess')
-RUNS = os.path.join(OUT, 'runs')
+TAIL = {'630': '', '783': '783'}[os.environ.get('FLYWIRE', '630')]   # FLYWIRE=783 이면 runs783/·report783.json 에 따로 쌓는다 (학습 데이터는 같이 씀)
+RUNS = os.path.join(OUT, 'runs' + TAIL)
 
 # 아래 상수를 건드리면 갈래끼리 비교가 무효가 된다. 바꿨으면 모든 런을 처음부터 다시 돌려야 한다.
 # 바닥 갈래(B3·C4·C3)를 먼저 돌린다. 중간에 끊겨도 관문의 바닥이 먼저 확보돼 있어야 한다
@@ -108,7 +109,7 @@ def upload():
     if subprocess.run(['gh', 'auth', 'status'], capture_output=True).returncode:
         print('gh 로그인이 안 돼 있어 못 올렸어요. dl/chess/report.json 을 직접 보내 주세요', flush=True); return
     zippath = os.path.join(OUT, 'chess_pilot.zip')
-    keep = [os.path.join(OUT, n) for n in ('report.json', 'meta.json')] + \
+    keep = [os.path.join(OUT, n) for n in ('report' + TAIL + '.json', 'meta.json')] + \
            [os.path.join(RUNS, n) for n in sorted(os.listdir(RUNS)) if n.endswith('.json')]
     subprocess.run([sys.executable, '-m', 'zipfile', '-c', zippath, *[k for k in keep if os.path.exists(k)]], check=True)
     tag = 'chess-pilot-' + time.strftime('%Y%m%d-%H%M')
@@ -234,7 +235,7 @@ def report():
            'spread': {a: spread([r[K] for r in runs if r['arm'] == a]) for a in ARMS if any(r['arm'] == a for r in runs)},
            'gate': gate_from(runs, runs[0]['metrics']['majority']),
            'notes': ['관문은 평균이 아니라 C0 최소값 > C1 최대값으로 본다', '모든 런의 배치·T·국면 수·학습률·검증 판 수가 같은지 먼저 확인했다']}
-    json.dump(rep, open(os.path.join(OUT, 'report.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
+    json.dump(rep, open(os.path.join(OUT, 'report' + TAIL + '.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
     print(json.dumps(rep, indent=1, ensure_ascii=False))
     return rep
 

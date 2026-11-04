@@ -118,6 +118,7 @@ Ubuntu 창에서 한 줄씩 붙여 넣는다 (붙여넣기는 마우스 오른�
 | 옥타폰 점검 | `desktop/check.py` | 고속 모드, 맥 결과 대조(`reference_op.json`), 판당 시간·작업자 수 |
 | 옥타폰 시뮬 | `model/ttt_run.py N W --game=op` | 판마다 감각 뉴런 32묶음 자극, 200 ms, 출력 뉴런 1,171개 발화 수. 난수 0·1 |
 | 옥타폰 학습·평가 | `model/op_train.py` | 릿지 판독기, 처음 보는 판 평가, 섞은 대조군 20회, G2 판정 |
+| 체스 학습 | `dl/chess_train.py all` | 대조군 C0~C4·B3 12런. 앞에 `FLYWIRE=783`을 붙이면 783 배선(SCALE 0.022, 결과 `dl/chess/runs783/`·`report783.json`). 연결 파일은 `FLYWIRE=783 python desktop/fetch_data.py dl` |
 | 딥러닝 벤치 | `dl/bench_gpu.py` | 연결체 신경망 학습 한 걸음의 속도·메모리, GO/조건부/NO-GO |
 | 연결체 연산 | `dl/conn_op.py` | 연결 모양 그대로 행렬곱과 기울기 (밀집 60 GiB 없이) |
 
