@@ -1,9 +1,12 @@
-import time, pandas as pd
+import sys, time, pandas as pd
 from brian2 import ms, Hz
 from model import run_exp, default_params as P
 import utils as utl
+V = sys.argv[1] if len(sys.argv) > 1 else '630'   # python try_loom.py 783
 config = dict(path_res='./results/try', path_comp='./2023_03_23_completeness_630_final.csv',
               path_con='./2023_03_23_connectivity_630_final.parquet', n_proc=3)
+if V == '783':   # results/try는 export_viz가 읽으니 따로 둔다
+    config.update(path_res='./results/try783', path_comp='./Completeness_783.csv', path_con='./Connectivity_783.parquet')
 a=pd.read_csv('./flywire_annotations_v630.tsv',sep='\t',low_memory=False)
 comp=pd.read_csv(config['path_comp'],index_col=0); a=a[a.root_id.isin(comp.index)]
 ct=lambda t,side=None: a[(a.cell_type==t)&((a.side==side) if side else True)].root_id.tolist()
@@ -12,7 +15,7 @@ P['n_run']=3; P['t_run']=1000*ms; P['r_poi']=100*Hz
 t0=time.time()
 run_exp('loomR', loomR, params=P, force_overwrite=True, **config)
 print(f'{time.time()-t0:.0f}s')
-df=utl.load_exps(['./results/try/loomR.parquet'])
+df=utl.load_exps([f"{config['path_res']}/loomR.parquet"])
 rate,_=utl.get_rate(df,t_run=P['t_run'],n_run=P['n_run'])
 r=rate['loomR']
 print('active neurons:', (r>0).sum())
