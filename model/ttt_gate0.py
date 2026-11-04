@@ -14,4 +14,4 @@ out = {'heldout_fly': fly, 'heldout_fly_new_noise': fly_new_noise, 'drop': round
        'heldout_shuffled_20': T.spread(null), 'random_mover': T.random_grade()[k],
        'r_ttt': round(float(np.median(sib) / np.median(seed)), 3),
        'pass_1_above_null_max': fly > max(null), 'pass_2_drop_le_0.05': (fly - fly_new_noise) <= 0.05}
-json.dump(out, open('ttt/gate0.json', 'w'), indent=1); print(json.dumps(out, indent=1))
+json.dump(out, open(f'ttt{T.OUT}/gate0.json', 'w'), indent=1); print(json.dumps(out, indent=1))

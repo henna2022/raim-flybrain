@@ -6,6 +6,7 @@
       .venv/bin/python ttt_train.py selftest   (가짜 특징으로 채점 로직 확인)"""
 import sys, json, numpy as np
 from ttt_game import fly_states, candidates, moves, play, value, winner, OTHER
+from ttt_sim import OUT   # FLYWIRE=783 이면 ttt783/ 를 읽고 쓴다
 
 STATES, CANDS = fly_states(), candidates()
 IDX = {b: i for i, b in enumerate(CANDS)}
@@ -98,7 +99,7 @@ def with_assists(choice): return {s: choice[s] if assist_move(s) is None else as
 def assisted_pick(pick): return lambda b, rng: pick(b, rng) if assist_move(b) is None else assist_move(b)
 
 def load(seed):
-    z = np.load(f'ttt/features_seed{seed}.npz'); d = dict(zip(z['boards'], z['X']))
+    z = np.load(f'ttt{OUT}/features_seed{seed}.npz'); d = dict(zip(z['boards'], z['X']))
     return np.log1p(np.stack([d[b] for b in CANDS]).astype(float))
 
 def onehot(bs): return np.array([[c == 'H' for c in b] + [c == 'F' for c in b] for b in bs], float)
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     for name, X in [('fly_brain', X0), ('board_onehot_linear', onehot(CANDS))]:
         ch, lams = heldout(X); H[name] = grade(ch) | {'lambdas': lams}
     ch, _ = heldout(X0, X1); H['fly_brain_tested_on_new_noise'] = grade(ch)
-    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r, onehot(CANDS)))[0]) for r in range(5)]]) for k in base}
+    H['random_network_control_5_draws'] = {k: spread([g[k] for g in [grade(heldout(random_network(40 + r, onehot(CANDS), X0.shape[1]))[0]) for r in range(5)]]) for k in base}
     perm = np.random.default_rng(9).permutation(len(CANDS))
     H['shuffled_null'] = grade(heldout(X0[perm])[0])
 
@@ -141,7 +142,7 @@ if __name__ == '__main__':
         'same_move_by_chance_where_choice_matters': mean([1 / len(moves(s)) for s in MATTERS])}
     E['fly_brain_with_2_assists'] = grade(with_assists(fly_choice))
     E['board_onehot_linear'] = grade(insample(onehot(CANDS))[0])
-    E['random_network_control'] = grade(insample(random_network(40, onehot(CANDS)))[0])
+    E['random_network_control'] = grade(insample(random_network(40, onehot(CANDS), X0.shape[1]))[0])
     null_games, null_grades = [], []
     for r in range(20):
         ch = insample(X0[np.random.default_rng(100 + r).permutation(len(CANDS))])[0]
@@ -159,8 +160,8 @@ if __name__ == '__main__':
                               'shuffled_null_20_with_2_assists_not_losing': {m: notlose([g[1] for g in null_games], m) for m in fly_games}}
 
     json.dump({'mu': fly_model['mu'].tolist(), 'sd': fly_model['sd'].tolist(), 'w': fly_model['w'].tolist(), 'b': fly_model['b'], 'lambda': fly_model['lam']},
-              open('ttt/readout.json', 'w'))
+              open(f'ttt{OUT}/readout.json', 'w'))
     json.dump({s: {'move': fly_choice[s], 'scores': {str(i): round(float(S0[play(s, i, 'F')]), 4) for i in moves(s)}} for s in STATES},
-              open('ttt/fly_moves.json', 'w'), separators=(',', ':'))
-    json.dump(rep, open('ttt/report.json', 'w'), indent=1, ensure_ascii=False)
+              open(f'ttt{OUT}/fly_moves.json', 'w'), separators=(',', ':'))
+    json.dump(rep, open(f'ttt{OUT}/report.json', 'w'), indent=1, ensure_ascii=False)
     print(json.dumps(rep, indent=1, ensure_ascii=False))

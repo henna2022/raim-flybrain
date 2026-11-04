@@ -22,7 +22,9 @@ def work(args):
 if __name__ == '__main__':
     seed, workers = int(sys.argv[1]), int(sys.argv[2]) if len(sys.argv) > 2 else 5
     boards = candidates()[: int(sys.argv[3])] if len(sys.argv) > 3 else candidates()
-    out = f'{GAME}/features_seed{seed}{"_test" if len(sys.argv) > 3 else ""}.npz'
+    from ttt_sim import OUT
+    out = f'{GAME}{OUT}/features_seed{seed}{"_test" if len(sys.argv) > 3 else ""}.npz'
+    os.makedirs(os.path.dirname(out), exist_ok=True)
     done = {}
     if os.path.exists(out):
         z = np.load(out); done = dict(zip(z['boards'], z['X']))

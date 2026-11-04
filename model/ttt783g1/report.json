@@ -1,0 +1,301 @@
+{
+ "_note": "heldout = 시험하는 초파리 차례 판의 후보 판을 학습에서 뺀 판독기로 채점. exhibit = 모든 판으로 학습한 뒤 같은 판에서 채점(태블릿이 실제로 쓰는 표). shuffled_null = 판과 발화 수의 짝을 무작위로 섞어 판 정보를 없앤 대조군, 같은 절차로 학습.",
+ "n_fly_positions": 4520,
+ "n_positions_where_choice_matters": 3191,
+ "n_boards_simulated": 5477,
+ "random_mover": {
+  "best_move_all_positions": 0.5797,
+  "best_move_where_choice_matters": 0.4046,
+  "lost_when_loss_was_avoidable": 0.3955
+ },
+ "heldout": {
+  "fly_brain": {
+   "best_move_all_positions": 0.6741,
+   "best_move_where_choice_matters": 0.5384,
+   "lost_when_loss_was_avoidable": 0.3076,
+   "lambdas": [
+    1000.0,
+    1000.0,
+    1000.0,
+    1000.0,
+    1000.0
+   ]
+  },
+  "board_onehot_linear": {
+   "best_move_all_positions": 0.6721,
+   "best_move_where_choice_matters": 0.5356,
+   "lost_when_loss_was_avoidable": 0.2996,
+   "lambdas": [
+    1,
+    1,
+    1,
+    1,
+    0.1
+   ]
+  },
+  "fly_brain_tested_on_new_noise": {
+   "best_move_all_positions": 0.6487,
+   "best_move_where_choice_matters": 0.5024,
+   "lost_when_loss_was_avoidable": 0.3248
+  },
+  "random_network_control_5_draws": {
+   "best_move_all_positions": {
+    "min": 0.9055,
+    "median": 0.91,
+    "max": 0.9162,
+    "n": 5
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.8662,
+    "median": 0.8725,
+    "max": 0.8812,
+    "n": 5
+   },
+   "lost_when_loss_was_avoidable": {
+    "min": 0.0607,
+    "median": 0.0651,
+    "max": 0.071,
+    "n": 5
+   }
+  },
+  "shuffled_null": {
+   "best_move_all_positions": 0.5699,
+   "best_move_where_choice_matters": 0.3908,
+   "lost_when_loss_was_avoidable": 0.411
+  }
+ },
+ "exhibit": {
+  "fly_brain": {
+   "best_move_all_positions": 0.7491,
+   "best_move_where_choice_matters": 0.6446,
+   "lost_when_loss_was_avoidable": 0.2294,
+   "lambda": 1000.0
+  },
+  "fly_brain_table_if_resimulated_with_new_noise": {
+   "best_move_all_positions": 0.6538,
+   "best_move_where_choice_matters": 0.5096,
+   "lost_when_loss_was_avoidable": 0.3197,
+   "same_move_where_choice_matters": 0.4955,
+   "same_move_by_chance_where_choice_matters": 0.2986
+  },
+  "fly_brain_with_2_assists": {
+   "best_move_all_positions": 0.9595,
+   "best_move_where_choice_matters": 0.9427,
+   "lost_when_loss_was_avoidable": 0.017
+  },
+  "board_onehot_linear": {
+   "best_move_all_positions": 0.6777,
+   "best_move_where_choice_matters": 0.5434,
+   "lost_when_loss_was_avoidable": 0.2919
+  },
+  "random_network_control": {
+   "best_move_all_positions": 0.9602,
+   "best_move_where_choice_matters": 0.9436,
+   "lost_when_loss_was_avoidable": 0.0234
+  },
+  "shuffled_null_20": {
+   "best_move_all_positions": {
+    "min": 0.6104,
+    "median": 0.6319,
+    "max": 0.6522,
+    "n": 20
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.4481,
+    "median": 0.4785,
+    "max": 0.5074,
+    "n": 20
+   },
+   "lost_when_loss_was_avoidable": {
+    "min": 0.3179,
+    "median": 0.339,
+    "max": 0.3578,
+    "n": 20
+   }
+  },
+  "shuffled_null_20_with_2_assists": {
+   "best_move_all_positions": {
+    "min": 0.9405,
+    "median": 0.9462,
+    "max": 0.9507,
+    "n": 20
+   },
+   "best_move_where_choice_matters": {
+    "min": 0.9157,
+    "median": 0.9238,
+    "max": 0.9301,
+    "n": 20
+   },
+   "lost_when_loss_was_avoidable": {
+    "min": 0.0275,
+    "median": 0.0332,
+    "max": 0.0358,
+    "n": 20
+   }
+  }
+ },
+ "games_1000_each": {
+  "fly_brain_exhibit_table": {
+   "vs_random_human_human_first": {
+    "fly_win": 550,
+    "draw": 100,
+    "fly_loss": 350
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 802,
+    "draw": 57,
+    "fly_loss": 141
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "draw": 19,
+    "fly_loss": 981
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "draw": 0,
+    "fly_loss": 1000
+   }
+  },
+  "fly_brain_with_2_assists_(tablet)": {
+   "vs_random_human_human_first": {
+    "fly_win": 747,
+    "draw": 230,
+    "fly_loss": 23
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 972,
+    "draw": 28,
+    "fly_loss": 0
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "draw": 580,
+    "fly_loss": 420
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "draw": 1000,
+    "fly_loss": 0
+   }
+  },
+  "random_mover": {
+   "vs_random_human_human_first": {
+    "fly_win": 285,
+    "draw": 122,
+    "fly_loss": 593
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 593,
+    "draw": 122,
+    "fly_loss": 285
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "draw": 37,
+    "fly_loss": 963
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "draw": 236,
+    "fly_loss": 764
+   }
+  },
+  "random_mover_with_2_assists": {
+   "vs_random_human_human_first": {
+    "fly_win": 691,
+    "draw": 238,
+    "fly_loss": 71
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 895,
+    "draw": 94,
+    "fly_loss": 11
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "draw": 233,
+    "fly_loss": 767
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "draw": 832,
+    "fly_loss": 168
+   }
+  },
+  "perfect_player": {
+   "vs_random_human_human_first": {
+    "fly_win": 764,
+    "draw": 236,
+    "fly_loss": 0
+   },
+   "vs_random_human_fly_first": {
+    "fly_win": 963,
+    "draw": 37,
+    "fly_loss": 0
+   },
+   "vs_perfect_human_human_first": {
+    "fly_win": 0,
+    "draw": 1000,
+    "fly_loss": 0
+   },
+   "vs_perfect_human_fly_first": {
+    "fly_win": 0,
+    "draw": 1000,
+    "fly_loss": 0
+   }
+  },
+  "shuffled_null_20_not_losing": {
+   "vs_random_human_human_first": {
+    "min": 408,
+    "median": 482,
+    "max": 595,
+    "n": 20
+   },
+   "vs_random_human_fly_first": {
+    "min": 608,
+    "median": 780,
+    "max": 855,
+    "n": 20
+   },
+   "vs_perfect_human_human_first": {
+    "min": 3,
+    "median": 49,
+    "max": 114,
+    "n": 20
+   },
+   "vs_perfect_human_fly_first": {
+    "min": 0,
+    "median": 252,
+    "max": 808,
+    "n": 20
+   }
+  },
+  "shuffled_null_20_with_2_assists_not_losing": {
+   "vs_random_human_human_first": {
+    "min": 904,
+    "median": 942,
+    "max": 975,
+    "n": 20
+   },
+   "vs_random_human_fly_first": {
+    "min": 976,
+    "median": 997,
+    "max": 1000,
+    "n": 20
+   },
+   "vs_perfect_human_human_first": {
+    "min": 46,
+    "median": 218,
+    "max": 605,
+    "n": 20
+   },
+   "vs_perfect_human_fly_first": {
+    "min": 491,
+    "median": 1000,
+    "max": 1000,
+    "n": 20
+   }
+  }
+ }
+}

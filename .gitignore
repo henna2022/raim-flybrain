@@ -6,8 +6,8 @@ __pycache__/
 model/*.parquet
 model/*.csv
 model/*.tsv
-model/ttt/*.npz
-model/ttt/*.log
+model/ttt*/*.npz
+model/ttt*/*.log
 .env*
 model/op/*.npz
 desktop/workers.txt
