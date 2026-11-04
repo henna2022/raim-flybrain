@@ -41,7 +41,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;m
 .boxhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;padding:12px 16px 0;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 5px 0 0;vertical-align:1px}
 .legend span{margin-right:12px}
-#brainCanvas{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}
+#brainCanvas{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;position:relative}.homeBtn{position:absolute;top:8px;right:8px;flex:none;gap:6px}
 #brain{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .spinHint{padding:0 16px 6px;font-size:13px;color:var(--muted)}
 #candWrap{padding:4px 16px 14px}
@@ -118,7 +118,7 @@ header{padding:8px 0;flex-shrink:0;position:relative;z-index:51} /* 설명 창(5
  </section>
  <section id="brainBox">
   <div class="boxhead"><span class="legend"><span><i style="background:var(--in)"></i>판 모양을 넣는 신경(느끼는 신경)</span><span><i style="background:var(--out)"></i>반응을 읽는 신경(몸에 명령하는 신경)</span></span><span id="fired"></span></div>
-  <div id="brainCanvas"><canvas id="brain" aria-label="계산한 뇌 반응, 손가락으로 끌어 입체 회전" aria-describedby="spinHint"></canvas><span class="spinHint" id="spinHint">손가락으로 돌려 볼 수 있어요</span></div>
+  <div id="brainCanvas"><canvas id="brain" aria-label="계산한 뇌 반응, 손가락으로 끌어 입체 회전" aria-describedby="spinHint"></canvas><span class="spinHint" id="spinHint">손가락으로 돌려 볼 수 있어요</span><button class="ghost-btn homeBtn" id="brainHome" type="button"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>원래대로</button></div>
   <div id="candWrap"><div id="candHead"></div><div class="thinkingLine" id="thinking" hidden aria-hidden="true"><i></i></div><div id="cands"></div></div>
  </section>
 </main>
@@ -236,6 +236,9 @@ function project(){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp
       if(dst){dst[n]=x;dst[n+1]=y;dst[n+2]=near}
       if(size){const r=size*d*near;b.globalAlpha=alpha*near;b.fillRect(x-r/2,y-r/2,r,r)}}}
   points(BG,null,'#8795ad',1.3,.2);points(RO,projectedRO,'#ef4444',2,.22);points(SENS,projectedSens,'#22c55e',0,0);projectionDirty=false}
+// 돌려 본 뇌를 처음 각도로. 손가락을 다시 대면 그 자리에서 멈춘다
+$('brainHome').onclick=()=>{const y0=Math.atan2(Math.sin(yaw),Math.cos(yaw)),p0=pitch,t0=performance.now(),ms=reducedMotion.matches?0:450;
+  const step=()=>{if(spin)return;const t=ms?Math.min(1,(performance.now()-t0)/ms):1,e=1-(1-t)**3;yaw=y0+(HOME_YAW-y0)*e;pitch=p0+(HOME_PITCH-p0)*e;projectionDirty=true;kick();if(t<1)requestAnimationFrame(step)};requestAnimationFrame(step)};
 function bindSpin(){
   cv.onpointerdown=e=>{if(!e.isPrimary||e.button!==0)return;spin={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)};
   cv.onpointermove=e=>{if(!spin||e.pointerId!==spin.id)return;

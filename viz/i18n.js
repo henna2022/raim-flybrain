@@ -9,7 +9,7 @@
     '처음으로': 'Home', '설명': 'Help', '시작하기': 'Start', '계속하기': 'Continue', '한 판 더': 'Play again',
     '태블릿이 세로로 되어 있다면': 'If the tablet is upright,', '가로로 세팅해 주세요!': 'please turn it sideways!',
     '이 체험은 가로 화면에서 진행됩니다.': 'This exhibit works in landscape.',
-    '손가락으로 돌려 볼 수 있어요': 'Drag with your finger to turn it',
+    '손가락으로 돌려 볼 수 있어요': 'Drag with your finger to turn it', '원래대로': 'Reset view',
     // 첫 화면
     '오늘은 초파리랑 무엇을 해 볼까요?': 'What shall we do with the fruit fly today?',
     '진짜 초파리 뇌의 연결을 본뜬 컴퓨터 뇌가 여러분에게 반응해요.': 'A computer brain modeled on the wiring of a real fruit fly brain reacts to you.',
